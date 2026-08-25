@@ -1,0 +1,147 @@
+<!doctype html>
+<!--
+  ============================================================================
+  PROJECT SUBPAGE TEMPLATE
+  ============================================================================
+  Copy this whole file's <article> block into src/main.ts as the `content`
+  value of a new entry in the `pages` record, e.g.:
+
+      "/projects/my-project": {
+          title: "My project.",
+          eyebrow: "Project / My project",
+          content: `<article class="article"> …paste here… </article>`
+      }
+
+  IMPORTANT — the content string in main.ts is a JS *template literal*
+  (backticks), so:
+
+    • Escape backticks     `  →  \`
+    • Escape `${`          →  \${  (only if you need it in text)
+    • Double every LaTeX backslash:  \text  →  \\text
+    • Watch for stray `$` — KaTeX treats $...$ as inline math.
+
+  This template mirrors the structure of the existing project pages:
+    • /projects/mandelbrot   (math-heavy article + mandelbrot canvas)
+    • /projects/boids        (three-rules explainer, SVG diagram, tables,
+                              boids canvas with data-visualization="boids")
+  See STYLE.md §2, §3, §4 for the full class reference.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Project subpage template</title>
+</head>
+<body>
+
+<!-- =========================================================================
+     PROJECT INDEX ENTRY (add a row to the /projects page's .project-list)
+     =========================================================================
+     This block is pasted inside the existing `<section class="project-list">`
+     of the "/projects" page. Keep the numbering sequential (next number =
+     current count + 1; boids is 02, mandelbrot is 01). -->
+<article class="project-row">
+  <!-- Sequential project number -->
+  <div class="project-number">03</div>
+  <div>
+    <!-- Title links to the new project route -->
+    <h2><a href="/projects/my-project">My project</a></h2>
+    <!-- One- or two-sentence description shown on the index -->
+    <p>A short description of what the project does.</p>
+    <!-- External links: repo, related write-ups, etc. -->
+    <div class="project-links"><a href="https://github.com/…">Repository</a></div>
+    <!-- Comma-separated tag line -->
+    <span class="tag">WebGL / TypeScript</span>
+  </div>
+  <!-- Status label: "Building", a year, or "Archive" -->
+  <div class="project-status">Building</div>
+</article>
+
+<!-- =========================================================================
+     PROJECT ARTICLE PAGE (the page the index row links to)
+     =========================================================================
+     This is the full `content` for the new "/projects/my-project" entry.
+     Everything lives inside one <article class="article">. -->
+<article class="article">
+
+  <!-- 1. Header: kicker + title + lede --------------------------------------
+       .kicker shows the section ("Project / …"), <h1> is the title (end with
+       a period), .lede is the one-sentence summary. -->
+  <p class="kicker">Project / My project</p>
+  <h1>My project.</h1>
+  <p class="lede">One sentence describing the project.</p>
+
+  <!-- 2. Canvas visualization ------------------------------------------------
+       THE canvas pattern (see STYLE.md §3). Requirements:
+         • .article-visual visual-frame  (or add a custom frame class)
+         • <canvas data-visualization="…"> — main.ts wires this up; you must
+           add a matching branch in the wiring loop at the bottom of main.ts:
+               if (canvas.dataset.visualization === "my-viz") new MyRenderer(canvas).start();
+         • aria-label for accessibility
+         • .visual-label with the viz name + a usage hint in <span>
+       The optional extra frame class (e.g. .boids-frame) can override the
+       frame background color. -->
+  <div class="article-visual visual-frame">
+    <canvas data-visualization="my-viz"
+            aria-label="Interactive visualization"></canvas>
+    <div class="visual-label">My viz <span>interaction hint</span></div>
+  </div>
+
+  <!-- 3. Introduction paragraphs ---------------------------------------------
+       Normal <p> under .article. Inline $...$ math works inside paragraphs. -->
+  <p>An introductory paragraph. Describe what the project is and why it exists.
+     Inline math like $x^2$ is fine here.</p>
+
+  <!-- 4. Section headings ----------------------------------------------------
+       <h2> for major sections. -->
+  <h2>The idea</h2>
+  <p>Body text explaining the core concept.</p>
+
+  <!-- 5. Display math --------------------------------------------------------
+       Wrap display math in <div class="math-display"> with $$...$$ delimiters.
+       NOTE: in main.ts this becomes \\text, \\sum etc. (double backslash). -->
+  <div class="math-display">$$\\text{key} = \\text{formula}$$</div>
+
+  <!-- 6. Sub-sections and more prose -----------------------------------------
+       <h3> for sub-sections under an <h2>. -->
+  <h3>Implementation detail</h3>
+  <p>More body text.</p>
+
+  <!-- 7. Tables --------------------------------------------------------------
+       Wrap tables in .table-wrap (horizontal scroll on mobile) and use
+       .spec-table for the shared border/header styling. -->
+  <div class="table-wrap">
+    <table class="spec-table">
+      <thead>
+        <tr><th>Setting</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Constant</td><td>value</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 8. SVG vector diagram (optional) ---------------------------------------
+       Inline SVG with .vector-diagram; title/caption text uses
+       .diagram-title and .diagram-caption. Arrow markers go in <defs>. -->
+  <svg class="vector-diagram" viewBox="0 0 960 280" role="img"
+       aria-label="Diagram of the concept">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+              markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 z" fill="#c59ad8"/>
+      </marker>
+    </defs>
+    <text x="160" y="26" class="diagram-title" text-anchor="middle">Title</text>
+    <line x1="60" y1="140" x2="260" y2="140" stroke="#c59ad8" stroke-width="2"
+          marker-end="url(#arrow)"/>
+    <text x="160" y="262" class="diagram-caption" text-anchor="middle">caption</text>
+  </svg>
+
+  <!-- 9. Closing paragraph ---------------------------------------------------- -->
+  <p>A closing paragraph that ties the project together.</p>
+
+</article>
+
+</body>
+</html>

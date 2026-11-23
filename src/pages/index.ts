@@ -10,6 +10,7 @@ import { mandelbrotPage } from "./mandelbrot";
 import { projectsPage } from "./projects";
 import { resumePage } from "./resume";
 import { seeingTheMandelbrotSetPage } from "./seeing-the-mandelbrot-set";
+import { whereTheFileMeetsTheMachinePage } from "./where-the-file-meets-the-machine";
 import type { Page } from "./types";
 
 export const pages: Record<string, Page> = {
@@ -22,5 +23,6 @@ export const pages: Record<string, Page> = {
     "/projects/fpga": fpgaPage,
     "/projects/hpc": hpcPage,
     "/blog": blogPage,
-    "/blog/seeing-the-mandelbrot-set": seeingTheMandelbrotSetPage
+    "/blog/seeing-the-mandelbrot-set": seeingTheMandelbrotSetPage,
+    "/blog/where-the-file-meets-the-machine": whereTheFileMeetsTheMachinePage
 };

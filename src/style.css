@@ -508,6 +508,30 @@ h1 {
 }
 
 /* =========================================================
+   Figures
+   ========================================================= */
+
+.article-figure {
+    margin: 40px 0;
+}
+
+.article-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    background: var(--bg-surface-alt);
+}
+
+.article-figure figcaption {
+    margin-top: 10px;
+    color: var(--text-subtle);
+    font: 0.68rem var(--font-mono);
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+}
+
+/* =========================================================
    Lists / Résumé
    ========================================================= */
 
@@ -779,6 +803,16 @@ footer {
 
     .skill-grid {
         grid-template-columns: 1fr;
+    }
+
+    .spec-table.wrap {
+        min-width: 0;
+        font-size: 0.82rem;
+    }
+
+    .spec-table.wrap th,
+    .spec-table.wrap td {
+        padding: 9px 8px;
     }
 
     .article-visual,

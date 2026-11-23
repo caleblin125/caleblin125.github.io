@@ -23,7 +23,7 @@ as a way to learn rendering while keeping the projects visible.
 ├── tsconfig.json           # strict-ish TS config, bundler resolution, noEmit
 ├── _config.yml             # legacy Jekyll config (GitHub Pages theme); the site itself is the Vite app
 ├── public/                 # static assets copied verbatim into dist/
-│   ├── blog/               # post figures (poster, robot CAD, glove usability plots)
+│   ├── blog/               # post figures (poster, robot CAD, glove plots, VGA frames and sprites)
 │   ├── caleb-lin-resume.pdf
 │   ├── favicon.svg
 │   └── icons.svg
@@ -43,6 +43,7 @@ as a way to learn rendering while keeping the projects visible.
 │   │   ├── fpga.ts         # "/projects/fpga"
 │   │   ├── hpc.ts          # "/projects/hpc"
 │   │   ├── blog.ts         # "/blog"
+│   │   ├── a-game-with-no-framebuffer.ts       # "/blog/a-game-with-no-framebuffer"
 │   │   ├── a-robot-on-a-field-with-no-map.ts   # "/blog/a-robot-on-a-field-with-no-map"
 │   │   ├── seeing-the-mandelbrot-set.ts        # "/blog/seeing-the-mandelbrot-set"
 │   │   ├── the-glove-is-the-controller.ts      # "/blog/the-glove-is-the-controller"

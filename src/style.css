@@ -482,6 +482,21 @@ h1 {
     margin: 0 !important;
 }
 
+.code-block {
+    margin: 28px 0;
+    padding: 18px 22px;
+    overflow-x: auto;
+    border-left: 2px solid var(--accent);
+    background: var(--bg-surface-alt);
+}
+
+.code-block pre {
+    margin: 0;
+    color: var(--text-muted);
+    font: 0.8rem/1.65 var(--font-mono);
+    white-space: pre;
+}
+
 /* =========================================================
    Diagrams
    ========================================================= */

@@ -237,6 +237,19 @@ headers in accent, body rows in muted text with `1px solid #51425a` row rules. A
 short numeric values; it lets body cells wrap instead of forcing horizontal scroll, and
 below `760px` it drops the 640px minimum so the whole table fits the screen.
 
+### Code blocks
+
+Wrap a short excerpt in `.code-block`:
+
+```html
+<div class="code-block"><pre>assign rgb_o = {12{shouldDraw}} &amp; rgb;</pre></div>
+```
+
+`.code-block` mirrors `.math-display` — panel background, accent left rule, and
+horizontal scroll — and its `pre` uses the mono font. Escape HTML characters
+(`&lt;`, `&amp;`) inside the excerpt, and keep code blocks to a few lines; longer
+listings belong in a repository or a linked file.
+
 ### Figures
 
 ```html

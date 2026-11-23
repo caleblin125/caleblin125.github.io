@@ -199,8 +199,32 @@ export const projectEntries: ProjectEntry[] = [
         metricLabel: "Mandelbrot orbit seeds"
     },
     {
-        id: "mandelbrot",
+        id: "treesim",
         number: "06",
+        title: "TreeSim: an evolving forest",
+        category: "Simulation",
+        description:
+            "An evolutionary tree simulation in C++20 and MPI: limbs compete for light, water, and soil, storms break them, and inherited growth networks decide which forms survive.",
+        problem: "Grow a forest from local growth rules with no stored tree shape, and make competition for light and soil large enough to select form over hundreds of generations.",
+        contribution: "Wrote the simulation core, the per-limb growth brain, the light and soil models, the MPI decomposition, the run recorder, the Slurm chain scripts, and the offline render and analysis tools.",
+        period: "2026–present",
+        technologies: ["C++20", "OpenMPI", "Slurm", "OpenGL / GLFW", "Dear ImGui", "Python", "NumPy / SciPy", "Matplotlib"],
+        dates: { started: "2026-06", published: "2026-11-23" },
+        image: {
+            src: "/projects/treesim.jpg",
+            alt: "Side view of a simulated forest on a hill: a dense brown canopy scattered with green leaf blades rises over tan terrain in a 235-year run of 51,755 trees."
+        },
+        path: "/projects/treesim",
+        titleHref: "/projects/treesim",
+        links: [
+            { label: "Project page", href: "/projects/treesim" },
+            { label: "GitHub", href: repos.treeSimulation }
+        ],
+        keywords: ["tree simulation", "evolutionary simulation", "C++20", "MPI", "Slurm", "procedural growth", "forest", "computational biology"]
+    },
+    {
+        id: "mandelbrot",
+        number: "07",
         title: "Mandelbrot drawer",
         category: "Computational visualization",
         description:
@@ -223,7 +247,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "boids",
-        number: "07",
+        number: "08",
         title: "Boids",
         category: "Computational visualization",
         description:
@@ -243,7 +267,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "autosentiment",
-        number: "08",
+        number: "09",
         title: "AutoSentiment",
         category: "Research software",
         description:
@@ -262,7 +286,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "ai-tutoring",
-        number: "09",
+        number: "10",
         title: "AI tutoring tools",
         category: "Machine learning",
         description:
@@ -283,27 +307,26 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "exploratory",
-        number: "10",
+        number: "11",
         title: "Exploratory systems",
         category: "Systems",
         description:
-            "Additional work in simulations, networking, digital design, and language experiments. These projects broaden the site beyond graphics into the systems I am learning by building.",
+            "Additional work in networking, digital design, and language experiments. These projects broaden the site beyond graphics into the systems I am learning by building.",
         problem: "Follow small technical questions far enough to learn the system underneath them.",
-        contribution: "Built simulations, packet-analysis exercises, Tiny Tapeout experiments, and numeral-system tools.",
+        contribution: "Built packet-analysis exercises, Tiny Tapeout experiments, and numeral-system tools.",
         period: "Archive",
         technologies: ["C++", "Python", "Verilog", "networking"],
         image: {
             src: "/projects/exploratory.svg",
-            alt: "Four technical motifs for simulation, networking, ternary logic, and numeral systems."
+            alt: "Four technical motifs: a branching structure, a packet flow, a ternary-logic diamond, and a numeral-system table."
         },
         links: [
-            { label: "TreeSimulation", href: repos.treeSimulation },
             { label: "Tshark1", href: repos.tshark },
             { label: "ttsky-brainfuck", href: repos.tinyTapeoutBrainfuck },
             { label: "ttsky-library-of-babel", href: repos.tinyTapeoutLibrary },
             { label: "GreekNumbers", href: repos.greekNumbers }
         ],
-        keywords: ["simulation", "networking", "digital design", "Verilog", "C++", "Python"]
+        keywords: ["networking", "digital design", "Verilog", "C++", "Python"]
     }
 ];
 

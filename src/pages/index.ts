@@ -17,6 +17,7 @@ import { resumePage } from "./resume";
 import { roboticsPage } from "./robotics";
 import { seeingTheMandelbrotSetPage } from "./seeing-the-mandelbrot-set";
 import { theGloveIsTheControllerPage } from "./the-glove-is-the-controller";
+import { treesimPage } from "./treesim";
 import { visualizationPage } from "./visualization";
 import { whereTheFileMeetsTheMachinePage } from "./where-the-file-meets-the-machine";
 import type { Page } from "./types";
@@ -32,6 +33,7 @@ export const pages: Record<string, Page> = {
     "/projects/hpc": hpcPage,
     "/projects/robotics": roboticsPage,
     "/projects/forecasting": forecastingPage,
+    "/projects/treesim": treesimPage,
     "/projects/visualization": visualizationPage,
     "/blog": blogPage,
     "/blog/a-game-with-no-framebuffer": aGameWithNoFramebufferPage,

@@ -29,6 +29,8 @@ function personEntity(): Record<string, unknown> {
             "high-performance computing",
             "Slurm",
             "MPI",
+            "evolutionary simulation",
+            "simulation software",
             "machine learning",
             "time-series forecasting",
             "control and estimation",

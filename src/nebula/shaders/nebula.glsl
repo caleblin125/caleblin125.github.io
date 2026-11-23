@@ -4,6 +4,11 @@
 // This is not a physical simulation. It is a reproducible 2D model — seed in,
 // structure out — chosen because it produces convincing filaments and dust
 // lanes at a fraction of the cost of ray-marching a volume.
+//
+// The laboratory page exposes the parts that were always in the model: how many
+// octaves the fBm keeps, how hard the warp bends the field, which region of the
+// noise field is framed, and an inspection view that shows one stage at a time.
+// Every uniform's default reproduces the original homepage frame.
 
 precision highp float;
 
@@ -16,6 +21,10 @@ uniform vec2 u_pointer;
 uniform vec3 u_colorA;
 uniform vec3 u_colorB;
 uniform vec3 u_colorC;
+uniform float u_octaves;
+uniform float u_warp;
+uniform float u_variant;
+uniform float u_view;
 
 out vec4 fragColor;
 
@@ -42,12 +51,22 @@ float fbm(vec2 p) {
     float value = 0.0;
     float amplitude = 0.5;
     mat2 turn = mat2(0.80, 0.60, -0.60, 0.80);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 6; i++) {
+        if (float(i) >= u_octaves) break;
         value += amplitude * valueNoise(p);
         p = turn * p * 2.03;
         amplitude *= 0.5;
     }
     return value;
+}
+
+// The variant simply frames a different region of the same field. It is not a
+// second generator; it is the seed's sibling.
+vec2 variantOffset() {
+    if (u_variant < 0.5) return vec2(0.0);
+    if (u_variant < 1.5) return vec2(7.3, -4.9);
+    if (u_variant < 2.5) return vec2(-11.7, 6.1);
+    return vec2(3.9, 9.4);
 }
 
 // Sparse stars on a hashed grid. The seed fixes the sky; time only twinkles.
@@ -73,16 +92,55 @@ void main() {
 
     // Seed shifts the whole field; a fixed framing transform then keeps the
     // structure centered on the canvas at any aspect ratio.
-    vec2 sp = p + u_offset;
+    vec2 sp = p + u_offset + variantOffset() * 0.5;
 
     float t = u_time * 0.025;
 
+    // View 1: the base noise, with no warp and no color ramp. One octave only,
+    // so the lattice underneath the finished image is visible.
+    if (u_view > 0.5 && u_view < 1.5) {
+        float n = valueNoise(sp * 2.4);
+        vec3 base = mix(PAGE_BG, u_colorA, smoothstep(0.08, 0.92, n) * 0.62);
+        base += (hash21(gl_FragCoord.xy + u_offset) - 0.5) * 0.004;
+        fragColor = vec4(base, 1.0);
+        return;
+    }
+
     // Two warps and a final sample: q bends the field, r tears it into filaments.
     vec2 q = vec2(fbm(sp + t), fbm(sp + vec2(5.2, 1.3) - t * 0.6));
-    vec2 r = vec2(fbm(sp + 4.0 * q + vec2(1.7, 9.2) + t * 0.35),
-                  fbm(sp + 4.0 * q + vec2(8.3, 2.8) - t * 0.25));
-    float f = fbm(sp + 4.0 * r);
+    vec2 r = vec2(fbm(sp + u_warp * 4.0 * q + vec2(1.7, 9.2) + t * 0.35),
+                  fbm(sp + u_warp * 4.0 * q + vec2(8.3, 2.8) - t * 0.25));
+    float f = fbm(sp + u_warp * 4.0 * r);
     f = min(f * 1.16, 1.0);
+
+    // View 2: the warp field itself. Red and green are the two components of
+    // q; blue is the magnitude of r's displacement from its mean.
+    if (u_view > 1.5 && u_view < 2.5) {
+        vec3 warp = vec3(
+            clamp((q.x - 0.18) * 2.6, 0.0, 1.0),
+            clamp((q.y - 0.18) * 2.6, 0.0, 1.0),
+            clamp(length(r - 0.5) * 3.4, 0.0, 1.0)
+        );
+        fragColor = vec4(mix(PAGE_BG, warp, 0.72), 1.0);
+        return;
+    }
+
+    // View 3: three octave bands, colored separately. Coarse structure is the
+    // background, fine detail is the highlight.
+    if (u_view > 2.5 && u_view < 3.5) {
+        mat2 turn = mat2(0.80, 0.60, -0.60, 0.80);
+        vec2 bp = sp;
+        float bandA = valueNoise(bp);
+        bp = turn * bp * 2.03;
+        float bandB = valueNoise(bp);
+        bp = turn * bp * 2.03;
+        float bandC = valueNoise(bp);
+        vec3 bands = mix(PAGE_BG, u_colorC, smoothstep(0.18, 0.85, bandA));
+        bands = mix(bands, u_colorB, smoothstep(0.20, 0.90, bandB) * 0.85);
+        bands = mix(bands, u_colorA, smoothstep(0.24, 0.94, bandC) * 0.75);
+        fragColor = vec4(bands, 1.0);
+        return;
+    }
 
     float radius = length(p * vec2(0.82, 1.0));
     float falloff = 1.0 - smoothstep(0.25, 1.45, radius);
@@ -99,6 +157,13 @@ void main() {
     color = mix(color, u_colorA, pow(core, 2.4) * 0.55);
     color *= 1.0 - dust * 0.45;
     color += u_colorA * pow(body, 6.0) * 0.18;
+
+    // View 4: the color field before the veil and the stars, so the three-stop
+    // ramp can be read on its own.
+    if (u_view > 3.5) {
+        fragColor = vec4(color, 1.0);
+        return;
+    }
 
     // A low-frequency veil keeps the frame from going pure black away from the
     // main filaments, without lifting the dark gaps inside them.

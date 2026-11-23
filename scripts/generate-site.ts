@@ -196,6 +196,8 @@ function buildLlmsTxt(): string {
     const resume = pages["/resume"];
     const projects = pages["/projects"];
     const blog = pages["/blog"];
+    const lab = pages["/lab"];
+    const nebula = pages["/lab/nebula"];
 
     return [
         "# Caleb Lin",
@@ -224,6 +226,8 @@ function buildLlmsTxt(): string {
         `- [About Caleb Lin](${canonicalUrl("/about")}): ${about?.description ?? ""}`,
         `- [Résumé](${canonicalUrl("/resume")}): ${resume?.description ?? ""}`,
         `- [Projects index](${canonicalUrl("/projects")}): ${projects?.description ?? ""}`,
+        `- [Interactive lab](${canonicalUrl("/lab")}): ${lab?.description ?? ""}`,
+        `- [Nebula laboratory](${canonicalUrl("/lab/nebula")}): ${nebula?.description ?? ""}`,
         `- [Notes index](${canonicalUrl("/blog")}): ${blog?.description ?? ""}`,
         "",
         "## Markdown",
@@ -246,6 +250,8 @@ function buildLlmsFull(markdownPages: Array<{ path: string; page: Page; markdown
         "/",
         "/projects",
         ...projectEntries.flatMap((project) => (project.path ? [project.path] : [])),
+        "/lab",
+        "/lab/nebula",
         "/blog",
         ...postEntries.map((post) => post.path),
         "/about",

@@ -10,7 +10,9 @@ import { forecastingPage } from "./forecasting";
 import { fpgaPage } from "./fpga";
 import { homePage } from "./home";
 import { hpcPage } from "./hpc";
+import { labPage } from "./lab";
 import { mandelbrotPage } from "./mandelbrot";
+import { nebulaLabPage } from "./nebula-lab";
 import { notFoundPage } from "./not-found";
 import { projectsPage } from "./projects";
 import { resumePage } from "./resume";
@@ -26,6 +28,8 @@ import type { Page } from "./types";
 export const pages: Record<string, Page> = {
     "/": homePage,
     "/projects": projectsPage,
+    "/lab": labPage,
+    "/lab/nebula": nebulaLabPage,
     "/resume": resumePage,
     "/about": aboutPage,
     "/projects/mandelbrot": mandelbrotPage,

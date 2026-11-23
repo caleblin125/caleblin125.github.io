@@ -60,11 +60,17 @@ function websiteEntity(): Record<string, unknown> {
 }
 
 function breadcrumbEntity(page: Page, path: string, url: string): Record<string, unknown> | null {
-    if (!page.section || path === "/projects" || path === "/blog") {
+    if (!page.section || path === "/projects" || path === "/blog" || path === "/lab") {
         return null;
     }
 
-    const sectionPath = path.startsWith("/projects/") ? "/projects/" : path.startsWith("/blog/") ? "/blog/" : null;
+    const sectionPath = path.startsWith("/projects/")
+        ? "/projects/"
+        : path.startsWith("/blog/")
+          ? "/blog/"
+          : path.startsWith("/lab/")
+            ? "/lab/"
+            : null;
     const items = [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }];
 
     if (sectionPath) {
@@ -88,7 +94,7 @@ export function buildJsonLd(page: Page, path: string, isNotFound: boolean): Reco
 
     const url = canonicalUrl(path);
     const pageType =
-        path === "/about" ? "AboutPage" : path === "/resume" ? "ProfilePage" : path === "/projects" || path === "/blog" ? "CollectionPage" : "WebPage";
+        path === "/about" ? "AboutPage" : path === "/resume" ? "ProfilePage" : path === "/projects" || path === "/blog" || path === "/lab" ? "CollectionPage" : "WebPage";
 
     const webpage: Record<string, unknown> = {
         "@type": pageType,

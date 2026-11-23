@@ -102,13 +102,19 @@ async function setupVisualizations(): Promise<void> {
             } else if (kind === "kalman") {
                 const { KalmanDemo } = await import("./kalman/demo");
                 new KalmanDemo(canvas).start();
+            } else if (kind === "bench") {
+                const { BenchExplorer } = await import("./lab/bench");
+                new BenchExplorer(canvas).start();
+            } else if (kind === "filter") {
+                const { FilterModel } = await import("./lab/filter");
+                new FilterModel(canvas).start();
             } else {
                 const [{ ChaosRenderer }, { Mandelbrot }] = await Promise.all([import("./chaos/renderer"), import("./chaos/mandelbrot")]);
                 new ChaosRenderer(canvas, new Mandelbrot()).start();
             }
         } catch (error) {
             console.error(`Unable to start the ${kind ?? "canvas"} visualization`, error);
-            canvas.closest<HTMLElement>(".visual-frame, .nebula-frame, .kalman-demo")?.classList.add("is-fallback");
+            canvas.closest<HTMLElement>(".visual-frame, .nebula-frame, .kalman-demo, .bench, .filter-model")?.classList.add("is-fallback");
         }
     }
 }

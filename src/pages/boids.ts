@@ -14,7 +14,7 @@ export const boidsPage: Page = {
     section: "Projects",
     description: project.description,
     keywords: project.keywords,
-    content: `<article class="article"><p class="kicker">Project</p><h1>Boids.</h1><p class="lede">A flocking simulation from an old Java project, rewritten for the browser.</p><div class="article-visual visual-frame boids-frame"><canvas data-visualization="boids" aria-label="Interactive boids flocking simulation"></canvas><div class="visual-label">Boids </div></div><p>This is a reimplementation of <a href="${boidsUrl}">my original Boids project</a>. It uses 2 Big, 7 Predator, 450 Prey1, and 30 Prey2 boids, updated once per frame with the original pixel-space constants. The caret marks use the velocity angle, and the fading trails show their recent movement.</p>
+    content: `<article class="article"><p class="kicker">Project</p><h1>Boids.</h1><p class="lede">A flocking simulation from an old Java project, rewritten for the browser.</p><div class="article-visual visual-frame boids-frame" id="demo"><canvas data-visualization="boids" aria-label="Interactive boids flocking simulation"></canvas><div class="visual-label">Boids </div></div><p>This is a reimplementation of <a href="${boidsUrl}">my original Boids project</a>. It uses 2 Big, 7 Predator, 450 Prey1, and 30 Prey2 boids, updated once per frame with the original pixel-space constants. The caret marks use the velocity angle, and the fading trails show their recent movement.</p>
 
 <h2>The three rules</h2>
 <p>Every boid builds a steering target once per 10&nbsp;ms simulation step. Three weighted forces are computed from the neighbours it can see, and the sum is clamped to the class's steering limit before it is applied as acceleration:</p>

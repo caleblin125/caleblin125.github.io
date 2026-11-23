@@ -9,6 +9,14 @@ export type ProjectLink = {
     href: string;
 };
 
+/** Section on the projects index. */
+export type ProjectGroup = "flagship" | "experiments" | "archive";
+
+export type ProjectDemo = {
+    href: string;
+    label: string;
+};
+
 export type ProjectImage = {
     /** Public path to a thumbnail depicting the project's actual output. */
     src: string;
@@ -52,8 +60,12 @@ export type ProjectEntry = {
     titleHref?: string;
     links: ProjectLink[];
     keywords: string[];
+    /** Section on the projects index. */
+    group: ProjectGroup;
     /** Set on the five projects shown in the homepage selected-work list. */
     featured?: boolean;
+    /** Where a live demo or model lives, when one does. */
+    demo?: ProjectDemo;
     metric?: string;
     metricLabel?: string;
 };
@@ -81,6 +93,7 @@ export const projectEntries: ProjectEntry[] = [
             { label: "GitHub", href: githubProfileUrl }
         ],
         keywords: ["FPGA", "Verilog", "Yosys", "Alveo U250", "ternary LLM inference", "VGA", "audio"],
+        group: "flagship",
         featured: true,
         metric: "3×",
         metricLabel: "class throughput"
@@ -110,7 +123,9 @@ export const projectEntries: ProjectEntry[] = [
             { label: "SBCC", href: repos.sbcc }
         ],
         keywords: ["HPC", "Slurm", "MPI", "HPL", "OpenMPI", "OpenBLAS", "H100", "HPE Cray"],
+        group: "flagship",
         featured: true,
+        demo: { href: "/projects/hpc#bench", label: "Benchmark explorer" },
         metric: "663 GFLOPS",
         metricLabel: "47% of peak"
     },
@@ -138,7 +153,9 @@ export const projectEntries: ProjectEntry[] = [
             { label: "Glove note", href: "/blog/the-glove-is-the-controller" }
         ],
         keywords: ["robotics", "state estimation", "mecanum", "PIC32", "STM32", "BNO055", "Kalman filter", "control"],
+        group: "flagship",
         featured: true,
+        demo: { href: "/projects/robotics#filter", label: "Filter response" },
         metric: "10 ms",
         metricLabel: "control period"
     },
@@ -165,6 +182,7 @@ export const projectEntries: ProjectEntry[] = [
             { label: "Résumé context", href: "/resume" }
         ],
         keywords: ["load forecasting", "data center", "time series", "machine learning", "MAPE", "Python"],
+        group: "flagship",
         featured: true,
         metric: "3% MAPE",
         metricLabel: "vs. 10% baseline"
@@ -194,7 +212,9 @@ export const projectEntries: ProjectEntry[] = [
             { label: "Print note", href: "/blog/where-the-file-meets-the-machine" }
         ],
         keywords: ["computational visualization", "WebGL", "Mandelbrot set", "boids", "procedural graphics", "printing"],
+        group: "flagship",
         featured: true,
+        demo: { href: "/lab/nebula", label: "Nebula laboratory" },
         metric: "44,200",
         metricLabel: "Mandelbrot orbit seeds"
     },
@@ -220,7 +240,8 @@ export const projectEntries: ProjectEntry[] = [
             { label: "Project page", href: "/projects/treesim" },
             { label: "GitHub", href: repos.treeSimulation }
         ],
-        keywords: ["tree simulation", "evolutionary simulation", "C++20", "MPI", "Slurm", "procedural growth", "forest", "computational biology"]
+        keywords: ["tree simulation", "evolutionary simulation", "C++20", "MPI", "Slurm", "procedural growth", "forest", "computational biology"],
+        group: "flagship"
     },
     {
         id: "scc-connect",
@@ -245,6 +266,8 @@ export const projectEntries: ProjectEntry[] = [
             { label: "Team repository", href: repos.sccConnect }
         ],
         keywords: ["SCC Connect", "student cluster competition", "HPL", "STREAM", "NCCL", "NVLink", "H100", "HPC benchmarking"],
+        group: "flagship",
+        demo: { href: "/projects/hpc#bench", label: "Benchmark explorer" },
         metric: "4,403.6 GFLOPS",
         metricLabel: "HPL, 86.0% of peak"
     },
@@ -269,7 +292,9 @@ export const projectEntries: ProjectEntry[] = [
             { label: "ChaosPlotter", href: repos.chaosPlotter },
             { label: "Chaos-Equations", href: chaosEquationsUrl }
         ],
-        keywords: ["Mandelbrot set", "complex dynamics", "WebGL", "TypeScript", "C++"]
+        keywords: ["Mandelbrot set", "complex dynamics", "WebGL", "TypeScript", "C++"],
+        group: "experiments",
+        demo: { href: "/projects/mandelbrot#demo", label: "Mandelbrot drawer" }
     },
     {
         id: "boids",
@@ -289,7 +314,9 @@ export const projectEntries: ProjectEntry[] = [
         path: "/projects/boids",
         titleHref: "/projects/boids",
         links: [{ label: "Original Java source", href: boidsUrl }],
-        keywords: ["boids", "flocking", "WebGL", "TypeScript", "simulation"]
+        keywords: ["boids", "flocking", "WebGL", "TypeScript", "simulation"],
+        group: "experiments",
+        demo: { href: "/projects/boids#demo", label: "Boids canvas" }
     },
     {
         id: "autosentiment",
@@ -308,7 +335,8 @@ export const projectEntries: ProjectEntry[] = [
         },
         titleHref: repos.autoSentiment,
         links: [{ label: "Repository", href: repos.autoSentiment }],
-        keywords: ["sentiment analysis", "local LLMs", "research dashboard", "Python"]
+        keywords: ["sentiment analysis", "local LLMs", "research dashboard", "Python"],
+        group: "experiments"
     },
     {
         id: "ai-tutoring",
@@ -329,7 +357,8 @@ export const projectEntries: ProjectEntry[] = [
             { label: "CookingTutor", href: repos.cookingTutor },
             { label: "GenAI Tutor Bootcamp", href: repos.genAiTutor }
         ],
-        keywords: ["AI tutoring", "Jupyter", "Streamlit", "education"]
+        keywords: ["AI tutoring", "Jupyter", "Streamlit", "education"],
+        group: "archive"
     },
     {
         id: "exploratory",
@@ -352,7 +381,8 @@ export const projectEntries: ProjectEntry[] = [
             { label: "ttsky-library-of-babel", href: repos.tinyTapeoutLibrary },
             { label: "GreekNumbers", href: repos.greekNumbers }
         ],
-        keywords: ["networking", "digital design", "Verilog", "C++", "Python"]
+        keywords: ["networking", "digital design", "Verilog", "C++", "Python"],
+        group: "archive"
     }
 ];
 

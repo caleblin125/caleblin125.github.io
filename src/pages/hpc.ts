@@ -1,18 +1,26 @@
 // HPC project page ("/projects/hpc") — Haydean cluster administration and
 // tuning, plus the UCSC HPC club's competition systems.
 import { projectById } from "../data/projects";
+import { BENCH_DATASETS, benchTable } from "../lab/bench-data";
 import { repos } from "./constants";
 import { projectFooter, projectHeader, resultRow } from "./project-ui";
 import type { Page } from "./types";
 
 const project = projectById("hpc");
 
+const benchButtons = BENCH_DATASETS.map(
+    (dataset, index) =>
+        `<button type="button" class="demo-button" data-bench-view aria-pressed="${index === 0 ? "true" : "false"}">${dataset.label}</button>`
+).join("");
+const benchTables = BENCH_DATASETS.map((dataset) => `<h3>${dataset.title}</h3>${benchTable(dataset)}`).join("\n");
+const firstBench = BENCH_DATASETS[0];
+
 export const hpcPage: Page = {
     title: "HPC and cluster tuning.",
     eyebrow: "Project / HPC",
     kind: "project",
     section: "Projects",
-    updated: "2026-11-22",
+    updated: "2026-11-23",
     description: project.description,
     keywords: project.keywords,
     content: `<article class="article project-article">
@@ -99,6 +107,20 @@ ${resultRow("IndySCC sweeps", "10,000+", "Slurm / MPI parameter runs")}
 </tbody>
 </table></div>
 <p>The 47% figure is the useful one: it says how much of the machine the benchmark actually reached, not just how fast the code looked.</p>
+
+<h2 id="bench">Interactive: the measured competition record</h2>
+<p>The 2026 SCC Connect campaign produced more numbers than a summary table can carry, so the measured results are collected here. The explorer draws the logged runs and stops there: four problem sizes because four were run, four collectives because four were graded, and no interpolated point between them. The table under each chart is the same data without the canvas.</p>
+<div class="bench" data-bench>
+<div class="bench-toolbar" role="group" aria-label="Benchmark dataset">${benchButtons}</div>
+<div class="bench-stage"><canvas data-visualization="bench" role="img" aria-label="Bar chart of measured HPL throughput by problem size, with the full data tables below the chart."></canvas></div>
+<p class="bench-readout" data-bench-readout aria-live="polite">${firstBench.title} — ${firstBench.subtitle}</p>
+<p class="bench-note" data-bench-note>${firstBench.note}</p>
+<details class="bench-table">
+<summary>Data tables and provenance</summary>
+<p class="bench-provenance">Source: the Not-So-Slow Slugs benchmark report for SCC Connect 2026, measured September–November 2026 on one NVIDIA LaunchPad node with 64 CPU cores and two H100 GPUs. HPL peak is 5,120 GFLOPS and NVLink peak is 318.7 GB/s. The HPL large-N campaign is 24 runs across four sizes; the settings rows come from separate campaigns with different run counts; NCCL cells are best of three at 8 GiB; STREAM rows are the best repeat after changing one parameter from the tuned baseline. None of these rows is a full factorial experiment, so the explorer does not draw a fitted trend or claim a significance test.</p>
+${benchTables}
+</details>
+</div>
 
 <h2 id="analysis">Analysis</h2>
 <p>The 47% of peak is an HPL result for one cluster and configuration, not a general efficiency claim; a different problem size, network, or BLAS build changes the number. The competition work is team work, and the first-place finish belongs to the team. The 400 Haydean sweeps and the 10,000+ IndySCC sweeps are parameter sweeps, not independent experiments, so they show sensitivity rather than statistical significance.</p>

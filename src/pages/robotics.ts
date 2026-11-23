@@ -12,7 +12,7 @@ export const roboticsPage: Page = {
     eyebrow: "Project / Robotics",
     kind: "project",
     section: "Projects",
-    updated: "2026-11-22",
+    updated: "2026-11-23",
     description: project.description,
     keywords: project.keywords,
     content: `<article class="article project-article">
@@ -82,6 +82,10 @@ ${projectHeader(
 <h3>The glove: calibration is the controller</h3>
 <p>ECE 167 used two STM32 Nucleo gloves with BNO055 IMUs, flex sensors, capacitive pads, and buttons. The firmware ran a 50 Hz Mahony-style complementary filter on a direction cosine matrix: the gyro predicts, the accelerometer and magnetometer correct, and the integral terms estimate gyro bias. A calibration gesture averages the rotation axis of a wrist twist and builds a transform that makes that axis the driver's steering axis.</p>
 <p>The useful result was not that the car moved. It was that a hand-relative frame could be recovered and tested. The same idea sits underneath the robot: a pose is only meaningful relative to a frame, and the frame has to be established by a measurement.</p>
+<div class="figure-pair">
+<figure class="article-figure"><img src="/blog/glove-static-dynamic.png" alt="Four stacked time-series plots showing a motion score, Euler angles for both gloves, and flex counts over fifty seconds, with static and dynamic regions shaded." loading="lazy"><figcaption>Fifty seconds of two-glove data, segmented per column into static and dynamic stretches. The top trace is the summed rolling standard deviation; Euler angles sit in the middle, flex counts at the bottom.</figcaption></figure>
+<figure class="article-figure"><img src="/blog/glove-usability-summary.png" alt="Bar chart of glove usability summary with stability scores for the two IMUs and normalized range scores for the two flex channels; smoothness bars are barely visible." loading="lazy"><figcaption>The harness summary. Stability comes from static variance, range is normalized to the widest flex channel, and smoothness is <code>1 / (1 + mean jerk)</code>. The smoothness bars are nearly invisible because jerk is still in raw units.</figcaption></figure>
+</div>
 
 <h2 id="results">Results</h2>
 <div class="result-grid">
@@ -100,6 +104,20 @@ ${resultRow("Control period", "10 ms", "PIC32 main service")}
 </tbody>
 </table></div>
 
+<h2 id="filter">Interactive: the response the optimizer was shaping</h2>
+<p>The built receiver is three cascaded Sallen-Key bandpass sections — a sixth-order filter. The model below applies the published first-stage result to each section: a center frequency of 2000.33 Hz and a Q of 20.3, both from a MATLAB Monte Carlo over measured capacitors. The curve is therefore an anchored model, not a swept transfer function. It shows the selectivity the optimizer was buying; it is not the measured total response of the assembled board.</p>
+<div class="filter-model" data-filter>
+<div class="demo-toolbar">
+<label class="demo-control">Center f0 <input type="range" min="1600" max="2400" step="0.5" value="2000.33" data-filter-f0><output data-filter-f0-value>2000.3 Hz</output></label>
+<label class="demo-control">Q <input type="range" min="4" max="40" step="0.1" value="20.3" data-filter-q><output data-filter-q-value>20.3</output></label>
+<label class="demo-control">Stages <select data-filter-stages><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option></select></label>
+</div>
+<div class="filter-readout" data-filter-readout aria-live="polite">Adjust the center, Q, and stage count.</div>
+<canvas data-visualization="filter" role="img" aria-label="Modeled bandpass response of three cascaded second-order sections centered at two kilohertz with Q 20.3."></canvas>
+<div class="demo-legend"><span><i class="legend-line legend-model"></i><span data-filter-model-label>cascade model</span></span><span class="legend-ghost"><i class="legend-line legend-stage"></i>one section</span><span><i class="legend-line legend-beacon"></i>beacon tones</span></div>
+<p class="demo-note">Model, not a measurement. Dashed vertical lines mark the 1.5 and 2.5 kHz wall tones at the edges and the 2.0 kHz opponent beacon at the center. The Monte Carlo samples are not published, only the mean and standard deviation, so no distribution is drawn. Missing from the public record: component values, the other two sections' individual results, a swept Bode plot, and the on-field signal-to-noise ratio.</p>
+</div>
+
 <h2 id="demo">Interactive: a synthetic Kalman filter</h2>
 <p>The robot's shipped match code did not use a Kalman filter. This demo is a separate, clearly synthetic 1D constant-velocity example: it shows how process noise and measurement noise change the estimate and its uncertainty. It is not a replay of robot data. The logic lives in <code>src/kalman/filter.ts</code>; the canvas only draws the state.</p>
 <div class="kalman-demo" data-kalman>
@@ -116,7 +134,7 @@ ${resultRow("Control period", "10 ms", "PIC32 main service")}
 
 <h2 id="analysis">Analysis</h2>
 <p>The honest gap is worth naming. The robot has a full particle filter, an opponent EKF, and A* planning in the repository, but the match code that ran used reactive tape logic and IR peak tracking instead. The general solution was built and simulated; the one that shipped was the one that could be verified on the actual field in the time available.</p>
-<p>The analog receiver is the part I trust most, because its tolerance was measured. The navigation stack is the part I would rebuild first, because the field rewarded a state machine over a model that had not been validated against the field. The glove study has its own limit: it is one 50-second recording from one person, not a user study, and some of its metrics were in incompatible units. The next version needs held-out gestures, several users, wrap-aware angles, and a task-level measure.</p>
+<p>The analog receiver is the part I trust most, because its tolerance was measured. The navigation stack is the part I would rebuild first, because the field rewarded a state machine over a model that had not been validated against the field. The glove study has its own limit: it is one 50-second recording from one person, not a user study, and some of its metrics were in incompatible units. The next version needs held-out gestures, several users, wrap-aware angles, and a task-level measure. No video of the final run is published here, so the minspec claim rests on the team's recorded result rather than a replayable artifact.</p>
 ${projectFooter([
     { label: "Robot note", href: "/blog/a-robot-on-a-field-with-no-map" },
     { label: "Glove note", href: "/blog/the-glove-is-the-controller" }

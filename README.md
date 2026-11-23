@@ -57,7 +57,9 @@ as a way to learn rendering while keeping the projects visible.
 │   │   ├── project-ui.ts   # shared project header, fact list, result rows, footer links
 │   │   ├── home.ts         # "/" (nebula + five featured projects)
 │   │   ├── not-found.ts    # 404 content for unknown routes
-│   │   ├── projects.ts     # "/projects"
+│   │   ├── projects.ts     # "/projects" (grouped: flagship, experiments, archive)
+│   │   ├── lab.ts          # "/lab" (interactive experiment index)
+│   │   ├── nebula-lab.ts   # "/lab/nebula" (full nebula control surface)
 │   │   ├── resume.ts       # "/resume" (web version + PDF download)
 │   │   ├── about.ts        # "/about"
 │   │   ├── mandelbrot.ts   # "/projects/mandelbrot"
@@ -78,7 +80,11 @@ as a way to learn rendering while keeping the projects visible.
 │   ├── kalman/             # synthetic 1D Kalman demo on the robotics page
 │   │   ├── filter.ts       # deterministic track, filter math, RMSE (testable without DOM)
 │   │   └── demo.ts         # Canvas 2D controls, step history, drawing
-│   ├── nebula/             # homepage procedural nebula
+│   ├── lab/                # measured-data and model explorers shared by pages
+│   │   ├── bench-data.ts   # SCC Connect 2026 HPL/NCCL/STREAM values + accessible tables
+│   │   ├── bench.ts        # Canvas 2D bar-chart explorer (no interpolation)
+│   │   └── filter.ts       # cascaded Sallen-Key bandpass model (anchored, not swept)
+│   ├── nebula/             # procedural nebula (homepage + laboratory)
 │   │   ├── renderer.ts     # NebulaRenderer: seeded uniforms, controls, quality, pause, fallback
 │   │   └── shaders/
 │   │       ├── nebula.glsl      # domain-warped fBm field, stars, palettes, dither
@@ -104,10 +110,11 @@ as a way to learn rendering while keeping the projects visible.
 ## How the site is put together
 
 - **`src/pages/`** holds one module per page, each exporting a `Page`. `src/pages/index.ts`
-  assembles them into the `pages` record keyed by route (`/`, `/projects`,
-  `/projects/fpga`, `/projects/hpc`, `/projects/robotics`, `/projects/forecasting`,
-  `/projects/visualization`, `/projects/boids`, `/projects/mandelbrot`,
-  `/projects/treesim`, `/projects/scc-connect`, `/resume`, `/blog`, `/blog/...`).
+  assembles them into the `pages` record keyed by route (`/`, `/projects`, `/lab`,
+  `/lab/nebula`, `/projects/fpga`, `/projects/hpc`, `/projects/robotics`,
+  `/projects/forecasting`, `/projects/visualization`, `/projects/boids`,
+  `/projects/mandelbrot`, `/projects/treesim`, `/projects/scc-connect`, `/resume`,
+  `/blog`, `/blog/...`).
 - **`src/data/`** is the shared source of truth for things that appear in more than one
   place. `projects.ts` supplies the project index rows, categories, problem and
   contribution text, homepage selected work, project pages' metadata, thumbnails,
@@ -160,7 +167,21 @@ as a way to learn rendering while keeping the projects visible.
 - **Nebula seeding:** the URL accepts `?seed=<hex>`; `0x1a2b3c4d` is the curated default.
   The Reseed button updates the URL so a field can be shared and reproduced. Density,
   scale, and palette (`violet` / `ice` / `ember`) are uniform inputs to the fragment
-  shader.
+  shader. The full URL state also carries `view`, `octaves`, `warp`, `variant`, and
+  `quality`; the homepage linker only exposes a subset, while `/lab/nebula` exposes all
+  of them plus fullscreen and copy-config actions.
+- **Interactive lab:** `/lab` indexes every live experiment and labels it *Measured*,
+  *Model*, *Synthetic*, or *Live*. The labels are a claim about provenance, so keep them
+  accurate when adding an entry. `/lab/nebula` is the only page that owns a full control
+  surface; the homepage nebula shares the renderer and shader with it.
+- **Measured explorers:** `src/lab/bench-data.ts` holds the SCC Connect 2026 values
+  exactly as reported, with the campaign note, run counts, and a matching HTML table.
+  `src/lab/bench.ts` draws those points only; do not add interpolation, fitted trends, or
+  synthesised rows. Every dataset must say what its rows do and do not support.
+- **Model explorers:** `src/lab/filter.ts` is a calculated response, not a sweep. It is
+  anchored at the published first-stage center and Q (2000.33 Hz, 20.3) repeated across
+  three sections; changing the controls explores that model, not the assembled board.
+  The page must keep saying so next to the chart.
 - **Shaders** are plain GLSL ES 3.00 files imported as raw strings. They live next to their
   renderer under `src/<viz>/shaders/`.
 

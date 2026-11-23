@@ -13,6 +13,10 @@ type Uniforms = {
     colorA: WebGLUniformLocation | null;
     colorB: WebGLUniformLocation | null;
     colorC: WebGLUniformLocation | null;
+    octaves: WebGLUniformLocation | null;
+    warp: WebGLUniformLocation | null;
+    variant: WebGLUniformLocation | null;
+    view: WebGLUniformLocation | null;
 };
 
 const PALETTES: Record<string, { a: Palette; b: Palette; c: Palette }> = {
@@ -29,6 +33,21 @@ const PRESETS: Record<string, { density: number; scale: number; palette: string 
     "ice-drift": { density: 0.72, scale: 1.35, palette: "ice" },
     "ember-core": { density: 0.42, scale: 0.82, palette: "ember" }
 };
+
+// View modes are labeled in the page, not derived from a hidden code path.
+const VIEWS = ["final", "base", "warp", "fractal", "color"] as const;
+export type ViewMode = (typeof VIEWS)[number];
+
+const VIEW_LABELS: Record<ViewMode, string> = {
+    final: "Final field",
+    base: "Base noise",
+    warp: "Warp field",
+    fractal: "Octave bands",
+    color: "Colour field"
+};
+
+const QUALITIES = ["adaptive", "high", "low"] as const;
+type QualityMode = (typeof QUALITIES)[number];
 
 // The first impression is a designed frame, not a random one. Passing ?seed=
 // or pressing Reseed hands control back to the generator; every other seed is
@@ -52,8 +71,25 @@ function offsetForSeed(seed: number): [number, number] {
     return [(x / 4294967296) * 256, (y / 4294967296) * 256];
 }
 
+function hexSeed(seed: number): string {
+    return seed.toString(16).padStart(8, "0");
+}
+
+function paramNumber(params: URLSearchParams, key: string, fallback: number, min: number, max: number): number {
+    const value = Number.parseFloat(params.get(key) ?? "");
+    if (!Number.isFinite(value)) return fallback;
+    return Math.min(Math.max(value, min), max);
+}
+
+function paramInt(params: URLSearchParams, key: string, fallback: number, min: number, max: number): number {
+    const value = Number.parseInt(params.get(key) ?? "", 10);
+    if (!Number.isFinite(value)) return fallback;
+    return Math.min(Math.max(value, min), max);
+}
+
 export class NebulaRenderer {
     private readonly canvas: HTMLCanvasElement;
+    private readonly frame: HTMLElement | null;
     private readonly gl: WebGL2RenderingContext;
     private program: WebGLProgram;
     private uniforms: Uniforms;
@@ -66,7 +102,7 @@ export class NebulaRenderer {
     private visible = true;
     private contextLost = false;
     private ready = false;
-    private seed = 0;
+    private seed = DEFAULT_SEED;
     private offset: [number, number] = [0, 0];
     private pointer = { x: 0, y: 0 };
     private pointerTarget = { x: 0, y: 0 };
@@ -77,9 +113,16 @@ export class NebulaRenderer {
     private density = 0.55;
     private scale = 1;
     private palette = "violet";
+    private octaves = 4;
+    private warp = 1;
+    private variant = 0;
+    private view: ViewMode = "final";
+    private qualityMode: QualityMode = "adaptive";
+    private urlHandle = 0;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
+        this.frame = canvas.closest<HTMLElement>("[data-nebula]");
 
         const gl = canvas.getContext("webgl2", {
             alpha: false,
@@ -97,7 +140,7 @@ export class NebulaRenderer {
         this.program = this.createProgram();
         this.uniforms = this.getUniforms();
         this.vao = this.createVertexArray();
-        this.seed = this.readSeed();
+        this.readState();
         this.offset = offsetForSeed(this.seed);
         this.reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
         this.resizeObserver = new ResizeObserver(this.resize);
@@ -111,6 +154,7 @@ export class NebulaRenderer {
         this.intersectionObserver.observe(this.canvas);
         window.addEventListener("resize", this.resize);
         document.addEventListener("visibilitychange", this.onVisibilityChange);
+        document.addEventListener("fullscreenchange", this.onFullscreenChange);
         this.canvas.addEventListener("pointermove", this.onPointerMove);
         this.canvas.addEventListener("pointerleave", this.onPointerLeave);
         this.canvas.addEventListener("webglcontextlost", this.onContextLost);
@@ -124,22 +168,72 @@ export class NebulaRenderer {
         }
     }
 
+    private readState(): void {
+        const params = new URLSearchParams(window.location.search);
+        const seed = params.get("seed");
+
+        if (seed && /^[0-9a-f]{1,8}$/i.test(seed)) {
+            this.seed = Number.parseInt(seed, 16) >>> 0;
+        }
+
+        this.density = paramNumber(params, "density", this.density, 0, 1);
+        this.scale = paramNumber(params, "scale", this.scale, 0.4, 2.2);
+        this.octaves = paramInt(params, "octaves", this.octaves, 1, 6);
+        this.warp = paramNumber(params, "warp", this.warp, 0, 2);
+        this.variant = paramInt(params, "variant", this.variant, 0, 3);
+
+        const palette = params.get("palette");
+        if (palette && PALETTES[palette]) {
+            this.palette = palette;
+        }
+
+        const view = params.get("view");
+        if (view && (VIEWS as readonly string[]).includes(view)) {
+            this.view = view as ViewMode;
+        }
+
+        const quality = params.get("quality");
+        if (quality && (QUALITIES as readonly string[]).includes(quality)) {
+            this.qualityMode = quality as QualityMode;
+        }
+
+        if (this.qualityMode === "low") this.quality = 0.6;
+        else this.quality = 1;
+    }
+
     private bindControls(): void {
-        const frame = this.canvas.closest<HTMLElement>("[data-nebula]");
+        const frame = this.frame;
         if (!frame) return;
 
         const density = frame.querySelector<HTMLInputElement>("[data-nebula-density]");
         const scale = frame.querySelector<HTMLInputElement>("[data-nebula-scale]");
+        const octaves = frame.querySelector<HTMLInputElement>("[data-nebula-octaves]");
+        const warp = frame.querySelector<HTMLInputElement>("[data-nebula-warp]");
         const palette = frame.querySelector<HTMLSelectElement>("[data-nebula-palette]");
         const preset = frame.querySelector<HTMLSelectElement>("[data-nebula-preset]");
-        const seed = frame.querySelector<HTMLElement>("[data-nebula-seed]");
+        const variant = frame.querySelector<HTMLSelectElement>("[data-nebula-variant]");
+        const view = frame.querySelector<HTMLSelectElement>("[data-nebula-view]");
+        const quality = frame.querySelector<HTMLSelectElement>("[data-nebula-quality]");
+        const seedInput = frame.querySelector<HTMLInputElement>("[data-nebula-seed-input]");
         const link = frame.querySelector<HTMLAnchorElement>("[data-nebula-link]");
         const reseed = frame.querySelector<HTMLButtonElement>("[data-nebula-reseed]");
+        const copy = frame.querySelector<HTMLButtonElement>("[data-nebula-copy]");
+        const fullscreen = frame.querySelector<HTMLButtonElement>("[data-nebula-fullscreen]");
+        const densityValue = frame.querySelector<HTMLElement>("[data-nebula-density-value]");
+        const scaleValue = frame.querySelector<HTMLElement>("[data-nebula-scale-value]");
+        const octavesValue = frame.querySelector<HTMLElement>("[data-nebula-octaves-value]");
+        const warpValue = frame.querySelector<HTMLElement>("[data-nebula-warp-value]");
+
+        this.bindRange(density, () => this.density, (value) => (this.density = value), densityValue, (value) => value.toFixed(2));
+        this.bindRange(scale, () => this.scale, (value) => (this.scale = value), scaleValue, (value) => value.toFixed(2));
+        this.bindRange(octaves, () => this.octaves, (value) => (this.octaves = Math.round(value)), octavesValue, (value) => String(Math.round(value)));
+        this.bindRange(warp, () => this.warp, (value) => (this.warp = value), warpValue, (value) => value.toFixed(2));
 
         if (preset) {
-            preset.value = Object.entries(PRESETS).find(
-                ([, value]) => value.density === this.density && value.scale === this.scale && value.palette === this.palette
-            )?.[0] ?? "filament";
+            preset.value =
+                Object.entries(PRESETS).find(
+                    ([, value]) => value.density === this.density && value.scale === this.scale && value.palette === this.palette
+                )?.[0] ?? "";
 
             preset.addEventListener("change", () => {
                 const selected = PRESETS[preset.value];
@@ -152,75 +246,183 @@ export class NebulaRenderer {
                 if (density) density.value = String(this.density);
                 if (scale) scale.value = String(this.scale);
                 if (palette) palette.value = this.palette;
-                this.draw();
-            });
-        }
-
-        if (density) {
-            density.value = String(this.density);
-            density.addEventListener("input", () => {
-                this.density = this.readNumber(density, this.density);
-                this.syncPreset(preset);
-                this.draw();
-            });
-        }
-
-        if (scale) {
-            scale.value = String(this.scale);
-            scale.addEventListener("input", () => {
-                this.scale = this.readNumber(scale, this.scale);
-                this.syncPreset(preset);
-                this.draw();
+                if (densityValue) densityValue.textContent = this.density.toFixed(2);
+                if (scaleValue) scaleValue.textContent = this.scale.toFixed(2);
+                this.commit();
             });
         }
 
         if (palette) {
             palette.value = this.palette;
             palette.addEventListener("change", () => {
-                this.palette = palette.value;
-                this.syncPreset(preset);
-                this.draw();
+                this.palette = PALETTES[palette.value] ? palette.value : "violet";
+                this.syncPreset();
+                this.commit();
             });
         }
 
-        if (seed) {
-            seed.textContent = `seed 0x${this.seed.toString(16).padStart(8, "0")}`;
+        if (view) {
+            view.value = this.view;
+            view.addEventListener("change", () => {
+                const chosen = view.value;
+                if ((VIEWS as readonly string[]).includes(chosen)) {
+                    this.view = chosen as ViewMode;
+                    this.commit();
+                }
+            });
         }
 
-        if (link) {
-            link.href = this.permalink();
+        if (variant) {
+            variant.value = String(this.variant);
+            variant.addEventListener("change", () => {
+                const value = Number.parseInt(variant.value, 10);
+                this.variant = Number.isFinite(value) ? Math.min(3, Math.max(0, value)) : 0;
+                this.commit();
+            });
+        }
+
+        if (quality) {
+            quality.value = this.qualityMode;
+            quality.addEventListener("change", () => {
+                const chosen = quality.value;
+                if ((QUALITIES as readonly string[]).includes(chosen)) {
+                    this.qualityMode = chosen as QualityMode;
+                    this.frameSamples = [];
+                    this.quality = this.qualityMode === "low" ? 0.6 : 1;
+                    this.resize();
+                    this.commit();
+                }
+            });
+        }
+
+        if (seedInput) {
+            seedInput.value = hexSeed(this.seed);
+            seedInput.addEventListener("change", () => {
+                const raw = seedInput.value.trim().replace(/^0x/i, "");
+                if (/^[0-9a-f]{1,8}$/i.test(raw)) {
+                    this.seed = Number.parseInt(raw, 16) >>> 0;
+                    this.offset = offsetForSeed(this.seed);
+                    this.commit();
+                } else {
+                    seedInput.value = hexSeed(this.seed);
+                }
+            });
         }
 
         if (reseed) {
             reseed.addEventListener("click", () => {
                 this.seed = this.randomSeed();
                 this.offset = offsetForSeed(this.seed);
-                if (seed) seed.textContent = `seed 0x${this.seed.toString(16).padStart(8, "0")}`;
-                this.writeSeedToUrl();
-                if (link) link.href = this.permalink();
-                this.draw();
+                this.commit();
             });
         }
+
+        if (copy) {
+            copy.addEventListener("click", () => {
+                const complete = (label: string): void => {
+                    copy.textContent = label;
+                    window.setTimeout(() => {
+                        copy.textContent = "Copy config";
+                    }, 1600);
+                };
+
+                if (navigator.clipboard?.writeText) {
+                    const url = new URL(this.permalink(), window.location.origin).href;
+                    navigator.clipboard.writeText(url).then(
+                        () => complete("Copied"),
+                        () => complete("Copy failed")
+                    );
+                } else {
+                    complete("Copy failed");
+                }
+            });
+        }
+
+        if (fullscreen) {
+            fullscreen.addEventListener("click", () => {
+                if (document.fullscreenElement) {
+                    void document.exitFullscreen();
+                } else if (frame.requestFullscreen) {
+                    void frame.requestFullscreen().catch(() => undefined);
+                }
+            });
+        }
+
+        if (link) link.href = this.permalink();
+        this.syncHeader();
+        this.syncPreset();
     }
 
-    private syncPreset(preset: HTMLSelectElement | null): void {
+    private bindRange(
+        input: HTMLInputElement | null,
+        get: () => number,
+        set: (value: number) => void,
+        output: HTMLElement | null,
+        format: (value: number) => string
+    ): void {
+        if (!input) return;
+
+        input.value = String(get());
+        if (output) output.textContent = format(get());
+
+        input.addEventListener("input", () => {
+            set(this.readNumber(input, get()));
+            if (output) output.textContent = format(get());
+            this.syncPreset();
+            this.commit();
+        });
+    }
+
+    private syncPreset(): void {
+        const preset = this.frame?.querySelector<HTMLSelectElement>("[data-nebula-preset]");
         if (!preset) return;
 
-        preset.value = Object.entries(PRESETS).find(
-            ([, value]) => value.density === this.density && value.scale === this.scale && value.palette === this.palette
-        )?.[0] ?? "";
+        preset.value =
+            Object.entries(PRESETS).find(
+                ([, value]) => value.density === this.density && value.scale === this.scale && value.palette === this.palette
+            )?.[0] ?? "";
+    }
+
+    private syncHeader(): void {
+        const seed = this.frame?.querySelector<HTMLElement>("[data-nebula-seed]");
+        const seedInput = this.frame?.querySelector<HTMLInputElement>("[data-nebula-seed-input]");
+        const link = this.frame?.querySelector<HTMLAnchorElement>("[data-nebula-link]");
+        const mode = this.frame?.querySelector<HTMLElement>("[data-nebula-mode]");
+
+        if (seed) seed.textContent = `seed 0x${hexSeed(this.seed)}`;
+        if (seedInput && document.activeElement !== seedInput) seedInput.value = hexSeed(this.seed);
+        if (link) link.href = this.permalink();
+        if (mode) mode.textContent = `${VIEW_LABELS[this.view]} / ${this.octaves} octaves`;
+    }
+
+    private commit(): void {
+        this.syncHeader();
+        this.writeStateToUrl();
+        this.draw();
     }
 
     private permalink(): string {
         const url = new URL(window.location.href);
-        url.searchParams.set("seed", this.seed.toString(16).padStart(8, "0"));
+        const params = url.searchParams;
+
+        params.set("seed", hexSeed(this.seed));
+        params.set("view", this.view);
+        params.set("octaves", String(this.octaves));
+        params.set("warp", this.warp.toFixed(2));
+        params.set("variant", String(this.variant));
+        params.set("density", this.density.toFixed(2));
+        params.set("scale", this.scale.toFixed(2));
+        params.set("palette", this.palette);
+        params.set("quality", this.qualityMode);
+
         return `${url.pathname}${url.search}`;
     }
 
-    private writeSeedToUrl(): void {
-        const url = new URL(window.location.href);
-        url.searchParams.set("seed", this.seed.toString(16).padStart(8, "0"));
-        window.history.replaceState(null, "", url);
+    private writeStateToUrl(): void {
+        if (this.urlHandle) window.clearTimeout(this.urlHandle);
+        this.urlHandle = window.setTimeout(() => {
+            window.history.replaceState(null, "", this.permalink());
+        }, 80);
     }
 
     private readNumber(input: HTMLInputElement, fallback: number): number {
@@ -229,14 +431,6 @@ export class NebulaRenderer {
         const min = Number.parseFloat(input.min);
         const max = Number.parseFloat(input.max);
         return Math.min(Math.max(value, Number.isFinite(min) ? min : value), Number.isFinite(max) ? max : value);
-    }
-
-    private readSeed(): number {
-        const fromUrl = new URLSearchParams(window.location.search).get("seed");
-        if (fromUrl && /^[0-9a-f]{1,8}$/i.test(fromUrl)) {
-            return Number.parseInt(fromUrl, 16) >>> 0;
-        }
-        return DEFAULT_SEED;
     }
 
     private randomSeed(): number {
@@ -287,6 +481,11 @@ export class NebulaRenderer {
     };
 
     private adaptQuality(): void {
+        if (this.qualityMode !== "adaptive") {
+            this.frameSamples = [];
+            return;
+        }
+
         const average = this.frameSamples.reduce((sum, value) => sum + value, 0) / this.frameSamples.length;
         this.frameSamples = [];
 
@@ -317,6 +516,10 @@ export class NebulaRenderer {
         gl.uniform1f(this.uniforms.density, this.density);
         gl.uniform1f(this.uniforms.scale, this.scale);
         gl.uniform2f(this.uniforms.pointer, this.pointer.x, this.pointer.y);
+        gl.uniform1f(this.uniforms.octaves, this.octaves);
+        gl.uniform1f(this.uniforms.warp, this.warp);
+        gl.uniform1f(this.uniforms.variant, this.variant);
+        gl.uniform1f(this.uniforms.view, VIEWS.indexOf(this.view));
 
         const palette = PALETTES[this.palette] ?? PALETTES.violet;
         gl.uniform3f(this.uniforms.colorA, palette.a[0], palette.a[1], palette.a[2]);
@@ -329,7 +532,7 @@ export class NebulaRenderer {
 
         if (!this.ready) {
             this.ready = true;
-            this.canvas.closest<HTMLElement>("[data-nebula]")?.classList.add("is-live");
+            this.frame?.classList.add("is-live");
         }
     }
 
@@ -364,6 +567,10 @@ export class NebulaRenderer {
         }
     };
 
+    private onFullscreenChange = (): void => {
+        window.setTimeout(this.resize, 60);
+    };
+
     private onReducedMotionChange = (): void => {
         if (this.reducedMotionQuery.matches) {
             this.stopLoop();
@@ -391,7 +598,7 @@ export class NebulaRenderer {
         event.preventDefault();
         this.contextLost = true;
         this.stopLoop();
-        this.canvas.closest<HTMLElement>("[data-nebula]")?.classList.add("is-fallback");
+        this.frame?.classList.add("is-fallback");
     };
 
     private onContextRestored = (): void => {
@@ -399,7 +606,7 @@ export class NebulaRenderer {
         this.program = this.createProgram();
         this.uniforms = this.getUniforms();
         this.vao = this.createVertexArray();
-        this.canvas.closest<HTMLElement>("[data-nebula]")?.classList.remove("is-fallback");
+        this.frame?.classList.remove("is-fallback");
         this.draw();
         if (this.visible && !this.reducedMotionQuery.matches) {
             this.startLoop();
@@ -454,7 +661,11 @@ export class NebulaRenderer {
             pointer: gl.getUniformLocation(this.program, "u_pointer"),
             colorA: gl.getUniformLocation(this.program, "u_colorA"),
             colorB: gl.getUniformLocation(this.program, "u_colorB"),
-            colorC: gl.getUniformLocation(this.program, "u_colorC")
+            colorC: gl.getUniformLocation(this.program, "u_colorC"),
+            octaves: gl.getUniformLocation(this.program, "u_octaves"),
+            warp: gl.getUniformLocation(this.program, "u_warp"),
+            variant: gl.getUniformLocation(this.program, "u_variant"),
+            view: gl.getUniformLocation(this.program, "u_view")
         };
     }
 

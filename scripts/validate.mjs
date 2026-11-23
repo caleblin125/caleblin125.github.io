@@ -277,14 +277,16 @@ try {
     const titles = new Map();
     const descriptions = new Map();
     const expected = [
-        ["/", ["I build systems, then make them legible.", "Problem.", "Contribution.", "Data-center load forecasting"]],
-        ["/projects", ["Work and projects.", "TreeSim", "Simulation", "SCC Connect 2026", "FPGA and digital hardware", "HPC and cluster tuning", "Robotics and state estimation", "Data-center load forecasting", "Computational visualization"]],
+        ["/", ["I build systems, then make them legible.", "Problem.", "Contribution.", "Data-center load forecasting", "Interactive lab", "Instrument", "Measure"]],
+        ["/projects", ["Work and projects.", "Flagship work", "Experiments", "Archive", "TreeSim", "SCC Connect 2026", "FPGA and digital hardware", "HPC and cluster tuning", "Robotics and state estimation", "Data-center load forecasting", "Computational visualization"]],
+        ["/lab", ["Interactive laboratory.", "Nebula generator", "HPC benchmark explorer", "Beacon filter response", "Kalman filter", "Measured", "Model", "Synthetic", "Live"]],
+        ["/lab/nebula", ["Nebula laboratory.", "Base noise", "Warp field", "Octave bands", "Colour field", "prefers-reduced-motion"]],
         ["/projects/treesim", ["A forest that grows itself.", "51,755", "10.65 m", "6.11 million", "UPGMA", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/scc-connect", ["One node, measured.", "4,403.6", "481.6", "249.9", "86.0%", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/fpga", ["Digital hardware, measured.", "Alveo U250", "Yosys", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
-        ["/projects/hpc", ["Clusters, benchmarks, and sweeps.", "663 GFLOPS", "HPL", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
-        ["/projects/robotics", ["Finding a goal without a map.", "2000.33 Hz", "10 ms", "synthetic", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
-        ["/projects/forecasting", ["A decade of ten-minute load.", "3% MAPE", "10% MAPE", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
+        ["/projects/hpc", ["Clusters, benchmarks, and sweeps.", "663 GFLOPS", "HPL", "measured competition record", "4,403.6", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
+        ["/projects/robotics", ["Finding a goal without a map.", "2000.33 Hz", "10 ms", "synthetic", "Sallen-Key", "Model, not a measurement", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
+        ["/projects/forecasting", ["A decade of ten-minute load.", "3% MAPE", "10% MAPE", "experimental record", "no interactive forecasting explorer", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/visualization", ["Rules made visible.", "44,200", "489", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/mandelbrot", ["Mandelbrot set."]],
         ["/projects/boids", ["Boids.", "separation"]],

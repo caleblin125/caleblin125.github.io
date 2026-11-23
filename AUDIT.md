@@ -119,16 +119,17 @@ omits it; no page pads a section it cannot support.
 ## 4. Verification performed
 
 - `npm run build` succeeds (`tsc`, `vite build`, `generate:html`).
-- `npm run validate` passes **1,004 checks, 0 failures**, covering all 19 routes, the twelve
+- `npm run validate` passes **1,126 checks, 0 failures**, covering all 21 routes, the twelve
   project rows, the five homepage thumbnails, the Atom feed, `projects.json`, sitemap and
   robots, per-page feed discovery, JSON-LD, and Markdown representations.
-- Bundle after the changes: main JS ~129 kB (gzip ~44 kB), CSS ~49 kB (gzip ~12.6 kB),
-  with renderers and the Kalman demo in lazy chunks. KaTeX auto-render remains the largest
-  single asset at ~255 kB and is only fetched by pages that contain math.
-- Browser checks at 1440 × 900 and 390 × 844 for `/`, `/projects`, `/projects/robotics`,
-  `/projects/forecasting`, `/projects/visualization`, `/projects/treesim`, and
-  `/projects/scc-connect`: layout, thumbnails, diagrams, results, tables, and the Kalman
-  controls all render and operate.
+- Bundle after the changes: main JS ~207 kB (gzip ~69.6 kB), CSS ~58 kB (gzip ~14 kB),
+  with renderers, the bench explorer, the filter model, and the Kalman demo in lazy chunks.
+  KaTeX auto-render remains the largest single asset at ~261 kB and is only fetched by pages
+  that contain math.
+- Browser checks at 1440 × 900 and 390 × 844 for `/`, `/projects`, `/lab`, `/lab/nebula`,
+  `/projects/hpc#bench`, `/projects/robotics#filter`, `/projects/forecasting`, and
+  `/projects/scc-connect`: layout, thumbnails, diagrams, results, tables, the benchmark
+  explorer, the filter model, and the Kalman controls all render and operate.
 - Generated HTML, Markdown, XML, and JSON were re-read as UTF-8 and contain the intended
   characters (`—`, `±`). PowerShell console output shows mojibake; the files do not.
 
@@ -141,10 +142,10 @@ omits it; no page pads a section it cannot support.
   (`No OpenChamber client connected here can control a page`). Nebula preset/reseed clicks,
   forced reduced-motion emulation, and the WebGL-disabled fallback were reviewed in code
   but not re-clicked in that final session.
-- **No benchmark explorer.** The spec prioritizes one; shipping it would require sweep data
-  that does not exist in the repository. Rather than invent a dataset, the pages report only
-  documented values (3× class throughput, 663 GFLOPS / 47% of peak, 10 ms control period,
-  3% vs 10% MAPE, 44,200 orbit seeds).
+- **No forecasting explorer.** The published record does not include the train/test
+  boundary, horizon, features, missing-data rule, or per-horizon errors, so an explorer
+  would need a fabricated series. The page documents the gaps instead; the HPC and filter
+  explorers exist because their underlying numbers do.
 - **Dates are partial.** Several projects have a period but no exact start or measurement
   date, so those fields are omitted rather than guessed.
 - **The Kalman demo is not the robot's filter.** It is a synthetic, clearly labeled
@@ -289,3 +290,75 @@ reservation was untested, and no raw NVLink copy ceiling was measured with a sep
 links), `src/structured-data.ts` (`knowsAbout`), `scripts/validate.mjs` (counts and needles),
 `public/projects/scc-connect.svg`, `scc-hpl.png`, `scc-stream.png`, `scc-nccl.png`, `README.md`,
 and this file.
+
+
+## 10. Addendum: Evidence, interactivity, and the lab (2026-11-23)
+
+This pass changed the site from "pages that describe work" to "pages that show the
+measured record and let a reader move it." It is additive: the framework, the nebula,
+the five homepage projects, and the existing project text are unchanged in intent.
+
+**New routes.** `/lab` indexes every interactive experiment with a provenance tag
+(*Measured*, *Model*, *Synthetic*, *Live*). `/lab/nebula` exposes the full control surface
+for the shader the homepage already used: seed, view, octaves, warp, variant, density,
+scale, palette, quality, fullscreen, copy-config, and URL restoration. The homepage keeps
+its smaller control set and its existing instance; both use the same renderer and shader,
+and the default seed reproduces the original frame.
+
+**Measured explorer.** `/projects/hpc#bench` charts the SCC Connect 2026 HPL, NCCL, and
+STREAM values from `src/lab/bench-data.ts`: four HPL sizes with min–max whiskers, four
+separate HPL settings campaigns, the 8 GiB NCCL matrix (four collectives, eight channel
+configurations), and the STREAM repeat variations. Every point was run; no curve is
+interpolated and no row is synthesised. The tables under the chart carry the same values,
+run counts, and campaign provenance, including the fact that the settings rows come from
+unequal campaigns rather than a factorial experiment.
+
+**Model explorer.** `/projects/robotics#filter` plots three cascaded second-order
+bandpass sections anchored at the published first-stage Monte Carlo result
+(f0 = 2000.33 Hz, Q = 20.3 ± 2.7). The page labels it a model next to the chart and in the
+caption, marks the 1.5 and 2.5 kHz wall tones, and names what is missing: component values,
+the other sections' individual results, a swept Bode plot, and the field SNR.
+
+**Forecasting record.** The forecasting page now separates what is published (decade of
+10-minute data, 3% MAPE, 10% baseline) from what is not (split, horizon, features,
+missing-data treatment, per-horizon errors, robustness). It states why there is no
+explorer: a verified forecast series and holdout boundary do not exist in the repository,
+so any chart would be invented. A contribution note separates the lab's dataset and
+baseline from the modelling work.
+
+**Robotics evidence.** Two real glove-study figures were added, and the page now says that
+no video of the final run is published, so the minspec claim rests on the team's recorded
+result rather than a replayable artifact.
+
+**Projects index.** The twelve projects are grouped into Flagship work (7), Experiments
+(3), and Archive (2). Rows gained demo links and an *Interactive* badge; the homepage
+gained the same badge on rows that have one, a direct *Interactive lab* link, and a
+Build → Instrument → Measure → Understand strip.
+
+**Verification.** `npm run build` succeeds. `npm run validate` passes **1,126 checks, 0
+failures** across **21 routes**, including the two lab routes, the grouped project index,
+and needles for the HPC explorer, filter model, and forecasting record. Browser checks at
+1440 × 900 and 390 × 844 covered `/lab`, `/lab/nebula` (all five views, preset, palette,
+variant, octaves, warp, seed, fullscreen entry points, URL state), `/projects`,
+`/projects/hpc#bench` (all four datasets, hover readout, tables), `/projects/robotics#filter`
+(1 and 3 stages, sliders, legend), and the homepage method strip. The nebula still renders
+its default frame and the bench legend now wraps instead of clipping on phones.
+
+**Bundle.** Main JS ~207 kB raw / ~69.6 kB gzip; CSS ~58 kB / ~14 kB gzip. The two new
+explorers are lazy chunks (`bench` ~5.6 kB, `filter` ~5.0 kB raw). The main-chunk growth
+comes from the shared bench dataset and the expanded nebula renderer reaching every page
+through the static page modules.
+
+**Known limits.** No forecasting explorer (no verified series), no FPGA synthesis panel
+(no public report), no robot video. Only mean/SD/Q are published for the filter, so no
+Monte Carlo distribution is drawn. The filter model repeats the first-stage result across
+all sections and is not the assembled board's measured response. The HPC settings rows are
+not a controlled experiment and the page does not test significance. The bench chart
+suppresses numeric labels on phones and relies on the hover readout plus the tables.
+
+**Files changed.** `src/lab/{bench-data,bench,filter}.ts` (new), `src/pages/{lab,nebula-lab}.ts`
+(new), `src/nebula/{renderer.ts,shaders/nebula.glsl}` (views, octaves, warp, variant, URL
+state, quality, fullscreen), `src/pages/{hpc,robotics,forecasting,projects,home,index}.ts`,
+`src/data/projects.ts` (group/demo), `src/main.ts` (explorer dispatch), `src/style.css`,
+`scripts/generate-site.ts` (lab entries in llms.txt and the full corpus), `scripts/validate.mjs`
+(new needles), `README.md`, and this file.

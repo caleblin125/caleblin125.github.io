@@ -25,7 +25,7 @@ const workRows = projects
 <span class="work-number">${escapeHtml(project.number)}</span>
 <span class="work-thumb"><img src="${escapeHtml(project.image.src)}" alt="${escapeHtml(project.image.alt)}" loading="lazy" decoding="async"></span>
 <div class="work-body">
-<p class="work-category">${escapeHtml(project.category)}</p>
+<p class="work-category">${escapeHtml(project.category)}${project.demo ? ' <span class="demo-badge">Interactive</span>' : ""}</p>
 <h2>${escapeHtml(project.title)}</h2>
 <p class="work-problem"><strong>Problem.</strong> ${escapeHtml(project.problem)}</p>
 <p class="work-contribution"><strong>Contribution.</strong> ${escapeHtml(project.contribution)}</p>
@@ -41,7 +41,7 @@ export const homePage: Page = {
     title: "Engineering and visual experiments.",
     eyebrow: "Caleb Lin",
     kind: "home",
-    updated: "2026-11-22",
+    updated: "2026-11-23",
     description:
         "Caleb Lin is a computer engineering and robotics student at UC Santa Cruz. He works on FPGA acceleration, HPC clusters, machine learning, control and estimation, and computational visualization systems that make technical results legible.",
     keywords: ["Caleb Lin", "computer engineering", "robotics", "FPGA", "HPC", "machine learning", "WebGL", "UC Santa Cruz"],
@@ -51,7 +51,7 @@ export const homePage: Page = {
                     <p class="kicker">Computer engineering / robotics / HPC / ML / visualization</p>
                     <h1>I build systems, then make them legible.</h1>
                     <p class="lede">I’m Caleb Lin, a computer engineering and robotics student at UC Santa Cruz. I work across digital hardware and FPGA acceleration, high-performance computing, machine learning, robotics and state estimation, and computational visualization. The through-line is instrumentation: build the system, measure it, then give someone a way to see what it is doing.</p>
-                    <div class="link-row"><a class="text-link" href="#selected-work">Selected work <span>↓</span></a><a class="text-link" href="/resume">Résumé <span>↗</span></a><a class="text-link" href="${githubProfileUrl}">GitHub <span>↗</span></a></div>
+                    <div class="link-row"><a class="text-link" href="#selected-work">Selected work <span>↓</span></a><a class="text-link" href="/lab">Interactive lab <span>↗</span></a><a class="text-link" href="/resume">Résumé <span>↗</span></a><a class="text-link" href="${githubProfileUrl}">GitHub <span>↗</span></a></div>
                 </div>
                 <div class="nebula-frame" data-nebula>
                     <div class="nebula-stage">
@@ -73,6 +73,15 @@ export const homePage: Page = {
                         <p>Rendering is adaptive: if frames run slow, the drawing buffer drops resolution before it stops animating. With <code>prefers-reduced-motion</code>, the shader draws one still frame at a fixed time and pointer parallax is disabled. Without WebGL2, the text fallback remains and the rest of the page is unaffected.</p>
                     </details>
                 </div>
+            </section>
+            <section class="method-strip" aria-label="How I work">
+                <div class="method-head"><p class="kicker">Method / 04</p><p class="method-note">The same loop runs through the hardware, the clusters, and the visual work.</p></div>
+                <ol class="method-steps">
+                    <li><span>01</span><strong>Build</strong><p>Make the system real enough to misbehave.</p></li>
+                    <li><span>02</span><strong>Instrument</strong><p>Give it a way to report what it is doing.</p></li>
+                    <li><span>03</span><strong>Measure</strong><p>Run it against a baseline and keep the raw numbers.</p></li>
+                    <li><span>04</span><strong>Understand</strong><p>Explain the result, including what it cannot support.</p></li>
+                </ol>
             </section>
             <section class="selected-work" id="selected-work">
                 <div class="section-head"><p class="kicker">Selected work / 05</p><a class="text-link" href="/projects">All projects <span>↗</span></a></div>

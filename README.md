@@ -3,9 +3,10 @@
 A personal website and portfolio for Caleb Lin: an engineering / graphics / HPC-focused
 homepage built around interactive **WebGL2** visual experiments. The site is a Vite +
 TypeScript single-page app that renders its content from an in-code page table, with
-KaTeX-rendered math and two canvas visualizations (Mandelbrot orbit points and a boids
-flocking simulation). It also hosts a web-readable résumé at `/resume` and dedicated
-FPGA and HPC project pages.
+KaTeX-rendered math and three canvas visualizations: a procedural seed-reproducible
+nebula on the homepage, Mandelbrot orbit points, and a boids flocking simulation. It
+also hosts a web-readable résumé at `/resume`, dedicated FPGA and HPC project pages,
+engineering notes, and a real 404 page.
 
 ## Purpose
 
@@ -18,7 +19,7 @@ as a way to learn rendering while keeping the projects visible.
 ## Project structure
 
 ```
-├── index.html              # Vite entry point; mounts #app and loads /src/main.ts
+├── index.html              # document head (meta/OG/canonical/JSON-LD/fonts), skip link, mounts #app
 ├── package.json            # npm project: vite, typescript, katex
 ├── tsconfig.json           # strict-ish TS config, bundler resolution, noEmit
 ├── _config.yml             # legacy Jekyll config (GitHub Pages theme); the site itself is the Vite app
@@ -28,13 +29,14 @@ as a way to learn rendering while keeping the projects visible.
 │   ├── favicon.svg
 │   └── icons.svg
 ├── src/
-│   ├── main.ts             # SPA shell: routing, header/footer, KaTeX init, canvas wiring
-│   ├── style.css           # all site styling: design tokens, layout, article, tables, diagrams
+│   ├── main.ts             # SPA shell: routing/404, header/footer, meta updates, KaTeX, canvas wiring
+│   ├── style.css           # all site styling: tokens, layout, article, tables, diagrams, nebula
 │   ├── pages/              # one file per page; assembled into the `pages` record by index.ts
 │   │   ├── index.ts        # barrel: maps routes to the page modules below
-│   │   ├── types.ts        # the shared `Page` type ({ title, eyebrow, content })
+│   │   ├── types.ts        # the shared `Page` type ({ title, eyebrow, description?, content })
 │   │   ├── constants.ts    # shared URL constants used inside content strings
-│   │   ├── home.ts         # "/"
+│   │   ├── home.ts         # "/" (nebula + selected work)
+│   │   ├── not-found.ts    # 404 content for unknown routes
 │   │   ├── projects.ts     # "/projects"
 │   │   ├── resume.ts       # "/resume" (web version + PDF download)
 │   │   ├── about.ts        # "/about"
@@ -48,6 +50,11 @@ as a way to learn rendering while keeping the projects visible.
 │   │   ├── seeing-the-mandelbrot-set.ts        # "/blog/seeing-the-mandelbrot-set"
 │   │   ├── the-glove-is-the-controller.ts      # "/blog/the-glove-is-the-controller"
 │   │   └── where-the-file-meets-the-machine.ts # "/blog/where-the-file-meets-the-machine"
+│   ├── nebula/             # homepage procedural nebula
+│   │   ├── renderer.ts     # NebulaRenderer: seeded uniforms, controls, quality, pause, fallback
+│   │   └── shaders/
+│   │       ├── nebula.glsl      # domain-warped fBm field, stars, palettes, dither
+│   │       └── nebula.vert.glsl # full-screen triangle from gl_VertexID
 │   ├── boids/              # boids flocking visualization
 │   │   ├── renderer.ts     # BoidsRenderer: CPU simulation + instanced WebGL2 chevrons + trail fade
 │   │   └── shaders/
@@ -69,21 +76,33 @@ as a way to learn rendering while keeping the projects visible.
 ## How the app is put together
 
 - **`src/pages/`** holds one module per page, each exporting a `Page`
-  (`{ title, eyebrow, content }`). `src/pages/index.ts` assembles them into the
-  `pages` record keyed by route (`/`, `/projects`, `/projects/fpga`,
+  (`{ title, eyebrow, description?, content }`). `src/pages/index.ts` assembles them
+  into the `pages` record keyed by route (`/`, `/projects`, `/projects/fpga`,
   `/projects/hpc`, `/projects/boids`, `/projects/mandelbrot`, `/resume`,
   `/blog`, `/blog/...`).
 - **`src/main.ts`** imports that record, injects the current route's content into
-  `#app`, KaTeX auto-renders `$...$` / `$$...$$` math, and hands every
-  `canvas[data-visualization]` on the page to its renderer:
+  `#app`, and updates `document.title`, the meta description, Open Graph/Twitter tags,
+  the canonical link, and `robots` for the route. Unknown routes render
+  `src/pages/not-found.ts` with `noindex, nofollow`. It then KaTeX-renders `$...$` /
+  `$$...$$` math and hands every `canvas[data-visualization]` on the page to its
+  renderer inside a try/catch:
   - `data-visualization="boids"` → `new BoidsRenderer(canvas)`
+  - `data-visualization="nebula"` → `new NebulaRenderer(canvas)`
   - anything else (currently `"mandelbrot"`) → `new ChaosRenderer(canvas, new Mandelbrot())`
+  A failing renderer marks its frame `.is-fallback` and does not stop the page.
   To add a page: create a file in `src/pages/` and register it in
   `src/pages/index.ts` — the shell and routing need no changes.
-- **Renderers** (`src/boids/renderer.ts`, `src/chaos/renderer.ts`) follow a common shape:
-  grab a `webgl2` context (boids uses `{ preserveDrawingBuffer: true }` for trail persistence),
-  compile shaders imported via Vite's `?raw` suffix, listen for `resize` (respecting
-  `devicePixelRatio`), and drive a `requestAnimationFrame` loop.
+- **Renderers** (`src/nebula/renderer.ts`, `src/boids/renderer.ts`,
+  `src/chaos/renderer.ts`) follow a common shape: grab a `webgl2` context (boids uses
+  `{ preserveDrawingBuffer: true }` for trail persistence), compile shaders imported via
+  Vite's `?raw` suffix, listen for `resize` (respecting `devicePixelRatio`), and drive a
+  `requestAnimationFrame` loop. Boids and nebula pause offscreen and when the tab is
+  hidden; the nebula also caps DPR, adapts its render scale to frame time, and draws a
+  static frame under `prefers-reduced-motion`.
+- **Nebula seeding:** the URL accepts `?seed=<hex>`; `0x1a2b3c4d` is the curated default.
+  The Reseed button updates the URL so a field can be shared and reproduced. Density,
+  scale, and palette (`violet` / `ice` / `ember`) are uniform inputs to the fragment
+  shader.
 - **Shaders** are plain GLSL ES 3.00 files imported as raw strings. They live next to their
   renderer under `src/<viz>/shaders/`.
 - **Math** on pages is KaTeX. Write `$$...$$` for display math and `$...$` for inline; the

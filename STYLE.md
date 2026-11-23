@@ -14,22 +14,31 @@ component rules).
 
 | Token | Value | Used for |
 |---|---|---|
-| `--text` color | `#eee8f2` | main foreground text |
-| page background | `#201625` | body / app background |
-| panel background | `#2a1e32` | `.math-display`, `.vector-diagram`, table headers |
-| frame background | `#120d18` | `.visual-frame` (canvas container) |
+| `--bg` | `#120d18` | page / body background, frame background |
+| `--bg-surface` | `#1a1320` | control bars, panel backgrounds |
+| `--bg-surface-alt` | `#2a1e32` | `.math-display`, `.vector-diagram`, `.code-block` |
 | boids frame | `#0e101c` | `.boids-frame` (darker, near-black) |
-| accent | `#c59ad8` | kickers, links on hover, brand slash, math-display border |
-| border | `#51425a` | headers, rows, frames, table rules |
-| muted text | `#b1a4b6` / `#a192a7` / `#85768b` | paragraphs, tags, footer |
-| link hover | `#c59ad8` | interactive emphasis |
+| `--text` | `#eee8f2` | main foreground text |
+| `--text-heading` | `#f2ecf5` | heading and metric text |
+| `--text-muted` | `#b9acbe` | paragraphs |
+| `--text-subtle` | `#a192a7` | tags, secondary labels |
+| `--text-dim` | `#9a8da0` | HUD text, seeds, footnotes |
+| `--accent` | `#c59ad8` | kickers, hover links, brand slash, diagram titles |
+| `--border` | `#51425a` | headers, rows, frames, table rules |
+| `--border-subtle` | `#403248` | inner control-bar rules |
+
+`html` sets `color-scheme: dark`, so native controls (range, select) follow the dark palette.
 
 ### Fonts
 
-- **Body / headings:** "Space Grotesk" (loaded from Google Fonts).
+- **Body / headings:** "Space Grotesk".
 - **Mono / labels:** "DM Mono" — used for `.kicker`, `.tag`, `.visual-label`,
-  `.header-note`, table headers, and the diagram captions. These elements typically use
+  `.header-note`, table headers, diagram captions, the nebula HUD and its controls.
+  These elements typically use
   `font: .68rem "DM Mono", monospace; letter-spacing: .08em; text-transform: uppercase;`.
+- Fonts are loaded from Google Fonts with `<link>` tags in `index.html`, after
+  `preconnect` hints. Do not add a CSS `@import`; it blocks rendering later than the
+  document-level links.
 
 ### Layout constants
 
@@ -48,6 +57,14 @@ record mapping routes to those modules lives in `src/pages/index.ts`. The shell
 (header/nav/footer) is rendered once by `main.ts`; the page contributes only its
 `content`.
 
+`Page` is `{ title, eyebrow, content, description? }`. `description` is optional but
+should be set on every page: `main.ts` uses it for the meta description, Open Graph,
+and Twitter tags, and rewrites those tags on every route change.
+
+Unknown routes render `notFoundPage` (also exported from `src/pages/index.ts`), with
+`noindex, nofollow` and no canonical link. The deploy workflow copies `index.html` to
+`404.html`, so the same app boots for unknown deep links.
+
 ### Common elements
 
 - `<p class="kicker">` — small magenta mono label above an `<h1>` (e.g. `Project / Boids`).
@@ -60,11 +77,35 @@ record mapping routes to those modules lives in `src/pages/index.ts`. The shell
 ```
 <section class="hero-grid">
   <div class="hero-copy">…kicker / h1 / lede / link-row…</div>
-  <div class="visual-frame"><canvas data-visualization="mandelbrot">…</canvas>
-    <div class="visual-label">…</div></div>
+  <div class="nebula-frame" data-nebula>
+    <div class="nebula-stage">
+      <canvas data-visualization="nebula" role="img" aria-label="…"></canvas>
+      <div class="nebula-hud" aria-hidden="true">Field 01 / … · WebGL2 / …</div>
+      <p class="nebula-caption">Nebula <span>pointer parallax / seed-reproducible</span></p>
+      <div class="nebula-fallback">…shown when WebGL2 is unavailable…</div>
+    </div>
+    <div class="nebula-controls">
+      density range · scale range · palette select · seed readout · reseed button
+    </div>
+  </div>
+</section>
+<section class="selected-work" id="selected-work">
+  <div class="section-head"><p class="kicker">Selected work</p><a class="text-link">…</a></div>
+  <div class="work-list">
+    <a class="work-row" href="/projects/…">
+      <span class="work-number">01</span>
+      <div><h2>Title</h2><p>One-sentence claim.</p></div>
+      <span class="work-metric"><strong>3×</strong><span>class throughput</span></span>
+    </a>
+    …
+  </div>
 </section>
 <section class="home-strip">…three-column "at the moment" strip…</section>
 ```
+
+Use the work rows for three projects with a hard, sourced number each — not for a
+generic list. The nebula is the only visualization on the homepage; the Mandelbrot
+canvas lives on `/projects/mandelbrot`.
 
 ### Project index (`/projects`)
 
@@ -135,6 +176,17 @@ The downloadable PDF lives at `public/caleb-lin-resume.pdf` and is served from `
 </article>
 ```
 
+Project pages that report measurements end with a **Limitations** section: a short
+paragraph that says what the number is not, so the result is not overclaimed. See
+`/projects/fpga` and `/projects/hpc`.
+
+### 404 page
+
+`src/pages/not-found.ts` supplies the content for any route missing from the `pages`
+record. It uses `.page-intro`, `.mono-note` (a dim mono line), and a `.link-row` back to
+the main sections. Keep it useful, not cute. `main.ts` marks unknown routes with
+`noindex, nofollow`, removes the canonical link, and clears the active nav item.
+
 ---
 
 ## 3. Canvas elements & visualizations
@@ -154,41 +206,76 @@ A visualization lives inside a `.visual-frame`:
 Rules:
 
 - The `<canvas>` **must** carry a `data-visualization` attribute. `main.ts` finds every
-  such canvas after rendering a page and instantiates the matching renderer:
+  such canvas after rendering a page and instantiates the matching renderer inside a
+  try/catch:
   ```ts
   for (const canvas of document.querySelectorAll("canvas[data-visualization]")) {
-      if (canvas.dataset.visualization === "boids") new BoidsRenderer(canvas).start();
-      else new ChaosRenderer(canvas, new Mandelbrot()).start();
+      try {
+          if (kind === "boids") new BoidsRenderer(canvas).start();
+          else if (kind === "nebula") new NebulaRenderer(canvas).start();
+          else new ChaosRenderer(canvas, new Mandelbrot()).start();
+      } catch (error) {
+          canvas.closest(".visual-frame, .nebula-frame")?.classList.add("is-fallback");
+      }
   }
   ```
-  Add a new branch here when you introduce a new visualization kind.
+  Add a new branch here when you introduce a new visualization kind. A failed renderer
+  must not stop the other canvases on the page.
 - `.visual-frame` gives the canvas its dark background, min-height (`500px`, `360px`
   mobile; `.article-visual` variant `460px`/`320px`), and the `1px solid #51425a` border.
+  `.is-fallback` hides the canvas and shows a "needs WebGL2" note via a pseudo-element.
+- `.nebula-frame` is the homepage variant: it stacks a `.nebula-stage` (canvas + HUD +
+  caption + fallback) over a `.nebula-controls` bar, with the same hairline border.
 - `.visual-label` is absolutely positioned at the bottom of the frame; it shows the viz
   name in accent color plus a hint (`.visual-label span`) in muted text. Keep it
   `pointer-events: none` so it never blocks pointer interaction.
-- `aria-label` on the canvas is required for accessibility.
+- Give the canvas a `role="img"` and an `aria-label` that describes what it shows. The
+  controls are separate native inputs, not canvas interaction.
 
 ### Renderer conventions (TypeScript side)
 
-Each renderer (`src/boids/renderer.ts`, `src/chaos/renderer.ts`) follows this shape:
+Each renderer (`src/boids/renderer.ts`, `src/chaos/renderer.ts`, `src/nebula/renderer.ts`)
+follows this shape:
 
 1. **Context:** `canvas.getContext("webgl2")`. Boids additionally passes
    `{ preserveDrawingBuffer: true }` because its trails rely on the framebuffer
    persisting between frames (the canvas is not cleared each frame — a fade pass
-   decays it). The Mandelbrot renderer clears every frame and does not need it.
+   decays it). The Mandelbrot and nebula renderers clear every frame and do not need it.
 2. **Shaders:** imported as raw strings and compiled at construction:
    ```ts
    import fragmentSource from "./shaders/boids.glsl?raw";
    ```
 3. **Resize:** a `resize` handler multiplies `clientWidth/Height` by
    `window.devicePixelRatio`, sets `canvas.width/height`, updates `gl.viewport`, and
-   (for boids) performs the initial clear. Register it on `window` for `"resize"`.
+   repaints. Register it on `window` for `"resize"`; the nebula also uses
+   `ResizeObserver`. Repaint on every resize: changing the drawing-buffer size clears
+   the canvas, so a paused loop would otherwise leave a black frame.
 4. **Loop:** `requestAnimationFrame(this.render)`; the boids loop steps a fixed-timestep
    simulation, the chaos renderer re-renders on demand (`requestRender`) to avoid work
-   while idle.
+   while idle. Boids and nebula pause their loops when the canvas leaves the viewport
+   (`IntersectionObserver`) or the document is hidden, and resume on return.
 5. **Instancing:** boids uses `drawArraysInstanced` for 489 chevrons; chaos uses
    instanced `POINTS` with `gl_InstanceID` driving orbit iteration in the vertex shader.
+   The nebula uses a single full-screen triangle generated from `gl_VertexID`; the
+   fragment shader owns the whole image, so there are no vertex buffers or attributes.
+
+### Nebula renderer specifics
+
+- **Model:** domain-warped fBm in the fragment shader (four value-noise octaves, two
+  warp passes), plus hashed-grid stars and a low-frequency veil. It is a 2D field, not a
+  ray-marched volume — chosen for cost and for the filament shapes it produces.
+- **Controls:** `data-nebula-density`, `data-nebula-scale`, `data-nebula-palette`, and
+  `data-nebula-reseed` are read from the closest `[data-nebula]` frame. Palette keys are
+  `violet`, `ice`, and `ember`; keep the `<option>` values and `PALETTES` in sync.
+- **Seeds:** `?seed=<hex>` (1–8 hex digits) selects a frame. `0x1a2b3c4d` is the curated
+  default; `offsetForSeed` hashes every other seed into a decorrelated region of the
+  field. Reseed writes the new seed back to the URL with `history.replaceState`, so a
+  frame can be reloaded or shared.
+- **Budget:** DPR is capped at 2; an adaptive quality factor downscales the drawing
+  buffer when the average frame time stays above ~24 ms, and recovers below ~14 ms.
+  Reduced-motion users get a single static frame at `u_time = 12` and no loop.
+- **Fallback:** if WebGL2 is unavailable or the context is lost, the frame gets
+  `.is-fallback`; the canvas is hidden and the `.nebula-fallback` note is shown.
 
 ### Shader file layout
 
@@ -288,24 +375,51 @@ At `max-width: 760px`:
 - `#app` padding drops to `20px`; grids (`hero-grid`, `about-grid`, `home-strip`,
   `project-row`) collapse to a single column.
 - `.header-note` hides; header/nav shrink.
-- Visual frames drop to `min-height: 360px` (article variant `320px`).
+- Visual frames drop to `min-height: 360px` (article variant `320px`); the nebula stage
+  drops to `420px`.
+- The nebula HUD's right label and the caption's right hint hide; the control bar wraps
+  and the seed group loses its `margin-left: auto`.
+- `.work-row` becomes one column, with the metric moved under the description in a
+  horizontal pair.
 - Tables rely on `.table-wrap { overflow-x: auto }` rather than resizing.
 - `.spec-table.wrap` drops its minimum width, so prose tables fit the screen.
 - `.resume-entry` collapses to one column (dates go left) and `.skill-grid` becomes one column.
 
 ---
 
-## 6. Adding a new page — quick checklist
+## 6. Accessibility & motion
+
+- `index.html` starts with a `.skip-link` to `#main`; `main` has `tabindex="-1"` so the
+  skip target takes focus. The link is translated off-screen until `:focus-visible`.
+- `:focus-visible` gets a 2px accent outline with a 3px offset. Do not remove outlines.
+- The active nav item carries `aria-current="page"`. Unknown routes clear it.
+- Inline links inside `.article` and `.about-grid` prose are underlined with
+  `text-decoration-color: var(--border)`; do not rely on hover color alone.
+- Canvas controls are native `<input type="range">`, `<select>`, and `<button>` with
+  visible `<label>` text. The seed readout is `aria-live="polite"`.
+- `@media (prefers-reduced-motion: reduce)` collapses animation/transition durations.
+  The nebula detects it directly and draws one static frame instead of looping; boids
+  still simulates but is not motion-safe by nature, so keep it behind a link rather than
+  autoplaying it on the homepage.
+
+---
+
+## 7. Adding a new page — quick checklist
 
 1. Create a page module in `src/pages/` (e.g. `my-page.ts`) exporting a `Page`
-   `{ title, eyebrow, content }` — copy an existing page file or use the
+   `{ title, eyebrow, description, content }` — copy an existing page file or use the
    templates in `templates/`.
 2. Register it in `src/pages/index.ts` under its route key (e.g.
-   `"/projects/my-page": myPage`). The shell, routing, and fallback in
+   `"/projects/my-page": myPage`). The shell, routing, and 404 fallback in
    `src/main.ts` need no changes.
 3. Write the `content` string as an `<article class="article">` (or a
-   `page-intro` + list section for index pages).
-4. If the page has a visualization, add a `<canvas data-visualization="…">` inside a
-   `.visual-frame` and a matching branch in the canvas wiring loop in `src/main.ts`.
+   `page-intro` + list section for index pages). Project pages with measurements get a
+   **Limitations** section.
+4. If the page has a visualization, add a `<canvas data-visualization="…" role="img"
+   aria-label="…">` inside a `.visual-frame` and a matching branch in the canvas wiring
+   loop in `src/main.ts`.
 5. Escape LaTeX backslashes (`\\`), keep `aria-label`s, and verify at
    `http://localhost:5173/<route>`.
+6. Check the page in the built app as well (`npm run build && npm run preview`); confirm
+   the title, description, and canonical URL update, and that unknown routes render the
+   404 page rather than the homepage.

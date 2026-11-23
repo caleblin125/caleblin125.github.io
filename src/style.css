@@ -1,6 +1,4 @@
 
-@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap");
-
 /* =========================================================
    Design Tokens
    ========================================================= */
@@ -15,7 +13,7 @@
     --text-heading: #f2ecf5;
     --text-muted: #b9acbe;
     --text-subtle: #a192a7;
-    --text-dim: #85768b;
+    --text-dim: #9a8da0;
 
     --accent: #c59ad8;
     --border: #51425a;
@@ -60,6 +58,7 @@ html {
     background: var(--bg);
     font-family: var(--font-body);
     font-synthesis: none;
+    color-scheme: dark;
 }
 
 body {
@@ -68,6 +67,34 @@ body {
 
 a {
     color: inherit;
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.skip-link {
+    position: fixed;
+    top: 12px;
+    left: var(--content-padding);
+    z-index: 10;
+    padding: 8px 12px;
+    color: var(--bg);
+    font: 0.72rem var(--font-mono);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+    background: var(--accent);
+    transform: translateY(-160%);
+}
+
+.skip-link:focus-visible {
+    transform: translateY(0);
+}
+
+main:focus {
+    outline: none;
 }
 
 #app {
@@ -117,7 +144,9 @@ nav a.active,
 footer a:hover,
 .text-link:hover,
 .project-links a:hover,
-.about-grid a:hover {
+.about-grid a:hover,
+.project-row p a:hover,
+.article p a:hover {
     color: var(--accent);
 }
 
@@ -252,6 +281,187 @@ h1 {
 }
 
 /* =========================================================
+   Nebula (homepage centerpiece)
+   ========================================================= */
+
+.nebula-frame {
+    margin: 0;
+    border: 1px solid var(--border);
+    background: var(--bg);
+}
+
+.nebula-stage {
+    position: relative;
+    min-height: 520px;
+    overflow: hidden;
+}
+
+.nebula-stage canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 520px;
+    opacity: 0;
+    cursor: crosshair;
+    touch-action: pan-y;
+    transition: opacity 700ms ease;
+}
+
+.nebula-frame.is-live .nebula-stage canvas {
+    opacity: 1;
+}
+
+.nebula-frame.is-fallback .nebula-stage canvas {
+    visibility: hidden;
+}
+
+.nebula-hud {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    left: 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    color: var(--text-dim);
+    font: 0.62rem var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.nebula-hud span:last-child {
+    text-align: right;
+}
+
+.nebula-caption {
+    position: absolute;
+    right: 18px;
+    bottom: 16px;
+    left: 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin: 0;
+    color: var(--accent);
+    font: 0.62rem var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.nebula-caption span {
+    color: var(--text-muted);
+    text-align: right;
+}
+
+.nebula-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+}
+
+.nebula-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-subtle);
+    font: 0.62rem var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.nebula-control input[type="range"] {
+    width: 64px;
+    accent-color: var(--accent);
+}
+
+.nebula-control select {
+    min-height: 26px;
+    padding: 2px 6px;
+    color: var(--text);
+    font: 0.62rem var(--font-mono);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    background: var(--bg);
+}
+
+.nebula-reseed {
+    min-height: 26px;
+    padding: 2px 8px;
+    color: var(--text);
+    font: 0.62rem var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.nebula-reseed:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.nebula-seed-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.nebula-seed {
+    color: var(--text-dim);
+    font: 0.62rem var(--font-mono);
+    letter-spacing: 0.04em;
+}
+
+.nebula-fallback {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: var(--text-muted);
+    font: 0.78rem/1.7 var(--font-mono);
+    text-align: center;
+}
+
+.nebula-frame.is-fallback .nebula-fallback {
+    display: flex;
+}
+
+.nebula-frame.is-fallback .nebula-hud,
+.nebula-frame.is-fallback .nebula-caption,
+.nebula-frame.is-fallback .nebula-controls {
+    display: none;
+}
+
+.visual-frame.is-fallback::after {
+    content: "This visualization needs WebGL2.";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: var(--text-muted);
+    font: 0.78rem/1.7 var(--font-mono);
+    text-align: center;
+}
+
+.visual-frame.is-fallback canvas,
+.visual-frame.is-fallback .visual-label {
+    visibility: hidden;
+}
+
+/* =========================================================
    Home Strip
    ========================================================= */
 
@@ -290,6 +500,93 @@ h1 {
 }
 
 /* =========================================================
+   Selected work (homepage)
+   ========================================================= */
+
+.selected-work {
+    margin-top: var(--space-3xl);
+}
+
+.section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border);
+}
+
+.section-head .kicker {
+    margin: 0;
+}
+
+.section-head .text-link {
+    margin-top: 0;
+}
+
+.work-list {
+    border-bottom: 1px solid var(--border);
+}
+
+.work-row {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) 220px;
+    gap: var(--space-md);
+    padding: 26px 0;
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+}
+
+.work-row:last-child {
+    border-bottom: 0;
+}
+
+.work-row:hover h2 {
+    color: var(--accent);
+}
+
+.work-number {
+    color: var(--accent);
+    font: 0.68rem var(--font-mono);
+    letter-spacing: 0.08em;
+}
+
+.work-row h2 {
+    margin: 0 0 8px;
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.work-row p {
+    max-width: 620px;
+    margin: 0;
+    color: #b1a4b6;
+    line-height: 1.65;
+}
+
+.work-metric {
+    text-align: right;
+}
+
+.work-metric strong {
+    display: block;
+    color: var(--text-heading);
+    font: 1.35rem/1 var(--font-mono);
+    font-weight: 500;
+}
+
+.work-metric span {
+    display: block;
+    margin-top: 6px;
+    color: var(--text-dim);
+    font: 0.62rem var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* =========================================================
    Page Intro
    ========================================================= */
 
@@ -300,6 +597,14 @@ h1 {
 
 .page-intro h1 {
     max-width: 760px;
+}
+
+.mono-note {
+    margin-top: var(--space-md);
+    color: var(--text-dim);
+    font: 0.68rem var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 /* =========================================================
@@ -347,9 +652,12 @@ h1 {
 }
 
 .project-row p a,
-.about-grid a,
+.about-grid p a,
 .article p a {
     color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 0.18em;
 }
 
 .project-links {
@@ -690,7 +998,7 @@ p.resume-note {
 }
 
 .spec-table thead th {
-    color: #666367;
+    color: var(--text-subtle);
     font: 0.68rem var(--font-mono);
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -768,6 +1076,44 @@ footer {
         min-height: 360px;
     }
 
+    .nebula-stage,
+    .nebula-stage canvas {
+        min-height: 420px;
+    }
+
+    .nebula-hud span:last-child,
+    .nebula-caption span {
+        display: none;
+    }
+
+    .nebula-controls {
+        gap: 10px 14px;
+    }
+
+    .nebula-control input[type="range"] {
+        width: 60px;
+    }
+
+    .nebula-seed-group {
+        margin-left: 0;
+    }
+
+    .work-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .work-metric {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        text-align: left;
+    }
+
+    .work-metric span {
+        margin-top: 0;
+    }
+
     .home-strip {
         grid-template-columns: 1fr;
         gap: var(--space-sm);
@@ -842,5 +1188,16 @@ footer {
 
     .footer-links {
         flex-wrap: wrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }

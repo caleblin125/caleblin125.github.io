@@ -21,6 +21,10 @@ export class BoidsRenderer {
     private lastTime = 0;
     private simulationTime = 0;
     private mouse = { x: 0, y: 0, active: false };
+    private running = false;
+    private visible = true;
+    private renderHandle = 0;
+    private readonly intersectionObserver: IntersectionObserver;
     private readonly rules: Record<Species, Rules> = {
         prey1: { separation: [35, 1, 9999, 1], alignment: [2.5, -0.5, 1, 1], cohesion: [2, -1, -9999, 0.3], mouseFollow: 0, maxSpeed: 100, acceleration: 700, constantAcceleration: 100, resistance: -3, senseRange: 70, senseAngle: Math.PI, avoidDistance: 30, maxSee: 20 },
         prey2: { separation: [0, 75, 2000, 35], alignment: [0, 4.5, 1, 1], cohesion: [-1, 1, -9999, 1000], mouseFollow: 0, maxSpeed: 200, acceleration: 1000, constantAcceleration: 300, resistance: -7, senseRange: 90, senseAngle: Math.PI, avoidDistance: 10, maxSee: 20 },
@@ -40,6 +44,7 @@ export class BoidsRenderer {
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         this.createBoids();
+        this.intersectionObserver = new IntersectionObserver(this.onIntersection, { threshold: 0.02 });
     }
 
     start(): void {
@@ -47,8 +52,36 @@ export class BoidsRenderer {
         window.addEventListener("resize", this.resize);
         this.canvas.addEventListener("pointermove", this.onPointerMove);
         this.canvas.addEventListener("pointerleave", this.onPointerLeave);
-        requestAnimationFrame(this.render);
+        this.intersectionObserver.observe(this.canvas);
+        document.addEventListener("visibilitychange", this.onVisibilityChange);
+        this.startLoop();
     }
+
+    private startLoop(): void {
+        if (this.running) return;
+        this.running = true;
+        this.lastTime = 0;
+        this.renderHandle = requestAnimationFrame(this.render);
+    }
+
+    private stopLoop(): void {
+        this.running = false;
+        if (this.renderHandle) {
+            cancelAnimationFrame(this.renderHandle);
+            this.renderHandle = 0;
+        }
+    }
+
+    private onIntersection = (entries: IntersectionObserverEntry[]): void => {
+        this.visible = entries.some((entry) => entry.isIntersecting);
+        if (this.visible && !document.hidden) this.startLoop();
+        else this.stopLoop();
+    };
+
+    private onVisibilityChange = (): void => {
+        if (document.hidden) this.stopLoop();
+        else if (this.visible) this.startLoop();
+    };
 
     private resize = (): void => {
         const pixelRatio = window.devicePixelRatio || 1;
@@ -60,6 +93,7 @@ export class BoidsRenderer {
     };
 
     private render = (time: number): void => {
+        if (!this.running) return;
         const elapsed = this.lastTime === 0 ? 0 : Math.min((time - this.lastTime) / 1000, 0.1);
         this.lastTime = time;
         this.simulationTime += elapsed;
@@ -68,7 +102,7 @@ export class BoidsRenderer {
             this.simulationTime -= 0.01;
         }
         this.draw();
-        requestAnimationFrame(this.render);
+        this.renderHandle = requestAnimationFrame(this.render);
     };
 
     private createBoids(): void {

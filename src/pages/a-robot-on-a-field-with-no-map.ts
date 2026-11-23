@@ -5,6 +5,7 @@ import type { Page } from "./types";
 export const aRobotOnAFieldWithNoMapPage: Page = {
     title: "A robot on a field with no map.",
     eyebrow: "Engineering notes / 03",
+    description: "An autonomous mecanum robot, a beacon receiver, and the ten-millisecond control loop that finds a goal on a field with no map.",
     content: `<article class="article"><p class="kicker">2026 / 11 / 22</p><h1>A robot on a field with no map.</h1><p class="lede">An autonomous mecanum robot that had to find a goal on a field it could barely see.</p>
 <p>The ECE 118 final was a different kind of limit. Team 28 — Will Langton, Preet Karia, and me — built <em>Sluggers of the Lost Goal</em>: an 11-inch mecanum cube with a double flywheel shooter and room for about fifty balls. The field is 84 × 36 inches inside two-inch border tape, with a 56-inch center spine, three cross tapes, a start zone with no tape at all, and a shooting goal at a coordinate rather than a marking. Three of four lanes hold walls that emit 1.5 kHz and 2.5 kHz infrared; the opponent carries a 2.0 kHz beacon somewhere on the far half.</p>
 <figure class="article-figure"><img src="/blog/sluggers-cad.png" alt="CAD render of the mecanum robot with its double flywheel shooter, storage box, and electronics layers." loading="lazy"><figcaption>The CAD model: mecanum base, two-layer electronics deck, angled double-flywheel shooter, and ball storage.</figcaption></figure>

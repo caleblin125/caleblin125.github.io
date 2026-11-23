@@ -6,6 +6,7 @@ import type { Page } from "./types";
 export const fpgaPage: Page = {
     title: "FPGA and digital hardware.",
     eyebrow: "Project / FPGA",
+    description: "FPGA work by Caleb Lin: a class-leading Verilog multiplier, VGA and audio interfaces, and ternary LLM inference on a Xilinx Alveo U250.",
     content: `<article class="article">
 <p class="kicker">Project / FPGA</p>
 <h1>Digital hardware, measured.</h1>
@@ -31,6 +32,9 @@ export const fpgaPage: Page = {
 <h2>Accelerator work</h2>
 <p>In the Hardware Systems Collective, I benchmarked and optimized ternary LLM inference on a Xilinx Alveo U250 FPGA and on NVIDIA Jetson edge GPUs. The work included enabling ONNX/TensorRT export of a matmul-free language model, working around CUDA Graph capture constraints, and patching fused Triton kernels with pure-PyTorch equivalents.</p>
 <p>On the FPGA side, the question was how an AI workload maps onto custom accelerator hardware; on the Jetson side, it was how the same model behaves on a power-constrained edge device. The useful output was not a single number but a comparison: CUDA Graphs, ONNX-TensorRT, and baseline execution, each with its own overheads and constraints. That is the same measurement loop as the multiplier, just at a larger scale.</p>
+
+<h2>Limitations</h2>
+<p>The 3× multiplier figure is a class comparison, not a portable benchmark; it depends on the synthesis settings and the workloads used in the course. The accelerator work is a comparison across FPGA and edge-GPU paths, not a production deployment, and the useful numbers move with the model, batch size, and toolchain version. The VGA game stores its sprite in logic rather than block RAM, so area is the constraint, and the checked-in sprite divider does not match the GIF’s intended timing.</p>
 
 <h2>What I took from it</h2>
 <p>Digital design is where the software stack becomes physical. A line of Verilog has a cost in area and timing; a kernel launch has a cost in synchronization; a benchmark only means something when the measurement is reproducible. I like working at that boundary.</p>

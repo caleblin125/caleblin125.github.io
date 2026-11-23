@@ -6,6 +6,7 @@ import type { Page } from "./types";
 export const hpcPage: Page = {
     title: "HPC and cluster tuning.",
     eyebrow: "Project / HPC",
+    description: "HPC work by Caleb Lin: Haydean cluster administration, HPL tuning to 663 GFLOPS, and competition systems including a 2× H100 cluster.",
     content: `<article class="article">
 <p class="kicker">Project / HPC</p>
 <h1>Clusters, benchmarks, and sweeps.</h1>
@@ -32,6 +33,9 @@ export const hpcPage: Page = {
 <li><strong>SCC Connect ’26</strong> — ran and tuned competition workloads on a 2× NVIDIA H100 system.</li>
 <li><strong>Single Board Cluster Competition</strong> — built and tuned a low-power cluster of 10 Raspberry Pis and a Jetson Nano.</li>
 </ul>
+
+<h2>Limitations</h2>
+<p>The 47% of peak is an HPL result for one cluster and configuration, not a general efficiency claim; a different problem size, network, or BLAS build changes the number. The competition work is team work, and the first-place finish belongs to the team. The 400 Haydean sweeps and the 10,000+ IndySCC sweeps are parameter sweeps, not independent experiments, so they show sensitivity rather than statistical significance.</p>
 
 <h2>The method</h2>
 <p>The loop is always the same: establish a baseline, change a parameter, measure, and keep the result only if it survives a rerun. That is how the HPL sweeps reached roughly 47% of peak, and how the IndySCC workloads were tuned without guessing.</p>

@@ -5,6 +5,7 @@ import type { Page } from "./types";
 export const whereTheFileMeetsTheMachinePage: Page = {
     title: "Where the file meets the machine.",
     eyebrow: "Engineering notes / 02",
+    description: "A 48 × 36 inch poster built around a printer's dot grid, its moiré limits, and the arithmetic behind every mark.",
     content: `<article class="article"><p class="kicker">2026 / 11 / 22</p><h1>Where the file meets the machine.</h1><p class="lede">A 48 × 36 inch poster built to break its printer, and the arithmetic behind every mark.</p>
 <p>The CSE 185E assignment was to make a poster about the technical limits of printing, with original artwork that demonstrates them. The poster is called <em>The Resolution Limit</em>. The artwork is a single scalar field, warped so it reads as terrain, then cut into five terraces. Each terrace spends its area on a different printing layer, so the image changes depending on how close you stand.</p>
 <figure class="article-figure"><img src="/blog/resolution-limit-poster.png" alt="Preview of the 48 by 36 inch Resolution Limit poster: a black and white warped contour artwork with colored moiré gratings." loading="lazy"><figcaption>The full poster layout. Thick index contours carry the shape at ten feet; the color and micro-patterns only show up close.</figcaption></figure>

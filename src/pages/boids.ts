@@ -7,6 +7,7 @@ import type { Page } from "./types";
 export const boidsPage: Page = {
     title: "Boids.",
     eyebrow: "Project / Boids",
+    description: "A browser reimplementation of a Java boids flocking simulation, with the three steering rules, species constants, and an interactive canvas.",
     content: `<article class="article"><p class="kicker">Project</p><h1>Boids.</h1><p class="lede">A flocking simulation from an old Java project, rewritten for the browser.</p><div class="article-visual visual-frame boids-frame"><canvas data-visualization="boids" aria-label="Interactive boids flocking simulation"></canvas><div class="visual-label">Boids </div></div><p>This is a reimplementation of <a href="${boidsUrl}">my original Boids project</a>. It uses 2 Big, 7 Predator, 450 Prey1, and 30 Prey2 boids, updated once per frame with the original pixel-space constants. The caret marks use the velocity angle, and the fading trails show their recent movement.</p>
 
 <h2>The three rules</h2>

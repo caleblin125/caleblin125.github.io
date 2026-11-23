@@ -9,6 +9,7 @@ import { fpgaPage } from "./fpga";
 import { homePage } from "./home";
 import { hpcPage } from "./hpc";
 import { mandelbrotPage } from "./mandelbrot";
+import { notFoundPage } from "./not-found";
 import { projectsPage } from "./projects";
 import { resumePage } from "./resume";
 import { seeingTheMandelbrotSetPage } from "./seeing-the-mandelbrot-set";
@@ -32,3 +33,5 @@ export const pages: Record<string, Page> = {
     "/blog/the-glove-is-the-controller": theGloveIsTheControllerPage,
     "/blog/where-the-file-meets-the-machine": whereTheFileMeetsTheMachinePage
 };
+
+export { notFoundPage };

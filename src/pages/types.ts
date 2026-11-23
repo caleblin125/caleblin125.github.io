@@ -4,5 +4,6 @@
 export type Page = {
     title: string;
     eyebrow: string;
+    description?: string;
     content: string;
 };

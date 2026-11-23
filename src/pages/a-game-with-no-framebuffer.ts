@@ -5,6 +5,7 @@ import type { Page } from "./types";
 export const aGameWithNoFramebufferPage: Page = {
     title: "A game with no framebuffer.",
     eyebrow: "Engineering notes / 05",
+    description: "An endless runner in Verilog, drawn one pixel at a time by the counters that steer the VGA beam.",
     content: `<article class="article"><p class="kicker">2026 / 11 / 22</p><h1>A game with no framebuffer.</h1><p class="lede">An endless runner in Verilog, drawn one pixel at a time by the counters that steer the beam.</p>
 <p>Lab 6 of CSE 100 put an endless runner on a Basys 3. Button C starts the world moving right to left; a yellow box jumps, a blue ball waits, a hole opens in the ground. No processor, no operating system, no frame buffer. Each pixel exists for one clock. Comparators compute its color when the monitor asks.</p>
 <p>The constraint is the design. A game normally stores a world and paints it; here the world is counters and the screen is a timing contract. The player is a rectangle at a fixed x; the world moves past it. The sprite is pixel art turned into a multiplexer tree by Python. No block RAM, no stored picture.</p>

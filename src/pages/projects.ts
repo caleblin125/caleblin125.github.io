@@ -7,6 +7,7 @@ import type { Page } from "./types";
 export const projectsPage: Page = {
     title: "Work and projects.",
     eyebrow: "Projects",
+    description: "A guided list of Caleb Lin's FPGA, HPC, graphics, AI, and research software projects, with measurements and technical write-ups.",
     content: `
             <section class="page-intro"><p class="kicker">Projects</p><h1>Work and projects.</h1><p class="lede">A guided list of the things I have been building: digital hardware, high-performance computing, interactive graphics, AI-assisted learning tools, and local research software.</p><div class="link-row"><a class="text-link" href="${githubProfileUrl}">Full GitHub profile <span>↗</span></a></div></section>
             <section class="project-list">

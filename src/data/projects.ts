@@ -77,7 +77,7 @@ export const projectEntries: ProjectEntry[] = [
         title: "FPGA and digital hardware",
         category: "Digital hardware",
         description:
-            "FPGA work by Caleb Lin: a class-leading Verilog multiplier, VGA and audio interfaces, and ternary LLM inference on a Xilinx Alveo U250.",
+            "A class-leading Verilog multiplier, VGA and audio interfaces, and ternary LLM inference on a Xilinx Alveo U250.",
         problem: "Make arithmetic and external interfaces meet timing, area, and throughput constraints in real hardware.",
         contribution: "Designed a class-leading multiplier, built VGA and audio interfaces, and benchmarked ternary inference across FPGA and edge-GPU paths.",
         period: "2025-26",
@@ -104,9 +104,9 @@ export const projectEntries: ProjectEntry[] = [
         title: "HPC and cluster tuning",
         category: "High-performance computing",
         description:
-            "HPC work by Caleb Lin: Haydean cluster administration, HPL tuning to 663 GFLOPS, and competition systems including a 2× H100 cluster.",
+            "Running and tuning Haydean, a 4-node Slurm/MPI cluster, to 663 GFLOPS on HPL, and first place at the Winter Classical Invitational on an HPE Cray system.",
         problem: "Turn a multi-node machine into a measurable system, then find the configuration that actually reaches its hardware.",
-        contribution: "Administered Haydean's Slurm/MPI stack, built OpenMPI and OpenBLAS, and automated the parameter sweeps behind the HPL result.",
+        contribution: "Administered Haydean, a 4-node Slurm/MPI cluster, built OpenMPI and OpenBLAS, and automated the parameter sweeps behind the HPL result.",
         period: "2025-26",
         technologies: ["Slurm", "MPI", "OpenMPI", "OpenBLAS", "HPL", "HPE Cray", "H100"],
         image: {
@@ -126,8 +126,8 @@ export const projectEntries: ProjectEntry[] = [
         group: "flagship",
         featured: true,
         demo: { href: "/projects/hpc#bench", label: "Benchmark explorer" },
-        metric: "663 GFLOPS",
-        metricLabel: "47% of peak"
+        metric: "1st place",
+        metricLabel: "Winter Classical, 9 teams"
     },
     {
         id: "robotics",

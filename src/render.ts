@@ -6,7 +6,7 @@ import type { Page } from "./pages/types";
 
 export const SITE_URL = "https://caleblin125.github.io";
 export const SITE_NAME = "Caleb Lin";
-export const SITE_TITLE = "Caleb Lin — Engineering and visual experiments";
+export const SITE_TITLE = "Caleb Lin — FPGA, HPC, and robotics engineering";
 export const SITE_DESCRIPTION =
     "Caleb Lin is a computer engineering and robotics student at UC Santa Cruz. He works on FPGA acceleration, high-performance computing, machine learning, robotics and state estimation, and computational visualization that makes technical results legible.";
 export const AUTHOR_DESCRIPTION =

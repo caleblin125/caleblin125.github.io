@@ -198,6 +198,37 @@ h1 {
     line-height: 1.65;
 }
 
+/* Hero highlights: the four results a skimming reader should see first. */
+.proof-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-md);
+    max-width: 490px;
+    margin: var(--space-lg) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.proof-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: var(--space-sm);
+    border-left: 1px solid var(--border);
+}
+
+.proof-list strong {
+    color: var(--text-heading);
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+.proof-list span {
+    color: var(--text-subtle);
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
 /* =========================================================
    Links
    ========================================================= */

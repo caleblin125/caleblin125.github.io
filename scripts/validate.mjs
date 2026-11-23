@@ -277,7 +277,7 @@ try {
     const titles = new Map();
     const descriptions = new Map();
     const expected = [
-        ["/", ["I build systems, then make them legible.", "Problem.", "Contribution.", "Data-center load forecasting", "Interactive lab", "Instrument", "Measure"]],
+        ["/", ["I build hardware, clusters, and robots, then measure them.", "86% of peak", "Problem.", "Contribution.", "Data-center load forecasting", "Interactive lab", "Instrument", "Measure"]],
         ["/projects", ["Work and projects.", "Flagship work", "Experiments", "Archive", "TreeSim", "SCC Connect 2026", "FPGA and digital hardware", "HPC and cluster tuning", "Robotics and state estimation", "Data-center load forecasting", "Computational visualization"]],
         ["/lab", ["Interactive laboratory.", "Nebula generator", "HPC benchmark explorer", "Beacon filter response", "Kalman filter", "Measured", "Model", "Synthetic", "Live"]],
         ["/lab/nebula", ["Nebula laboratory.", "Density", "Cloud base", "Filaments", "Shape field", "Mask", "3D volume", "999999", "prefers-reduced-motion"]],

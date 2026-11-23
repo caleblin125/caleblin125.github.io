@@ -4,7 +4,7 @@
 // previews cannot drift from the project pages.
 import { featuredProjects } from "../data/projects";
 import { defaultParameters, nebulaControls } from "../nebula/controls";
-import { githubProfileUrl } from "./constants";
+import { email, githubProfileUrl } from "./constants";
 import type { Page } from "./types";
 
 const projects = featuredProjects();
@@ -40,7 +40,7 @@ const workRows = projects
     .join("");
 
 export const homePage: Page = {
-    title: "Engineering and visual experiments.",
+    title: "FPGA, HPC, and robotics engineering.",
     eyebrow: "Caleb Lin",
     kind: "home",
     updated: "2026-11-23",
@@ -50,10 +50,16 @@ export const homePage: Page = {
     content: `
             <section class="hero-grid">
                 <div class="hero-copy">
-                    <p class="kicker">Computer engineering / robotics / HPC / ML / visualization</p>
-                    <h1>I build systems, then make them legible.</h1>
-                    <p class="lede">I’m Caleb Lin, a computer engineering and robotics student at UC Santa Cruz. I work across digital hardware and FPGA acceleration, high-performance computing, machine learning, robotics and state estimation, and computational visualization. The through-line is instrumentation: build the system, measure it, then give someone a way to see what it is doing.</p>
-                    <div class="link-row"><a class="text-link" href="#selected-work">Selected work <span>↓</span></a><a class="text-link" href="/lab">Interactive lab <span>↗</span></a><a class="text-link" href="/resume">Résumé <span>↗</span></a><a class="text-link" href="${githubProfileUrl}">GitHub <span>↗</span></a></div>
+                    <p class="kicker">Computer engineering + robotics / UC Santa Cruz / June 2027</p>
+                    <h1>I build hardware, clusters, and robots, then measure them.</h1>
+                    <p class="lede">I’m Caleb Lin, a double major in computer engineering and robotics at UC Santa Cruz. I work on FPGA acceleration, high-performance computing, and control and estimation. Every project here states what I built, what I measured, and what the number cannot tell you.</p>
+                    <ul class="proof-list" aria-label="Highlights">
+                        <li><strong>1st place</strong><span>Winter Classical Invitational, vs. 8 U.S. colleges</span></li>
+                        <li><strong>86% of peak</strong><span>4,403.6 GFLOPS HPL at SCC Connect 2026</span></li>
+                        <li><strong>3× throughput</strong><span>Top FPGA multiplier in a class of ~100</span></li>
+                        <li><strong>3.95 GPA</strong><span>Two undergraduate research labs</span></li>
+                    </ul>
+                    <div class="link-row"><a class="text-link" href="#selected-work">Selected work <span>↓</span></a><a class="text-link" href="/lab">Interactive lab <span>↗</span></a><a class="text-link" href="/resume">Résumé <span>↗</span></a><a class="text-link" href="${githubProfileUrl}">GitHub <span>↗</span></a><a class="text-link" href="mailto:${email}">Email <span>↗</span></a></div>
                 </div>
                 <div class="nebula-frame" data-nebula data-nebula-variant="home">
                     <div class="nebula-stage">
@@ -71,6 +77,10 @@ export const homePage: Page = {
                     </details>
                 </div>
             </section>
+            <section class="selected-work" id="selected-work">
+                <div class="section-head"><p class="kicker">Selected work / 05</p><a class="text-link" href="/projects">All projects <span>↗</span></a></div>
+                <div class="work-list">${workRows}</div>
+            </section>
             <section class="method-strip" aria-label="How I work">
                 <div class="method-head"><p class="kicker">Method / 04</p><p class="method-note">The same loop runs through the hardware, the clusters, and the visual work.</p></div>
                 <ol class="method-steps">
@@ -79,10 +89,6 @@ export const homePage: Page = {
                     <li><span>03</span><strong>Measure</strong><p>Run it against a baseline and keep the raw numbers.</p></li>
                     <li><span>04</span><strong>Understand</strong><p>Explain the result, including what it cannot support.</p></li>
                 </ol>
-            </section>
-            <section class="selected-work" id="selected-work">
-                <div class="section-head"><p class="kicker">Selected work / 05</p><a class="text-link" href="/projects">All projects <span>↗</span></a></div>
-                <div class="work-list">${workRows}</div>
             </section>
             <section class="home-strip">
                 <p>At the moment</p>

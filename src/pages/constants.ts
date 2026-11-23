@@ -10,6 +10,8 @@ export const resumePdfUrl = "/caleb-lin-resume.pdf";
 
 // Repositories linked from the /projects page.
 export const repos = {
+    aurora: "https://github.com/caleblin125/aurora",
+    drawingArm: "https://github.com/caleblin125/drawing-arm",
     autoSentiment: "https://github.com/caleblin125/AutoSentiment",
     cookingTutor: "https://github.com/caleblin125/CookingTutor",
     genAiTutor: "https://github.com/caleblin125/GenAI-Tutor-Bootcamp-2025",

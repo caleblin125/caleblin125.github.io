@@ -4,8 +4,10 @@
 import { aGameWithNoFramebufferPage } from "./a-game-with-no-framebuffer";
 import { aRobotOnAFieldWithNoMapPage } from "./a-robot-on-a-field-with-no-map";
 import { aboutPage } from "./about";
+import { auroraPage } from "./aurora";
 import { blogPage } from "./blog";
 import { boidsPage } from "./boids";
+import { drawingArmPage } from "./drawing-arm";
 import { forecastingPage } from "./forecasting";
 import { fpgaPage } from "./fpga";
 import { homePage } from "./home";
@@ -41,6 +43,8 @@ export const pages: Record<string, Page> = {
     "/projects/treesim": treesimPage,
     "/projects/scc-connect": sccConnectPage,
     "/projects/visualization": visualizationPage,
+    "/projects/drawing-arm": drawingArmPage,
+    "/projects/aurora": auroraPage,
     "/blog": blogPage,
     "/blog/a-game-with-no-framebuffer": aGameWithNoFramebufferPage,
     "/blog/a-robot-on-a-field-with-no-map": aRobotOnAFieldWithNoMapPage,

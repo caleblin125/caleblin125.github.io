@@ -257,7 +257,7 @@ try {
     }
 
     check(Boolean(projectData), "projects.json parses");
-    check(Array.isArray(projectData?.projects) && projectData.projects.length === 12, "projects.json lists every project");
+    check(Array.isArray(projectData?.projects) && projectData.projects.length === 14, "projects.json lists every project");
     check(projectData?.projects?.filter((project) => project.featured).length === 5, "projects.json marks five featured projects");
 
     for (const project of projectData?.projects ?? []) {
@@ -288,6 +288,8 @@ try {
         ["/projects/robotics", ["Finding a goal without a map.", "2000.33 Hz", "10 ms", "synthetic", "Sallen-Key", "Model, not a measurement", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/forecasting", ["A decade of ten-minute load.", "3% MAPE", "10% MAPE", "experimental record", "no interactive forecasting explorer", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/visualization", ["Rules made visible.", "44,200", "489", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
+        ["/projects/drawing-arm", ["A drawing stored in cams.", "8.6 s", "142 / 132 / 55 / 155 mm", "has not been printed", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
+        ["/projects/aurora", ["Northern lights, solved per ray.", "557.7 nm", "/lab/aurora/", "not a forecast", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/mandelbrot", ["Mandelbrot set."]],
         ["/projects/boids", ["Boids.", "separation"]],
         ["/blog", ["Notes.", "A game with no framebuffer."]],
@@ -394,6 +396,9 @@ try {
     check(homeMarkdown.text.includes("### [FPGA and digital hardware]"), "root Markdown renders selected work as readable rows");
     check(!homeMarkdown.text.includes("[01\n"), "root Markdown does not nest headings inside links");
 
+    const aurora = await get("/lab/aurora/");
+    check(aurora.status === 200 && aurora.text.includes("AURORA <em>BOREALIS</em>") && aurora.text.includes('href="/projects/aurora"'), "the live aurora is served at /lab/aurora/ with a link back to its write-up");
+
     const fpgaHtml = await get("/projects/fpga");
     check(fpgaHtml.text.includes('type="application/ld+json"'), "project pages carry structured data");
     check(fpgaHtml.text.includes('"@type":"CreativeWork"'), "project pages describe the work as CreativeWork");
@@ -411,7 +416,7 @@ try {
 
     const projectsHtml = await get("/projects");
     const projectImages = [...projectsHtml.text.matchAll(/<figure class="project-thumb"><img src="([^"]+)" alt="([^"]+)"/g)];
-    check(projectImages.length === 12, `every project row has a thumbnail (${projectImages.length} found)`);
+    check(projectImages.length === 14, `every project row has a thumbnail (${projectImages.length} found)`);
 
     const projectImageSources = new Set();
 

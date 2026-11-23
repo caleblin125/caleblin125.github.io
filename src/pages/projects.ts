@@ -65,9 +65,9 @@ export const projectsPage: Page = {
     kind: "index",
     section: "Projects",
     updated: "2026-11-23",
-    description: "A guided list of Caleb Lin's evolutionary simulation, FPGA, HPC and cluster competition, robotics, machine-learning, graphics, AI, and research-software projects, grouped into flagship work, experiments, and archive.",
+    description: "A guided list of Caleb Lin's evolutionary simulation, FPGA, HPC and cluster competition, robotics, mechanism design, machine-learning, real-time graphics, AI, and research-software projects, grouped into flagship work, experiments, and archive.",
     keywords: ["projects", "FPGA", "HPC", "cluster competition", "robotics", "machine learning", "graphics", "AI", "research software", "Caleb Lin"],
     content: `
-            <section class="page-intro"><p class="kicker">Projects</p><h1>Work and projects.</h1><p class="lede">A guided list of the things I have been building: digital hardware, high-performance computing and cluster competition, evolutionary simulation, robotics and state estimation, machine-learning forecasting, computational visualization, AI-assisted learning tools, and local research software. The list is grouped by scope and evidence rather than by year.</p><div class="link-row"><a class="text-link" href="${githubProfileUrl}">Full GitHub profile <span>↗</span></a><a class="text-link" href="/lab">Interactive lab <span>↗</span></a><a class="text-link" href="/lab/nebula">Nebula laboratory <span>↗</span></a></div></section>
+            <section class="page-intro"><p class="kicker">Projects</p><h1>Work and projects.</h1><p class="lede">A guided list of the things I have been building: digital hardware, high-performance computing and cluster competition, evolutionary simulation, robotics, state estimation, and mechanism design, machine-learning forecasting, real-time graphics and computational visualization, AI-assisted learning tools, and local research software. The list is grouped by scope and evidence rather than by year.</p><div class="link-row"><a class="text-link" href="${githubProfileUrl}">Full GitHub profile <span>↗</span></a><a class="text-link" href="/lab">Interactive lab <span>↗</span></a><a class="text-link" href="/lab/nebula">Nebula laboratory <span>↗</span></a></div></section>
             ${groupSections}`
 };

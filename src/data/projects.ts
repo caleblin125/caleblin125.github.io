@@ -272,8 +272,59 @@ export const projectEntries: ProjectEntry[] = [
         metricLabel: "HPL, 86.0% of peak"
     },
     {
-        id: "mandelbrot",
+        id: "drawing-arm",
         number: "08",
+        title: "Drawing arm: one motor, three joints",
+        category: "Mechanism design",
+        description:
+            "A human-like drawing automaton: a shoulder–elbow–wrist arm with all three inputs at the shoulder, driven by one motor through cams synthesized from the drawing, with planning, printable parts, and a structural check.",
+        problem: "Draw an arbitrary picture with a three-joint arm driven by a single motor, so the drawing has to be stored in the mechanism itself.",
+        contribution: "Wrote the kinematics, human-like motion planner, cam and drum synthesis, CadQuery part generator, structural check, and tkinter simulator.",
+        period: "2026",
+        technologies: ["Python", "NumPy / SciPy", "CadQuery", "kinematics", "cam synthesis", "tkinter", "3D printing"],
+        dates: { started: "2026-11-18", published: "2026-11-23" },
+        image: {
+            src: "/projects/drawing-arm.png",
+            alt: "Top and isometric views of the drawing arm: a gray cam stack beside the shoulder, blue and green arm links, lavender and teal parallelogram couplers, and an orange hand at the pen tip."
+        },
+        path: "/projects/drawing-arm",
+        titleHref: "/projects/drawing-arm",
+        links: [
+            { label: "Project page", href: "/projects/drawing-arm" },
+            { label: "GitHub", href: repos.drawingArm }
+        ],
+        keywords: ["drawing automaton", "cam synthesis", "parallelogram linkage", "inverse kinematics", "motion planning", "CadQuery", "3D printing", "mechanism design"],
+        group: "flagship"
+    },
+    {
+        id: "aurora",
+        number: "09",
+        title: "Aurora borealis",
+        category: "Computational visualization",
+        description:
+            "A real-time WebGL 2 aurora driven by a small solar-wind and substorm model, with analytically integrated curtain sheets, bloom, and a procedural night scene. It runs live in the lab.",
+        problem: "Render auroral curtains that stay sharp and alias-free in real time, and let a physically ordered space-weather model, not hand-drawn curves, decide how they move and glow.",
+        contribution: "Wrote the substorm model, the curtain-sheet solver and emission model, the bloom and scene passes, adaptive quality, and the headless capture harness.",
+        period: "2026",
+        technologies: ["WebGL2", "GLSL", "JavaScript", "procedural noise", "HDR / ACES", "headless Chrome"],
+        dates: { started: "2026-11-23", published: "2026-11-23" },
+        image: {
+            src: "/projects/aurora.jpg",
+            alt: "Green auroral curtains with faint red tops rise over a dark mountain ridge under a starfield and reflect in a rippled lake."
+        },
+        path: "/projects/aurora",
+        titleHref: "/projects/aurora",
+        links: [
+            { label: "Project page", href: "/projects/aurora" },
+            { label: "GitHub", href: repos.aurora }
+        ],
+        keywords: ["aurora borealis", "WebGL2", "GLSL", "real-time rendering", "space weather", "substorm", "procedural graphics"],
+        group: "flagship",
+        demo: { href: "/lab/aurora/", label: "Live aurora" }
+    },
+    {
+        id: "mandelbrot",
+        number: "10",
         title: "Mandelbrot drawer",
         category: "Computational visualization",
         description:
@@ -298,7 +349,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "boids",
-        number: "09",
+        number: "11",
         title: "Boids",
         category: "Computational visualization",
         description:
@@ -320,7 +371,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "autosentiment",
-        number: "10",
+        number: "12",
         title: "AutoSentiment",
         category: "Research software",
         description:
@@ -340,7 +391,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "ai-tutoring",
-        number: "11",
+        number: "13",
         title: "AI tutoring tools",
         category: "Machine learning",
         description:
@@ -362,7 +413,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "exploratory",
-        number: "12",
+        number: "14",
         title: "Exploratory systems",
         category: "Systems",
         description:

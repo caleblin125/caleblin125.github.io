@@ -27,6 +27,16 @@ const entries: LabEntry[] = [
     },
     {
         number: "02",
+        title: "Aurora borealis",
+        href: "/lab/aurora/",
+        category: "WebGL2 / space weather",
+        description:
+            "Auroral curtains solved per ray and driven by a small solar-wind and substorm model. Trigger a substorm, change turbulence and emission altitude, and drag to look around. The physics is ordered, not forecast.",
+        tag: "Live",
+        tagTone: "live"
+    },
+    {
+        number: "03",
         title: "HPC benchmark explorer",
         href: "/projects/hpc#bench",
         category: "Measured / SCC Connect 2026",
@@ -36,7 +46,7 @@ const entries: LabEntry[] = [
         tagTone: "measured"
     },
     {
-        number: "03",
+        number: "04",
         title: "Beacon filter response",
         href: "/projects/robotics#filter",
         category: "Model / Sallen-Key",
@@ -46,7 +56,7 @@ const entries: LabEntry[] = [
         tagTone: "model"
     },
     {
-        number: "04",
+        number: "05",
         title: "Kalman filter",
         href: "/projects/robotics#demo",
         category: "Synthetic / 1D tracking",
@@ -56,7 +66,7 @@ const entries: LabEntry[] = [
         tagTone: "synthetic"
     },
     {
-        number: "05",
+        number: "06",
         title: "Mandelbrot drawer",
         href: "/projects/mandelbrot",
         category: "WebGL2 / complex dynamics",
@@ -66,7 +76,7 @@ const entries: LabEntry[] = [
         tagTone: "live"
     },
     {
-        number: "06",
+        number: "07",
         title: "Boids",
         href: "/projects/boids",
         category: "WebGL2 / flocking",
@@ -99,8 +109,8 @@ export const labPage: Page = {
     section: "Lab",
     updated: "2026-11-23",
     description:
-        "Interactive experiments by Caleb Lin: a procedural nebula generator, measured HPC benchmark explorer, Sallen-Key filter model, synthetic Kalman demo, Mandelbrot drawer, and boids simulation.",
-    keywords: ["interactive lab", "WebGL", "HPC benchmarks", "Sallen-Key filter", "Kalman filter", "Mandelbrot", "boids", "Caleb Lin"],
+        "Interactive experiments by Caleb Lin: a procedural nebula generator, a real-time aurora, measured HPC benchmark explorer, Sallen-Key filter model, synthetic Kalman demo, Mandelbrot drawer, and boids simulation.",
+    keywords: ["interactive lab", "WebGL", "aurora", "HPC benchmarks", "Sallen-Key filter", "Kalman filter", "Mandelbrot", "boids", "Caleb Lin"],
     content: `
             <section class="page-intro">
                 <p class="kicker">Lab</p>

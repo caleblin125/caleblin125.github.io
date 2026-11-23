@@ -15,6 +15,7 @@ import { notFoundPage } from "./not-found";
 import { projectsPage } from "./projects";
 import { resumePage } from "./resume";
 import { roboticsPage } from "./robotics";
+import { sccConnectPage } from "./scc";
 import { seeingTheMandelbrotSetPage } from "./seeing-the-mandelbrot-set";
 import { theGloveIsTheControllerPage } from "./the-glove-is-the-controller";
 import { treesimPage } from "./treesim";
@@ -34,6 +35,7 @@ export const pages: Record<string, Page> = {
     "/projects/robotics": roboticsPage,
     "/projects/forecasting": forecastingPage,
     "/projects/treesim": treesimPage,
+    "/projects/scc-connect": sccConnectPage,
     "/projects/visualization": visualizationPage,
     "/blog": blogPage,
     "/blog/a-game-with-no-framebuffer": aGameWithNoFramebufferPage,

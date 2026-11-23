@@ -20,10 +20,10 @@ export const projectsPage: Page = {
     eyebrow: "Projects",
     kind: "index",
     section: "Projects",
-    description: "A guided list of Caleb Lin's evolutionary simulation, FPGA, HPC, robotics, machine-learning, graphics, AI, and research-software projects, with measurements and technical write-ups.",
-    keywords: ["projects", "FPGA", "HPC", "robotics", "machine learning", "graphics", "AI", "research software", "Caleb Lin"],
+    description: "A guided list of Caleb Lin's evolutionary simulation, FPGA, HPC and cluster competition, robotics, machine-learning, graphics, AI, and research-software projects, with measurements and technical write-ups.",
+    keywords: ["projects", "FPGA", "HPC", "cluster competition", "robotics", "machine learning", "graphics", "AI", "research software", "Caleb Lin"],
     content: `
-            <section class="page-intro"><p class="kicker">Projects</p><h1>Work and projects.</h1><p class="lede">A guided list of the things I have been building: digital hardware, high-performance computing, evolutionary simulation, robotics and state estimation, machine-learning forecasting, computational visualization, AI-assisted learning tools, and local research software.</p><div class="link-row"><a class="text-link" href="${githubProfileUrl}">Full GitHub profile <span>↗</span></a></div></section>
+            <section class="page-intro"><p class="kicker">Projects</p><h1>Work and projects.</h1><p class="lede">A guided list of the things I have been building: digital hardware, high-performance computing and cluster competition, evolutionary simulation, robotics and state estimation, machine-learning forecasting, computational visualization, AI-assisted learning tools, and local research software.</p><div class="link-row"><a class="text-link" href="${githubProfileUrl}">Full GitHub profile <span>↗</span></a></div></section>
             <section class="project-list">
                 ${projectRows}
             </section>`

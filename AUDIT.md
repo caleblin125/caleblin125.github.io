@@ -119,15 +119,16 @@ omits it; no page pads a section it cannot support.
 ## 4. Verification performed
 
 - `npm run build` succeeds (`tsc`, `vite build`, `generate:html`).
-- `npm run validate` passes **938 checks, 0 failures**, covering all 18 routes, the eleven
+- `npm run validate` passes **1,004 checks, 0 failures**, covering all 19 routes, the twelve
   project rows, the five homepage thumbnails, the Atom feed, `projects.json`, sitemap and
   robots, per-page feed discovery, JSON-LD, and Markdown representations.
 - Bundle after the changes: main JS ~129 kB (gzip ~44 kB), CSS ~49 kB (gzip ~12.6 kB),
   with renderers and the Kalman demo in lazy chunks. KaTeX auto-render remains the largest
   single asset at ~255 kB and is only fetched by pages that contain math.
 - Browser checks at 1440 × 900 and 390 × 844 for `/`, `/projects`, `/projects/robotics`,
-  `/projects/forecasting`, `/projects/visualization`, and `/projects/treesim`: layout,
-  thumbnails, diagrams, results, tables, and the Kalman controls all render and operate.
+  `/projects/forecasting`, `/projects/visualization`, `/projects/treesim`, and
+  `/projects/scc-connect`: layout, thumbnails, diagrams, results, tables, and the Kalman
+  controls all render and operate.
 - Generated HTML, Markdown, XML, and JSON were re-read as UTF-8 and contain the intended
   characters (`—`, `±`). PowerShell console output shows mojibake; the files do not.
 
@@ -174,6 +175,7 @@ omits it; no page pads a section it cannot support.
 - `public/projects/treesim.jpg`, `treesim-fittest.jpg`, `treesim-metrics.png` — TreeSim run output.
 - `public/projects/exploratory.svg` — title no longer claims a simulation motif.
 - `README.md` — routes, modules, machine-readable files, thumbnail constraints.
+- SCC Connect 2026 additions are listed in §9.
 
 ## 7. Recommended next steps
 
@@ -213,11 +215,77 @@ the parameter file's project notes, not re-measured for this page.
 `src/pages/treesim.ts` follows Overview, Architecture, Implementation, Results, Analysis with
 an inline SVG of the growth-and-selection loop. `src/data/projects.ts` gains the entry and
 renumbers Mandelbrot 07, Boids 08, AutoSentiment 09, AI tutoring 10, and Exploratory 11.
-TreeSimulation is removed from the Exploratory links, and that thumbnail's title no longer
-claims a simulation motif.
+(SCC Connect 2026 later took 07 and shifted these to 08–12; see §9.) TreeSimulation is
+removed from the Exploratory links, and that thumbnail's title no longer claims a simulation
+motif.
 
 Known limits are stated on the page: one seed per run, different code provenance between the
 two runs, light-catching area of 0.44 m²/m² against a real forest's 3–8, rare flat leaves,
 fixed equal-width MPI strips, and a windowed viewer exercised only headless. The generic
 build passes all simulation tests; the `-march=native` cluster build is compute-node only and
 crashes on the older login node, as the README warns.
+
+## 9. Addendum: SCC Connect 2026 page (2026-11-23)
+
+The site now documents the SCC Connect 2026 competition work as project 07 at
+`/projects/scc-connect`. Later projects were renumbered Mandelbrot 08, Boids 09, AutoSentiment
+10, AI tutoring 11, and Exploratory 12; the homepage still shows five featured projects. The
+page is an engineering record of the three graded benchmarks — CPU HPL, CPU STREAM, and NCCL
+over NVLink — on one NVIDIA LaunchPad bare-metal node, not a competition recap.
+
+**Evidence.** The page was written from the team's submitted benchmark report and its LaTeX
+sources on `scc-connect-17-gpu01` (`/home/nvidia/report`, sections `hpl.tex`, `stream.tex`,
+`nccl.tex`, `tooling.tex`, and `ai.tex`), the submitted report and per-benchmark logs under
+`/submissions/not_so_slow_slugs-benchmark-report/`, the run records and `outputs/best/*.json`
+under `~/caleb/SCC-CONNECT-2026`, the separate WRF and MFC submission trees, and the ValQyriE
+results snapshot. No number was taken from a tuner summary without a named run behind it.
+
+**Headline results.** CPU HPL 4,403.6 GFLOPS at N = 324,520 (86.0% of the 5,120 GFLOPS
+base-clock peak; mean 4,399.1 ± 3.0 over 24 large-N runs). CPU STREAM Triad 481.6 GB/s best and
+476.2 ± 1.8 GB/s mean over 28,758 validated runs (72.4% and 71.5% of the 665.6 GB/s DRAM peak).
+NCCL all_reduce 249.9 GB/s (78.4% of the 318.7 GB/s per-direction NVLink peak), with all_gather
+249.7, reduce_scatter 246.4, and broadcast 251.4 GB/s. The page pairs each best value with its
+mean and run count.
+
+**Scope and credits.** The page credits Caleb for the HPL and STREAM harnesses, the NCCL grid,
+the large-N and repeat campaigns, and most of the report; Myles Hallett for the local-AI
+appendix and the final NCCL narrative; Indira Mariya for the final NCCL tuning; and Holden
+Martinez for the ValQyriE results. Shiloh Sharmahd and Julien Lee are named as team members
+without a specific claim.
+
+**What stays separate.** WRF (298.5× on the team's Santa Cruz 3-hour case, not answer-checked;
+the submitted Derecho case is a different 24-hour forecast), MFC (artifacts and figures, no
+performance claim), ValQyriE (434.627 s single-core against 29,704.248 s for the reference
+NumPy code, 68.3×, correctness gate passing, thread sweep pending), and the local AI assistant
+(Qwen3.8-27B-FP8 with MTP2, 156 tok/s for one user on one GPU) are presented as separate
+deliverables, not as points on the three graded benchmarks. GPU HPL (69.15 TFLOPS) and GPU
+STREAM (3,446.5 GB/s) are labeled supplementary and ungraded.
+
+**No placement.** The artifacts contain no award or placement, so the page claims none. It also
+states that the SMAC3 runs are a sequential search, not independent experiments, and that best
+values are best runs paired with means.
+
+**Figures.** The page uses three real report figures — the HPL campaign scatter, the STREAM
+array-size sweep, and the 648-run NCCL grid — plus a new self-contained SVG thumbnail that plots
+the three graded results as a share of hardware peak. The figures were trimmed of surrounding
+whitespace and resized to 1,400 px wide; no data was redrawn.
+
+**Verification.** `npm run build` succeeds. `npm run validate` passes 1,004 checks across 19
+routes, including 12 project rows and 12 thumbnails; `projects.json` lists 12 projects with 5
+featured. The page was checked in the browser at 1440 × 900 and 390 × 844: the inline pipeline
+diagram scrolls inside its frame on mobile, the three figures render, the results table does
+not overflow, and the thumbnail is legible in the project index. Generated Markdown and JSON
+were read back as UTF-8.
+
+**Known limits.** One node, one event, one submission. The WRF tuning case was not
+answer-checked and differs from the submitted Derecho forecast. The ValQyriE speedup is
+single-core and was measured under shared-machine load; the thread sweep was still pending. The
+GPU benchmark numbers are supplementary. The report's own limits stand: the 1 GB huge-page
+reservation was untested, and no raw NVLink copy ceiling was measured with a separate tool.
+
+**Files changed.** `src/pages/scc.ts` (new page), `src/pages/index.ts` (route),
+`src/pages/constants.ts` (team repository), `src/data/projects.ts` (entry, metric, renumbering),
+`src/pages/projects.ts` (lede and keywords), `src/pages/hpc.ts` and `src/pages/resume.ts` (SCC
+links), `src/structured-data.ts` (`knowsAbout`), `scripts/validate.mjs` (counts and needles),
+`public/projects/scc-connect.svg`, `scc-hpl.png`, `scc-stream.png`, `scc-nccl.png`, `README.md`,
+and this file.

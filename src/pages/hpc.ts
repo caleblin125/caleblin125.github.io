@@ -79,7 +79,7 @@ ${projectHeader(
 <ul class="article-list">
 <li><strong>Winter Classical Invitational</strong> — first place against 8 other U.S. colleges on an HPE Cray cluster.</li>
 <li><strong>IndySCC</strong> — built and optimized a climate emulator, a hardware simulation, and a matrix benchmark on a custom multi-node cluster, with 10,000+ Slurm/MPI parameter sweeps.</li>
-<li><strong>SCC Connect ’26</strong> — ran and tuned competition workloads on a 2× NVIDIA H100 system.</li>
+<li><strong>SCC Connect 2026</strong> — tuned the three graded benchmarks on one 2× NVIDIA H100 LaunchPad node; see <a href="/projects/scc-connect">the project page</a>.</li>
 <li><strong>Single Board Cluster Competition</strong> — built and tuned a low-power cluster of 10 Raspberry Pis and a Jetson Nano.</li>
 </ul>
 

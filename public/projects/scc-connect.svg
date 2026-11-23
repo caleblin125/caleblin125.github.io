@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" width="480" height="320" role="img" aria-labelledby="scc-thumb-title scc-thumb-desc">
+<title id="scc-thumb-title">SCC Connect 2026 benchmark results</title>
+<desc id="scc-thumb-desc">Three bars show the graded benchmarks as a share of each hardware peak: HPL 86.0 percent at 4,403.6 GFLOPS, STREAM 72.4 percent at 481.6 GB/s, and NCCL 78.4 percent at 249.9 GB/s.</desc>
+<rect width="480" height="320" fill="#1a1320"/>
+<rect x="1" y="1" width="478" height="318" fill="none" stroke="#51425a"/>
+
+<text x="24" y="34" fill="#c59ad8" font-family="DM Mono, monospace" font-size="15" letter-spacing="2">SCC CONNECT 2026</text>
+<text x="24" y="55" fill="#9a8da0" font-family="DM Mono, monospace" font-size="9" letter-spacing="0.5">TEAM 17 / UCSC / ONE LAUNCHPAD NODE</text>
+<line x1="24" y1="68" x2="456" y2="68" stroke="#403248"/>
+
+<g font-family="DM Mono, monospace">
+  <text x="24" y="105" fill="#eee8f2" font-size="13">HPL</text>
+  <text x="24" y="119" fill="#9a8da0" font-size="8">4,403.6 GFLOPS</text>
+  <rect x="132" y="94" width="272" height="14" fill="#2a1e32"/>
+  <rect x="132" y="94" width="234" height="14" fill="#c59ad8"/>
+  <text x="414" y="105" fill="#eee8f2" font-size="11">86.0%</text>
+
+  <text x="24" y="155" fill="#eee8f2" font-size="13">STREAM</text>
+  <text x="24" y="169" fill="#9a8da0" font-size="8">481.6 GB/s</text>
+  <rect x="132" y="144" width="272" height="14" fill="#2a1e32"/>
+  <rect x="132" y="144" width="197" height="14" fill="#b48ec6"/>
+  <text x="414" y="155" fill="#eee8f2" font-size="11">72.4%</text>
+
+  <text x="24" y="205" fill="#eee8f2" font-size="13">NCCL</text>
+  <text x="24" y="219" fill="#9a8da0" font-size="8">249.9 GB/s</text>
+  <rect x="132" y="194" width="272" height="14" fill="#2a1e32"/>
+  <rect x="132" y="194" width="213" height="14" fill="#a982ba"/>
+  <text x="414" y="205" fill="#eee8f2" font-size="11">78.4%</text>
+</g>
+
+<line x1="24" y1="237" x2="404" y2="237" stroke="#51425a" stroke-width="1"/>
+<g fill="#9a8da0" font-family="DM Mono, monospace" font-size="8">
+  <text x="24" y="252">0</text>
+  <text x="404" y="252" text-anchor="end">100% OF EACH HARDWARE PEAK</text>
+</g>
+<line x1="404" y1="86" x2="404" y2="226" stroke="#51425a" stroke-dasharray="4 4"/>
+<line x1="24" y1="272" x2="456" y2="272" stroke="#403248"/>
+<text x="24" y="294" fill="#9a8da0" font-family="DM Mono, monospace" font-size="8" letter-spacing="0.4">2× XEON 6548Y+ · 1 TiB DDR5 · 2× H100 NVL</text>
+</svg>

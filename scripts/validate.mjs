@@ -218,7 +218,7 @@ try {
         }
     }
 
-    check(routes.length >= 14, `sitemap lists every indexable route (${routes.length} found)`);
+    check(routes.length >= 15, `sitemap lists every indexable route (${routes.length} found)`);
 
     const robots = await get("/robots.txt");
     check(robots.status === 200, "robots.txt is served");
@@ -257,7 +257,7 @@ try {
     }
 
     check(Boolean(projectData), "projects.json parses");
-    check(Array.isArray(projectData?.projects) && projectData.projects.length === 11, "projects.json lists every project");
+    check(Array.isArray(projectData?.projects) && projectData.projects.length === 12, "projects.json lists every project");
     check(projectData?.projects?.filter((project) => project.featured).length === 5, "projects.json marks five featured projects");
 
     for (const project of projectData?.projects ?? []) {
@@ -278,8 +278,9 @@ try {
     const descriptions = new Map();
     const expected = [
         ["/", ["I build systems, then make them legible.", "Problem.", "Contribution.", "Data-center load forecasting"]],
-        ["/projects", ["Work and projects.", "TreeSim", "Simulation", "FPGA and digital hardware", "HPC and cluster tuning", "Robotics and state estimation", "Data-center load forecasting", "Computational visualization"]],
+        ["/projects", ["Work and projects.", "TreeSim", "Simulation", "SCC Connect 2026", "FPGA and digital hardware", "HPC and cluster tuning", "Robotics and state estimation", "Data-center load forecasting", "Computational visualization"]],
         ["/projects/treesim", ["A forest that grows itself.", "51,755", "10.65 m", "6.11 million", "UPGMA", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
+        ["/projects/scc-connect", ["One node, measured.", "4,403.6", "481.6", "249.9", "86.0%", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/fpga", ["Digital hardware, measured.", "Alveo U250", "Yosys", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/hpc", ["Clusters, benchmarks, and sweeps.", "663 GFLOPS", "HPL", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/robotics", ["Finding a goal without a map.", "2000.33 Hz", "10 ms", "synthetic", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
@@ -408,7 +409,7 @@ try {
 
     const projectsHtml = await get("/projects");
     const projectImages = [...projectsHtml.text.matchAll(/<figure class="project-thumb"><img src="([^"]+)" alt="([^"]+)"/g)];
-    check(projectImages.length === 11, `every project row has a thumbnail (${projectImages.length} found)`);
+    check(projectImages.length === 12, `every project row has a thumbnail (${projectImages.length} found)`);
 
     const projectImageSources = new Set();
 

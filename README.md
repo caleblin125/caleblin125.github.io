@@ -7,7 +7,7 @@ pre-rendered to static HTML, and the client hydrates only the canvas visualizati
 route-specific metadata. It has KaTeX-rendered math and four canvas visualizations: a
 procedural seed-reproducible nebula on the homepage, Mandelbrot orbit points, a boids
 flocking simulation, and a synthetic Kalman-filter demo. It also hosts a web-readable
-résumé at `/resume`, eight project pages (FPGA, HPC, robotics, forecasting,
+résumé at `/resume`, nine project pages (FPGA, HPC, SCC Connect 2026, robotics, forecasting,
 visualization, Mandelbrot, boids, tree simulation), engineering notes, and a real 404 page.
 
 The same source also produces agent-readable representations: Markdown for every page,
@@ -68,6 +68,7 @@ as a way to learn rendering while keeping the projects visible.
 │   │   ├── forecasting.ts  # "/projects/forecasting"
 │   │   ├── visualization.ts # "/projects/visualization"
 │   │   ├── treesim.ts      # "/projects/treesim"
+│   │   ├── scc.ts          # "/projects/scc-connect" (SCC Connect 2026 benchmark work)
 │   │   ├── blog.ts         # "/blog"
 │   │   ├── a-game-with-no-framebuffer.ts       # "/blog/a-game-with-no-framebuffer"
 │   │   ├── a-robot-on-a-field-with-no-map.ts   # "/blog/a-robot-on-a-field-with-no-map"
@@ -106,7 +107,7 @@ as a way to learn rendering while keeping the projects visible.
   assembles them into the `pages` record keyed by route (`/`, `/projects`,
   `/projects/fpga`, `/projects/hpc`, `/projects/robotics`, `/projects/forecasting`,
   `/projects/visualization`, `/projects/boids`, `/projects/mandelbrot`,
-  `/projects/treesim`, `/resume`, `/blog`, `/blog/...`).
+  `/projects/treesim`, `/projects/scc-connect`, `/resume`, `/blog`, `/blog/...`).
 - **`src/data/`** is the shared source of truth for things that appear in more than one
   place. `projects.ts` supplies the project index rows, categories, problem and
   contribution text, homepage selected work, project pages' metadata, thumbnails,

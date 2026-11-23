@@ -91,7 +91,7 @@ export const resumePage: Page = {
 <ul class="article-list">
 <li><strong>FPGA hardware multiplier</strong> — top design in a class of ~100, with 3× the class-average throughput (measured with Yosys). Also built a VGA display interface and music generator.</li>
 <li><strong>Haydean 4-node cluster</strong> — administer Slurm (slurmdbd/MariaDB), NFS, and MPI; tuned HPL to ~663 GFLOPS (~47% of theoretical peak) with ~400 automated sweeps.</li>
-<li><strong>HPC competitions</strong> — first place at the Winter Classical Invitational against 8 U.S. colleges; 10,000+ Slurm/MPI parameter sweeps in IndySCC; SCC Connect ’26 on 2× NVIDIA H100.</li>
+<li><strong>HPC competitions</strong> — first place at the Winter Classical Invitational against 8 U.S. colleges; 10,000+ Slurm/MPI parameter sweeps in IndySCC; SCC Connect 2026 on one 2× NVIDIA H100 LaunchPad node.</li>
 <li><strong>Controls and estimation</strong> — EKF + RTS smoother from video, ballistic trajectory EKF, inverted pendulum simulation, and robust Sallen-Key filter design with Monte Carlo tolerance analysis.</li>
 <li><strong>Robotics and embedded</strong> — PIC32 mecanum-drive robot, STM32 sensor integration, PIC32 I2C/UART drivers, FRC autonomous and closed-loop shooter control.</li>
 </ul>

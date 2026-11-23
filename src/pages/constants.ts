@@ -17,6 +17,7 @@ export const repos = {
     hplBuilds: "https://github.com/caleblin125/HPL_Builds",
     indyScc: "https://github.com/caleblin125/IndySCC-UCSC-NSSS",
     sbcc: "https://github.com/caleblin125/sbcc-2026-UCSC",
+    sccConnect: "https://github.com/Hmartinez214/SCC-CONNECT-2026",
     treeSimulation: "https://github.com/caleblin125/TreeSimulation",
     chaosPlotter: "https://github.com/caleblin125/ChaosPlotter",
     tinyTapeoutBrainfuck: "https://github.com/caleblin125/ttsky-brainfuck",

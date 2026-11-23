@@ -223,8 +223,34 @@ export const projectEntries: ProjectEntry[] = [
         keywords: ["tree simulation", "evolutionary simulation", "C++20", "MPI", "Slurm", "procedural growth", "forest", "computational biology"]
     },
     {
-        id: "mandelbrot",
+        id: "scc-connect",
         number: "07",
+        title: "SCC Connect 2026",
+        category: "High-performance computing",
+        description:
+            "UC Santa Cruz's Not-So-Slow Slugs at SCC Connect 2026: tuning CPU HPL, CPU STREAM, and NCCL on one NVIDIA LaunchPad node, with the run logs behind each number.",
+        problem: "Reach a defensible share of one node's CPU, memory, and NVLink peaks in three graded benchmarks, and leave a record that makes each number reproducible.",
+        contribution: "Built the HPL and STREAM autotuning harnesses and the NCCL grid, ran the large-N and repeat campaigns, and wrote most of the team's benchmark report.",
+        period: "2026",
+        technologies: ["HPL", "STREAM", "NCCL", "NVLink", "SMAC3", "Intel MPI", "OpenMP", "WRF", "ValQyriE", "NVIDIA H100"],
+        dates: { started: "2026-09", measured: "2026-11", published: "2026-11-23" },
+        image: {
+            src: "/projects/scc-connect.svg",
+            alt: "Three horizontal bars showing the graded benchmarks as a share of hardware peak: HPL 86.0 percent, STREAM 72.4 percent, and NCCL 78.4 percent, over a line naming the node's 64 cores and two H100 GPUs."
+        },
+        path: "/projects/scc-connect",
+        titleHref: "/projects/scc-connect",
+        links: [
+            { label: "Project page", href: "/projects/scc-connect" },
+            { label: "Team repository", href: repos.sccConnect }
+        ],
+        keywords: ["SCC Connect", "student cluster competition", "HPL", "STREAM", "NCCL", "NVLink", "H100", "HPC benchmarking"],
+        metric: "4,403.6 GFLOPS",
+        metricLabel: "HPL, 86.0% of peak"
+    },
+    {
+        id: "mandelbrot",
+        number: "08",
         title: "Mandelbrot drawer",
         category: "Computational visualization",
         description:
@@ -247,7 +273,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "boids",
-        number: "08",
+        number: "09",
         title: "Boids",
         category: "Computational visualization",
         description:
@@ -267,7 +293,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "autosentiment",
-        number: "09",
+        number: "10",
         title: "AutoSentiment",
         category: "Research software",
         description:
@@ -286,7 +312,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "ai-tutoring",
-        number: "10",
+        number: "11",
         title: "AI tutoring tools",
         category: "Machine learning",
         description:
@@ -307,7 +333,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "exploratory",
-        number: "11",
+        number: "12",
         title: "Exploratory systems",
         category: "Systems",
         description:

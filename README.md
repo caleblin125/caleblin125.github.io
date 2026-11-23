@@ -104,3 +104,11 @@ npm run preview   # serve the built dist/ locally
   conventions for placing `<canvas>` elements and wiring visualizations.
 - Use the files in **`templates/`** as starting points for new blog posts, project pages,
   and shaders — see **`templates/README.md`** for usage.
+
+## Deployment
+
+GitHub Pages serves the built app, not the repo root. `.github/workflows/deploy.yml`
+runs on every push to `main`: it installs dependencies, runs `npm run build`, copies
+`dist/index.html` to `dist/404.html` so deep links fall back to the SPA, adds
+`.nojekyll`, and deploys `dist/` as the Pages artifact. Pages must be configured with
+**Build and deployment → Source: GitHub Actions**; nothing is committed from `dist/`.

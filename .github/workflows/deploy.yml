@@ -25,6 +25,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - run: npm run validate
       - name: Add skip Jekyll
         run: touch dist/.nojekyll
       - uses: actions/configure-pages@v5

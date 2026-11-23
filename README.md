@@ -23,6 +23,7 @@ as a way to learn rendering while keeping the projects visible.
 ├── tsconfig.json           # strict-ish TS config, bundler resolution, noEmit
 ├── _config.yml             # legacy Jekyll config (GitHub Pages theme); the site itself is the Vite app
 ├── public/                 # static assets copied verbatim into dist/
+│   ├── blog/               # post figures (poster preview/detail, robot CAD)
 │   ├── caleb-lin-resume.pdf
 │   ├── favicon.svg
 │   └── icons.svg
@@ -42,7 +43,8 @@ as a way to learn rendering while keeping the projects visible.
 │   │   ├── fpga.ts         # "/projects/fpga"
 │   │   ├── hpc.ts          # "/projects/hpc"
 │   │   ├── blog.ts         # "/blog"
-│   │   └── seeing-the-mandelbrot-set.ts  # "/blog/seeing-the-mandelbrot-set"
+│   │   ├── seeing-the-mandelbrot-set.ts        # "/blog/seeing-the-mandelbrot-set"
+│   │   └── where-the-file-meets-the-machine.ts # "/blog/where-the-file-meets-the-machine"
 │   ├── boids/              # boids flocking visualization
 │   │   ├── renderer.ts     # BoidsRenderer: CPU simulation + instanced WebGL2 chevrons + trail fade
 │   │   └── shaders/

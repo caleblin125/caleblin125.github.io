@@ -234,7 +234,21 @@ Wrap tables in a scroll container and use the shared class:
 `.spec-table` is full width (min-width 640px so it scrolls on mobile), mono uppercase
 headers in accent, body rows in muted text with `1px solid #51425a` row rules. Add the
 `wrap` class (`<table class="spec-table wrap">`) when cells contain prose rather than
-short numeric values; it lets body cells wrap instead of forcing horizontal scroll.
+short numeric values; it lets body cells wrap instead of forcing horizontal scroll, and
+below `760px` it drops the 640px minimum so the whole table fits the screen.
+
+### Figures
+
+```html
+<figure class="article-figure">
+  <img src="/blog/name.png" alt="…" loading="lazy">
+  <figcaption>What the image shows and why it matters.</figcaption>
+</figure>
+```
+
+Images live in `public/blog/` and are referenced by absolute path. `.article-figure`
+sets the vertical rhythm, a hairline border on the image, and a small mono caption in
+muted text. Keep figures to the article's 820px measure and write real `alt` text.
 
 ### Lists
 
@@ -263,6 +277,7 @@ At `max-width: 760px`:
 - `.header-note` hides; header/nav shrink.
 - Visual frames drop to `min-height: 360px` (article variant `320px`).
 - Tables rely on `.table-wrap { overflow-x: auto }` rather than resizing.
+- `.spec-table.wrap` drops its minimum width, so prose tables fit the screen.
 - `.resume-entry` collapses to one column (dates go left) and `.skill-grid` becomes one column.
 
 ---

@@ -8,8 +8,8 @@ import type { Page } from "./types";
 
 const featuredPost = postEntries.find((post) => post.id === "a-game-with-no-framebuffer");
 
-if (!featuredPost) {
-    throw new Error("The homepage selected-work list needs the VGA note");
+if (!featuredPost?.image) {
+    throw new Error("The homepage selected-work list needs the VGA note and its thumbnail");
 }
 
 const featuredWork = [
@@ -20,6 +20,7 @@ const featuredWork = [
             href: project.path ?? project.titleHref ?? "/projects",
             title: project.title,
             description: project.description,
+            image: project.image,
             metric: project.metric ?? "",
             metricLabel: project.metricLabel ?? ""
         })),
@@ -28,6 +29,7 @@ const featuredWork = [
         href: featuredPost.path,
         title: featuredPost.title.replace(/\.$/, ""),
         description: featuredPost.description,
+        image: featuredPost.image,
         metric: featuredPost.metric ?? "",
         metricLabel: featuredPost.metricLabel ?? ""
     }
@@ -36,7 +38,7 @@ const featuredWork = [
 const workRows = featuredWork
     .map(
         (work) =>
-            `<a class="work-row" href="${work.href}"><span class="work-number">${work.number}</span><div><h2>${work.title}</h2><p>${work.description}</p></div><span class="work-metric"><strong>${work.metric}</strong><span>${work.metricLabel}</span></span></a>`
+            `<a class="work-row" href="${work.href}"><span class="work-number">${work.number}</span><span class="work-thumb"><img src="${work.image.src}" alt="" loading="lazy" decoding="async"></span><div class="work-body"><h2>${work.title}</h2><p>${work.description}</p></div><span class="work-metric"><strong>${work.metric}</strong><span>${work.metricLabel}</span></span></a>`
     )
     .join("");
 

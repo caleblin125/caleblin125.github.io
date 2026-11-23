@@ -356,9 +356,40 @@ try {
     check(fpgaHtml.text.includes('type="application/ld+json"'), "project pages carry structured data");
     check(fpgaHtml.text.includes('"@type":"CreativeWork"'), "project pages describe the work as CreativeWork");
 
+    const fpgaJsonLd = parseJsonLd(fpgaHtml.text);
+    const fpgaProject = fpgaJsonLd?.["@graph"]?.find((node) => node?.["@type"] === "CreativeWork");
+    check(Boolean(fpgaProject?.image?.startsWith(`${origin}/`)), "project structured data includes an image", fpgaProject?.image ?? "missing");
+
     const postHtml = await get("/blog/a-game-with-no-framebuffer");
     check(postHtml.text.includes('"@type":"BlogPosting"'), "notes describe themselves as BlogPosting");
     check(postHtml.text.includes('"datePublished":"2026-11-22"'), "notes carry a publication date");
+    const postJsonLd = parseJsonLd(postHtml.text);
+    const postArticle = postJsonLd?.["@graph"]?.find((node) => node?.["@id"]?.endsWith("#article"));
+    check(Boolean(postArticle?.image?.startsWith(`${origin}/`)), "note structured data includes its frame", postArticle?.image ?? "missing");
+
+    const projectsHtml = await get("/projects");
+    const projectImages = [...projectsHtml.text.matchAll(/<figure class="project-thumb"><img src="([^"]+)" alt="([^"]+)"/g)];
+    check(projectImages.length === 7, `every project row has a thumbnail (${projectImages.length} found)`);
+
+    const projectImageSources = new Set();
+
+    for (const [, src, alt] of projectImages) {
+        check(!projectImageSources.has(src), `project thumbnail is unique: ${src}`);
+        projectImageSources.add(src);
+        check(alt.length >= 30, `project thumbnail has descriptive alt text: ${src}`, `found "${alt}"`);
+
+        const image = await get(src);
+        check(image.status === 200, `project thumbnail is served: ${src}`, `status ${image.status}`);
+        check(image.type.startsWith("image/"), `project thumbnail has an image content type: ${src}`, `found "${image.type}"`);
+    }
+
+    const homeImages = [...(await get("/")).text.matchAll(/<span class="work-thumb"><img src="([^"]+)"/g)];
+    check(homeImages.length === 3, `homepage selected work has a thumbnail per row (${homeImages.length} found)`);
+
+    for (const [, src] of homeImages) {
+        const image = await get(src);
+        check(image.status === 200 && image.type.startsWith("image/"), `homepage thumbnail is served: ${src}`, `status ${image.status}, type "${image.type}"`);
+    }
 
     console.log(`\n${checks} checks, ${failures.length} failure${failures.length === 1 ? "" : "s"}`);
 

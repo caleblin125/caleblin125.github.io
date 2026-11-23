@@ -106,7 +106,11 @@ turndown.addRule("workRow", {
         const metric = node.querySelector(".work-metric strong")?.textContent?.trim() ?? "";
         const metricLabel = node.querySelector(".work-metric span")?.textContent?.trim() ?? "";
         const metricLine = metric ? `\n\n**${metric}**${metricLabel ? ` ${metricLabel}` : ""}` : "";
-        return `\n\n### [${title}](${absoluteUrl(href)})\n\n${description}${metricLine}\n\n`;
+        const image = node.querySelector("img");
+        // The homepage hides the alt text because the row's own heading names the
+        // work; in the Markdown copy, use the heading as the image description.
+        const imageLine = image ? `\n\n![${title}](${absoluteUrl(image.getAttribute("src") ?? "")})` : "";
+        return `\n\n${imageLine}\n\n### [${title}](${absoluteUrl(href)})\n\n${description}${metricLine}\n\n`;
     }
 });
 

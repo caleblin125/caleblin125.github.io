@@ -102,6 +102,7 @@ export function buildJsonLd(page: Page, path: string, isNotFound: boolean): Reco
             "@type": "CreativeWork",
             name: project.title,
             description: project.description,
+            image: `${SITE_URL}${project.image.src}`,
             ...(project.path ? { url: canonicalUrl(project.path) } : project.titleHref ? { url: project.titleHref } : {})
         }));
     }
@@ -112,7 +113,8 @@ export function buildJsonLd(page: Page, path: string, isNotFound: boolean): Reco
             headline: post.title,
             description: post.description,
             datePublished: post.date,
-            url: canonicalUrl(post.path)
+            url: canonicalUrl(post.path),
+            ...(post.image ? { image: `${SITE_URL}${post.image.src}` } : {})
         }));
     }
 
@@ -124,6 +126,8 @@ export function buildJsonLd(page: Page, path: string, isNotFound: boolean): Reco
     }
 
     if (page.kind === "post") {
+        const post = postEntries.find((entry) => entry.path === path);
+
         graph.push({
             "@type": "BlogPosting",
             "@id": `${url}#article`,
@@ -136,18 +140,22 @@ export function buildJsonLd(page: Page, path: string, isNotFound: boolean): Reco
             articleSection: "Engineering notes",
             inLanguage: "en",
             isPartOf: { "@id": websiteId },
+            ...(post?.image ? { image: `${SITE_URL}${post.image.src}` } : {}),
             ...(page.date ? { datePublished: page.date, dateModified: page.updated ?? page.date } : {}),
             ...(page.keywords ? { keywords: page.keywords.join(", ") } : {})
         });
     }
 
     if (page.kind === "project") {
+        const project = projectEntries.find((entry) => entry.path === path);
+
         graph.push({
             "@type": "CreativeWork",
             "@id": `${url}#project`,
             name: page.title,
             description: page.description ?? SITE_DESCRIPTION,
             url,
+            ...(project ? { image: `${SITE_URL}${project.image.src}` } : {}),
             author: { "@id": personId },
             creator: { "@id": personId },
             inLanguage: "en",

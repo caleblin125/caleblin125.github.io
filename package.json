@@ -7,6 +7,7 @@
     "predev": "npm run generate:docs",
     "dev": "vite",
     "generate:docs": "node scripts/generate.mjs docs",
+    "generate:thumbnails": "node scripts/generate-thumbnails.mjs",
     "generate:html": "node scripts/generate.mjs html",
     "build": "tsc && vite build && npm run generate:html",
     "preview": "vite preview",

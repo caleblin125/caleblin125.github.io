@@ -96,10 +96,15 @@ as a way to learn rendering while keeping the projects visible.
   `/resume`, `/blog`, `/blog/...`).
 - **`src/data/`** is the shared source of truth for things that appear in more than one
   place. `projects.ts` supplies the project index rows, the homepage selected work, the
-  project pages' descriptions and keywords, `llms.txt`, and JSON-LD. `posts.ts` supplies
-  the note index, post front matter, dates, and per-post metadata. Edit these files first
-  when a project or post changes; do not duplicate the same sentence in a page and in the
-  generated files.
+  project pages' descriptions and keywords, thumbnails, `llms.txt`, and JSON-LD.
+  `posts.ts` supplies the note index, post front matter, dates, and per-post metadata.
+  Edit these files first when a project or post changes; do not duplicate the same
+  sentence in a page and in the generated files.
+- **Project thumbnails:** every `ProjectEntry` needs an `image: { src, alt }`. Use an
+  actual project output where one exists (`public/blog/` or `public/projects/`);
+  otherwise add a 3:2 technical SVG under `public/projects/`. Raster thumbnails are
+  480 × 320. `npm run generate:thumbnails` re-renders the Mandelbrot and Boids images
+  from the same rules as their canvases.
 - **`src/render.ts`** owns the parts that must match between the static build and the
   client: the header/nav/footer shell, canonical URL normalization (directory routes end
   in `/`), Markdown paths, and document/meta title rules. `src/main.ts` and the generator

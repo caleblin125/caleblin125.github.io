@@ -10,7 +10,7 @@ const projectRows = projectEntries
         const title = project.titleHref ? `<a href="${project.titleHref}">${project.title}</a>` : project.title;
         const links = project.links.map((link) => `<a href="${link.href}">${link.label}</a>`).join("");
 
-        return `<article class="project-row"><div class="project-number">${project.number}</div><div><h2>${title}</h2><p>${project.description}</p><div class="project-links">${links}</div><span class="tag">${project.tags}</span></div><div class="project-status">${project.period}</div></article>`;
+        return `<article class="project-row"><div class="project-number">${project.number}</div><figure class="project-thumb"><img src="${project.image.src}" alt="${project.image.alt}" loading="lazy" decoding="async"></figure><div class="project-body"><h2>${title}</h2><p>${project.description}</p><div class="project-links">${links}</div><span class="tag">${project.tags}</span></div><div class="project-status">${project.period}</div></article>`;
     })
     .join("\n                ");
 

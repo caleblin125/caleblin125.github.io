@@ -27,8 +27,9 @@ follow.
 
 1. **Add shared metadata.** For a note, add a `PostEntry` to
    `src/data/posts.ts`; for a project with its own page, add a `ProjectEntry` to
-   `src/data/projects.ts`. The indexes, homepage selected work, Markdown front matter,
-   `llms.txt`, sitemap, and JSON-LD all read from these lists.
+   `src/data/projects.ts`, including a 3:2 `image: { src, alt }` that depicts what the
+   project does. The indexes, homepage selected work, Markdown front matter, `llms.txt`,
+   sitemap, and JSON-LD all read from these lists.
 2. **Create a page module** in `src/pages/` (e.g. `src/pages/my-post.ts`) exporting a
    `Page`. Copy `blog-post.ts` or `project-page.ts` and replace the placeholders. Set
    `description`, `kind`, `section`, and (for notes) `date`; read the shared entry with

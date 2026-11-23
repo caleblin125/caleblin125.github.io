@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" width="480" height="300" role="img" aria-labelledby="title">
+  <title id="title">Four motifs for simulation, networking, ternary logic, and numeral systems</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1c1325"/>
+      <stop offset="1" stop-color="#100b16"/>
+    </linearGradient>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M30 0H0v30" fill="none" stroke="#51425a" stroke-width="0.6" opacity="0.3"/>
+    </pattern>
+  </defs>
+  <rect width="480" height="300" fill="url(#bg)"/>
+  <rect width="480" height="300" fill="url(#grid)"/>
+  <rect x="14" y="14" width="452" height="272" fill="none" stroke="#51425a" stroke-width="1" opacity="0.55"/>
+  <g stroke="#51425a" stroke-width="2" opacity="0.9">
+    <path d="M14 34V14h20M446 14h20v20M466 266v20h-20M34 286H14v-20"/>
+  </g>
+  <g stroke="#403248" stroke-width="1">
+    <line x1="240" y1="42" x2="240" y2="258"/>
+    <line x1="42" y1="150" x2="438" y2="150"/>
+  </g>
+
+  <g stroke="#c59ad8" stroke-width="2" fill="none">
+    <path d="M120 58v22M120 80l-26 22M120 80l26 22M94 102v20M94 102l-18 20M94 102l18 20M146 102v20M146 102l-18 20M146 102l18 20"/>
+  </g>
+  <g fill="#c59ad8">
+    <circle cx="120" cy="54" r="7"/>
+    <circle cx="94" cy="102" r="5"/>
+    <circle cx="146" cy="102" r="5"/>
+    <circle cx="76" cy="124" r="4"/>
+    <circle cx="112" cy="124" r="4"/>
+    <circle cx="128" cy="124" r="4"/>
+    <circle cx="164" cy="124" r="4"/>
+  </g>
+
+  <g fill="none" stroke="#86d7e8" stroke-width="2" stroke-dasharray="5 5">
+    <path d="M286 76C316 76 314 112 340 112s22-34 48-34"/>
+  </g>
+  <g>
+    <circle cx="282" cy="76" r="7" fill="#231a2c" stroke="#86d7e8" stroke-width="2"/>
+    <circle cx="340" cy="112" r="7" fill="#231a2c" stroke="#86d7e8" stroke-width="2"/>
+    <circle cx="392" cy="78" r="7" fill="#231a2c" stroke="#86d7e8" stroke-width="2"/>
+  </g>
+  <rect x="332" y="58" width="18" height="14" rx="2" fill="#86d7e8" opacity="0.85"/>
+  <path d="M372 82l16-6" stroke="#86d7e8" stroke-width="2"/>
+
+  <g fill="none" stroke="#e6a15f" stroke-width="2.5" stroke-linejoin="round">
+    <rect x="102" y="178" width="36" height="36" rx="3" transform="rotate(45 120 196)"/>
+    <rect x="106" y="182" width="28" height="28" rx="2" transform="rotate(45 120 196)" opacity="0.55"/>
+  </g>
+  <g fill="#e6a15f">
+    <circle cx="120" cy="170" r="4"/>
+    <circle cx="146" cy="196" r="4"/>
+    <circle cx="120" cy="222" r="4"/>
+    <circle cx="94" cy="196" r="4"/>
+  </g>
+
+  <g stroke="#b9acbe" stroke-width="2" opacity="0.85">
+    <line x1="300" y1="178" x2="300" y2="232"/>
+    <line x1="340" y1="178" x2="340" y2="232"/>
+    <line x1="380" y1="178" x2="380" y2="232"/>
+    <line x1="420" y1="178" x2="420" y2="232"/>
+  </g>
+  <g fill="#c59ad8">
+    <circle cx="300" cy="190" r="5"/>
+    <circle cx="300" cy="210" r="5"/>
+    <circle cx="340" cy="200" r="5"/>
+    <circle cx="340" cy="222" r="5"/>
+    <circle cx="380" cy="186" r="5"/>
+    <circle cx="380" cy="214" r="5"/>
+    <circle cx="420" cy="196" r="5"/>
+  </g>
+  <path d="M292 246h136" stroke="#51425a" stroke-width="2"/>
+</svg>

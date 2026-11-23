@@ -1,6 +1,8 @@
 // Shared note metadata. The blog index, each post's front matter, the RSS-style
 // structured data, and the machine-readable files all read from this list, so a
 // post's title, summary, and date only live in one place.
+import type { ProjectImage } from "./projects";
+
 export type PostEntry = {
     id: string;
     path: string;
@@ -12,6 +14,8 @@ export type PostEntry = {
     dateDisplay: string;
     eyebrow: string;
     keywords: string[];
+    /** Thumbnail for the homepage selected-work list and structured data. */
+    image?: ProjectImage;
     /** Set on notes that appear in the homepage selected-work list. */
     metric?: string;
     metricLabel?: string;
@@ -28,6 +32,10 @@ export const postEntries: PostEntry[] = [
         dateDisplay: "2026 / 11 / 22",
         eyebrow: "Engineering notes / 05",
         keywords: ["Verilog", "VGA", "FPGA", "endless runner", "sprite generation", "testbench"],
+        image: {
+            src: "/blog/vga-final-frame.png",
+            alt: "A 640 by 480 testbench-rendered VGA frame with a magenta border, colored sky bands, gray ground, a yellow player, and a small green slug."
+        },
         metric: "59.52 Hz",
         metricLabel: "no framebuffer"
     },

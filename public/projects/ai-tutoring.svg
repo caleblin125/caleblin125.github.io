@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" width="480" height="300" role="img" aria-labelledby="title">
+  <title id="title">A tutor dialogue with a guided sequence of steps</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1d1426"/>
+      <stop offset="1" stop-color="#100b16"/>
+    </linearGradient>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.3" fill="#7a6486" opacity="0.32"/>
+    </pattern>
+    <marker id="tip" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0 0 10 5 0 10z" fill="#86d7e8"/>
+    </marker>
+  </defs>
+  <rect width="480" height="300" fill="url(#bg)"/>
+  <rect width="480" height="300" fill="url(#dots)"/>
+  <rect x="14" y="14" width="452" height="272" fill="none" stroke="#51425a" stroke-width="1" opacity="0.55"/>
+  <g stroke="#51425a" stroke-width="2" opacity="0.9">
+    <path d="M14 34V14h20M446 14h20v20M466 266v20h-20M34 286H14v-20"/>
+  </g>
+
+  <g>
+    <path d="M56 66h206a14 14 0 0 1 14 14v82a14 14 0 0 1-14 14H96l-24 22v-22H56a14 14 0 0 1-14-14V80a14 14 0 0 1 14-14z" fill="#241a2e" stroke="#51425a" stroke-width="2"/>
+    <g fill="#b9acbe" opacity="0.7">
+      <rect x="66" y="88" width="130" height="4" rx="2"/>
+      <rect x="66" y="102" width="166" height="4" rx="2"/>
+      <rect x="66" y="116" width="98" height="4" rx="2"/>
+    </g>
+    <g fill="none" stroke="#c59ad8" stroke-width="2.5" stroke-linecap="round">
+      <path d="M66 144h64"/>
+      <path d="M66 158h96"/>
+    </g>
+    <rect x="66" y="140" width="3" height="22" fill="#c59ad8" opacity="0.55"/>
+  </g>
+
+  <g>
+    <path d="M288 118h136a12 12 0 0 1 12 12v62a12 12 0 0 1-12 12h-38v20l-22-20h-76a12 12 0 0 1-12-12v-62a12 12 0 0 1 12-12z" fill="#2a1e33" stroke="#86d7e8" stroke-width="2"/>
+    <g fill="none" stroke="#86d7e8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M312 172l12 10 24-28"/>
+    </g>
+    <g fill="#86d7e8">
+      <circle cx="374" cy="148" r="3"/>
+      <circle cx="390" cy="158" r="3"/>
+      <circle cx="406" cy="168" r="3"/>
+    </g>
+  </g>
+
+  <g fill="none" stroke="#6b5875" stroke-width="1.5" stroke-dasharray="3 7">
+    <path d="M104 222C164 222 190 246 246 246s106-26 150-42"/>
+  </g>
+  <g>
+    <circle cx="104" cy="222" r="7" fill="#231a2c" stroke="#51425a" stroke-width="1.5"/>
+    <circle cx="176" cy="231" r="7" fill="#231a2c" stroke="#51425a" stroke-width="1.5"/>
+    <circle cx="246" cy="246" r="7" fill="#c59ad8"/>
+    <circle cx="322" cy="228" r="7" fill="#231a2c" stroke="#51425a" stroke-width="1.5"/>
+    <circle cx="396" cy="204" r="7" fill="#231a2c" stroke="#86d7e8" stroke-width="1.5"/>
+  </g>
+  <line x1="404" y1="198" x2="438" y2="178" stroke="#86d7e8" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#tip)"/>
+</svg>

@@ -1,12 +1,19 @@
 // Blog post: "The glove is the controller." — two instrumented gloves driving
 // Slow Roads, plus the calibration gesture and usability harness behind them.
+import { postById } from "../data/posts";
 import type { Page } from "./types";
 
+const post = postById("the-glove-is-the-controller");
+
 export const theGloveIsTheControllerPage: Page = {
-    title: "The glove is the controller.",
-    eyebrow: "Engineering notes / 04",
-    description: "Two instrumented gloves, a 50 Hz attitude filter, and the calibration that decides which way is forward.",
-    content: `<article class="article"><p class="kicker">2026 / 11 / 22</p><h1>The glove is the controller.</h1><p class="lede">Two instrumented gloves, a 50 Hz attitude filter, and the calibration that decides which way is forward.</p>
+    title: post.title,
+    eyebrow: post.eyebrow,
+    kind: "post",
+    section: "Blog",
+    date: post.date,
+    description: post.description,
+    keywords: post.keywords,
+    content: `<article class="article"><p class="kicker">${post.dateDisplay}</p><h1>${post.title}</h1><p class="lede">Two instrumented gloves, a 50 Hz attitude filter, and the calibration that decides which way is forward.</p>
 <p>ECE 167 ends with an open project. I built a pair of gloves that drive Slow Roads, a browser driving game: roll your hands to steer, curl an index finger to accelerate or brake, tap a thumb to put the car back on the road. The game is the demo. The actual work is the agreement between the hand and the machine — what the sensors measure, what the filter believes, and what the user thinks they are doing.</p>
 
 <h2>Two gloves, five signals</h2>

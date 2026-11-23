@@ -1,12 +1,18 @@
 // HPC project page ("/projects/hpc") — Haydean cluster administration and
 // tuning, plus the UCSC HPC club's competition systems.
+import { projectById } from "../data/projects";
 import { repos } from "./constants";
 import type { Page } from "./types";
+
+const project = projectById("hpc");
 
 export const hpcPage: Page = {
     title: "HPC and cluster tuning.",
     eyebrow: "Project / HPC",
-    description: "HPC work by Caleb Lin: Haydean cluster administration, HPL tuning to 663 GFLOPS, and competition systems including a 2× H100 cluster.",
+    kind: "project",
+    section: "Projects",
+    description: project.description,
+    keywords: project.keywords,
     content: `<article class="article">
 <p class="kicker">Project / HPC</p>
 <h1>Clusters, benchmarks, and sweeps.</h1>

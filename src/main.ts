@@ -1,15 +1,14 @@
 import "./style.css";
 import "katex/dist/katex.min.css";
-import renderMathInElement from "katex/contrib/auto-render";
+import { BoidsRenderer } from "./boids/renderer";
 import { ChaosRenderer } from "./chaos/renderer";
 import { Mandelbrot } from "./chaos/mandelbrot";
-import { BoidsRenderer } from "./boids/renderer";
 import { NebulaRenderer } from "./nebula/renderer";
 import { notFoundPage, pages } from "./pages";
-import { email, githubProfileUrl, linkedinUrl } from "./pages/constants";
 import type { Page } from "./pages/types";
+import { normalizePath, pageMeta, renderPage } from "./render";
 
-const path = window.location.pathname.replace(/\/$/, "") || "/";
+const path = normalizePath(window.location.pathname);
 const knownPage = pages[path];
 const page: Page = knownPage ?? notFoundPage;
 const isNotFound = !knownPage;
@@ -19,50 +18,76 @@ if (!app) {
     throw new Error("App element not found");
 }
 
-const navItems: Record<string, string> = {
-    "/projects": "Projects",
-    "/resume": "Résumé",
-    "/about": "About",
-    "/blog": "Blog"
-};
+const meta = pageMeta(page, path, isNotFound);
+// A static host may serve a directory index through an SPA fallback. Compare
+// the route as well as the flag so a mismatched fallback page is re-rendered
+// instead of showing another route's content.
+const prerendered = app.dataset.prerendered === "true" && app.dataset.route === path;
 
-const nav = Object.entries(navItems)
-    .map(([href, label]) => {
-        const inSection = !isNotFound && (path === href || path.startsWith(`${href}/`));
-        const current = inSection ? (path === href ? ' aria-current="page"' : ' aria-current="true"') : "";
-        return `<a href="${href}"${inSection ? ` class="active"${current}` : ""}>${label}</a>`;
-    })
-    .join("");
+// Static pages arrive with the shell and content already in #app. Only the dev
+// server (and any mismatched or unmarked page) needs the client renderer.
+if (!prerendered) {
+    app.innerHTML = renderPage(page, path, isNotFound);
+}
 
-const canonicalUrl = `https://caleblin125.github.io${path === "/" ? "/" : path}`;
-const description = page.description ?? "Caleb Lin — engineering, research, and computational experiments.";
+document.title = meta.title;
+setMeta('meta[name="description"]', meta.description);
+setMeta('meta[property="og:title"]', meta.title);
+setMeta('meta[property="og:description"]', meta.description);
+setMeta('meta[property="og:type"]', meta.ogType);
+setMeta('meta[name="twitter:title"]', meta.title);
+setMeta('meta[name="twitter:description"]', meta.description);
+setMeta('meta[name="robots"]', meta.robots);
 
-document.title = `Caleb Lin — ${page.title}`;
-setMeta('meta[name="description"]', description);
-setMeta('meta[property="og:title"]', `Caleb Lin — ${page.title}`);
-setMeta('meta[property="og:description"]', description);
-setMeta('meta[property="og:url"]', canonicalUrl);
-setMeta('meta[name="twitter:title"]', `Caleb Lin — ${page.title}`);
-setMeta('meta[name="twitter:description"]', description);
-setMeta('meta[name="robots"]', isNotFound ? "noindex, nofollow" : "index, follow");
+if (isNotFound) {
+    document.querySelector('meta[property="og:url"]')?.remove();
+} else {
+    setMeta('meta[property="og:url"]', meta.canonical);
+}
 
 const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
 if (canonical) {
     if (isNotFound) {
         canonical.remove();
     } else {
-        canonical.href = canonicalUrl;
+        canonical.href = meta.canonical;
     }
 }
 
-app.innerHTML = `<header class="site-header"><a class="brand" href="/" aria-label="Caleb Lin, home">CL<span>/</span></a><nav aria-label="Primary">${nav}</nav><span class="header-note">${page.eyebrow}</span></header><main id="main" tabindex="-1">${page.content}</main><footer><span>© 2026 Caleb Lin</span><span class="footer-links"><a href="${githubProfileUrl}">GitHub ↗</a><a href="${linkedinUrl}">LinkedIn ↗</a><a href="/resume">Résumé ↗</a><a href="mailto:${email}">Say hello ↗</a></span></footer>`;
+const markdownLink = document.querySelector<HTMLLinkElement>('link[rel="alternate"][type="text/markdown"]');
+if (markdownLink) {
+    if (isNotFound) {
+        markdownLink.remove();
+    } else {
+        markdownLink.href = meta.markdown;
+    }
+}
 
-renderMathInElement(app, {
-    delimiters: [
-        { left: "$$", right: "$$", display: true },
-        { left: "$", right: "$", display: false }
-    ]
-});
+if (meta.publishedTime) {
+    let published = document.querySelector<HTMLMetaElement>('meta[property="article:published_time"]');
+
+    if (!published) {
+        published = document.createElement("meta");
+        published.setAttribute("property", "article:published_time");
+        document.head.appendChild(published);
+    }
+
+    published.content = meta.publishedTime;
+}
+
+if (!prerendered) {
+    // Static pages arrive with KaTeX already typeset, so the dev client (and a
+    // page that had to re-render) is the only place that needs the renderer.
+    // Keep it in a separate chunk instead of shipping KaTeX to every visitor.
+    void import("katex/contrib/auto-render").then(({ default: renderMathInElement }) => {
+        renderMathInElement(app, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false }
+            ]
+        });
+    });
+}
 
 for (const canvas of document.querySelectorAll<HTMLCanvasElement>("canvas[data-visualization]")) {
     const kind = canvas.dataset.visualization;

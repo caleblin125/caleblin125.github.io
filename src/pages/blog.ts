@@ -1,10 +1,22 @@
-// Blog index ("/blog") — list of posts. Add new posts as .post-row links
-// (newest first), keeping the muted "Soon" placeholder at the bottom.
+// Blog index ("/blog") — list of posts. Rows are generated from
+// src/data/posts.ts, which also supplies each post's metadata and the
+// machine-readable representations. Keep the muted "Soon" placeholder last.
+import { postEntries } from "../data/posts";
 import type { Page } from "./types";
+
+const postRows = postEntries
+    .map(
+        (post) =>
+            `<a class="post-row" href="${post.path}"><span class="post-date">${post.dateDisplay}</span><span><h2>${post.title}</h2><p>${post.description}</p></span><span class="arrow">↗</span></a>`
+    )
+    .join("");
 
 export const blogPage: Page = {
     title: "Notes.",
     eyebrow: "Blog",
+    kind: "index",
+    section: "Blog",
     description: "Engineering notes by Caleb Lin on hardware, graphics, robotics, and the measurements behind the projects.",
-    content: `<section class="page-intro"><p class="kicker">Notes</p><h1>Notes.</h1><p class="lede">Things I wrote down while trying to understand them.</p></section><section class="post-list"><a class="post-row" href="/blog/a-game-with-no-framebuffer"><span class="post-date">2026 / 11 / 22</span><span><h2>A game with no framebuffer</h2><p>An endless runner in Verilog, drawn one pixel at a time by the counters that steer the beam.</p></span><span class="arrow">↗</span></a><a class="post-row" href="/blog/the-glove-is-the-controller"><span class="post-date">2026 / 11 / 22</span><span><h2>The glove is the controller</h2><p>Two instrumented gloves, a 50 Hz attitude filter, and the calibration that decides which way is forward.</p></span><span class="arrow">↗</span></a><a class="post-row" href="/blog/a-robot-on-a-field-with-no-map"><span class="post-date">2026 / 11 / 22</span><span><h2>A robot on a field with no map</h2><p>An autonomous mecanum robot that had to find a goal on a field it could barely see.</p></span><span class="arrow">↗</span></a><a class="post-row" href="/blog/where-the-file-meets-the-machine"><span class="post-date">2026 / 11 / 22</span><span><h2>Where the file meets the machine</h2><p>A 48 × 36 inch poster built to break its printer, and the arithmetic behind every mark.</p></span><span class="arrow">↗</span></a><a class="post-row" href="/blog/seeing-the-mandelbrot-set"><span class="post-date">2026 / 08 / 20</span><span><h2>Seeing the Mandelbrot set</h2><p>What changed when I stopped drawing the set and started drawing its paths.</p></span><span class="arrow">↗</span></a><div class="post-row muted"><span class="post-date">Soon</span><span><h2>Rendering points in a fragment shader</h2><p>A note about making the GPU do the repetitive part.</p></span></div></section>`
+    keywords: ["engineering notes", "FPGA", "robotics", "graphics", "HPC", "Caleb Lin"],
+    content: `<section class="page-intro"><p class="kicker">Notes</p><h1>Notes.</h1><p class="lede">Things I wrote down while trying to understand them.</p></section><section class="post-list">${postRows}<div class="post-row muted"><span class="post-date">Soon</span><span><h2>Rendering points in a fragment shader</h2><p>A note about making the GPU do the repetitive part.</p></span></div></section>`
 };

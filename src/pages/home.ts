@@ -1,12 +1,51 @@
 // Home page ("/") — a compact intro, the procedural nebula centerpiece, a
 // selected-work list with hard numbers, and a "home strip" pointing to About.
+// The selected-work rows come from src/data so project summaries do not drift.
+import { postEntries } from "../data/posts";
+import { projectEntries } from "../data/projects";
 import { githubProfileUrl } from "./constants";
 import type { Page } from "./types";
+
+const featuredPost = postEntries.find((post) => post.id === "a-game-with-no-framebuffer");
+
+if (!featuredPost) {
+    throw new Error("The homepage selected-work list needs the VGA note");
+}
+
+const featuredWork = [
+    ...projectEntries
+        .filter((project) => project.featured)
+        .map((project) => ({
+            number: project.number,
+            href: project.path ?? project.titleHref ?? "/projects",
+            title: project.title,
+            description: project.description,
+            metric: project.metric ?? "",
+            metricLabel: project.metricLabel ?? ""
+        })),
+    {
+        number: "03",
+        href: featuredPost.path,
+        title: featuredPost.title.replace(/\.$/, ""),
+        description: featuredPost.description,
+        metric: featuredPost.metric ?? "",
+        metricLabel: featuredPost.metricLabel ?? ""
+    }
+];
+
+const workRows = featuredWork
+    .map(
+        (work) =>
+            `<a class="work-row" href="${work.href}"><span class="work-number">${work.number}</span><div><h2>${work.title}</h2><p>${work.description}</p></div><span class="work-metric"><strong>${work.metric}</strong><span>${work.metricLabel}</span></span></a>`
+    )
+    .join("");
 
 export const homePage: Page = {
     title: "Engineering and visual experiments.",
     eyebrow: "Caleb Lin",
+    kind: "home",
     description: "Caleb Lin is a computer engineering and robotics student at UC Santa Cruz. He works on FPGA acceleration, HPC clusters, control and estimation, and visual systems that make technical results legible.",
+    keywords: ["Caleb Lin", "computer engineering", "robotics", "FPGA", "HPC", "WebGL", "UC Santa Cruz"],
     content: `
             <section class="hero-grid">
                 <div class="hero-copy">
@@ -32,11 +71,7 @@ export const homePage: Page = {
             </section>
             <section class="selected-work" id="selected-work">
                 <div class="section-head"><p class="kicker">Selected work</p><a class="text-link" href="/projects">All projects <span>↗</span></a></div>
-                <div class="work-list">
-                    <a class="work-row" href="/projects/fpga"><span class="work-number">01</span><div><h2>FPGA and digital hardware</h2><p>A class-leading hardware multiplier and ternary LLM inference on a Xilinx Alveo U250.</p></div><span class="work-metric"><strong>3×</strong><span>class throughput</span></span></a>
-                    <a class="work-row" href="/projects/hpc"><span class="work-number">02</span><div><h2>HPC and cluster tuning</h2><p>HPL sweeps on a 4-node lab cluster and competition workloads on a 2× H100 system.</p></div><span class="work-metric"><strong>663 GFLOPS</strong><span>47% of peak</span></span></a>
-                    <a class="work-row" href="/blog/a-game-with-no-framebuffer"><span class="work-number">03</span><div><h2>A game with no framebuffer</h2><p>An endless runner in Verilog, drawn one pixel at a time by the counters that steer the beam.</p></div><span class="work-metric"><strong>59.52 Hz</strong><span>no framebuffer</span></span></a>
-                </div>
+                <div class="work-list">${workRows}</div>
             </section>
             <section class="home-strip">
                 <p>At the moment</p>

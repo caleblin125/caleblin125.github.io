@@ -1,4 +1,5 @@
-// Barrel file: assembles the `pages` record used by src/main.ts.
+// Barrel file: assembles the `pages` record used by the client and the
+// static generator in scripts/generate-site.ts.
 // Add new routes here after creating their page file in this folder.
 import { aGameWithNoFramebufferPage } from "./a-game-with-no-framebuffer";
 import { aRobotOnAFieldWithNoMapPage } from "./a-robot-on-a-field-with-no-map";

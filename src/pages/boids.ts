@@ -1,13 +1,19 @@
 // Boids project page ("/projects/boids") — flocking write-up with the
 // interactive boids canvas, the three-rules SVG diagram, KaTeX force
 // equations, and the species constant / interaction tables.
+import { projectById } from "../data/projects";
 import { boidsUrl } from "./constants";
 import type { Page } from "./types";
+
+const project = projectById("boids");
 
 export const boidsPage: Page = {
     title: "Boids.",
     eyebrow: "Project / Boids",
-    description: "A browser reimplementation of a Java boids flocking simulation, with the three steering rules, species constants, and an interactive canvas.",
+    kind: "project",
+    section: "Projects",
+    description: project.description,
+    keywords: project.keywords,
     content: `<article class="article"><p class="kicker">Project</p><h1>Boids.</h1><p class="lede">A flocking simulation from an old Java project, rewritten for the browser.</p><div class="article-visual visual-frame boids-frame"><canvas data-visualization="boids" aria-label="Interactive boids flocking simulation"></canvas><div class="visual-label">Boids </div></div><p>This is a reimplementation of <a href="${boidsUrl}">my original Boids project</a>. It uses 2 Big, 7 Predator, 450 Prey1, and 30 Prey2 boids, updated once per frame with the original pixel-space constants. The caret marks use the velocity angle, and the fading trails show their recent movement.</p>
 
 <h2>The three rules</h2>

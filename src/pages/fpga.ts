@@ -1,12 +1,18 @@
 // FPGA project page ("/projects/fpga") — Verilog work, from a class-leading
 // hardware multiplier to accelerator benchmarking on a Xilinx Alveo U250.
+import { projectById } from "../data/projects";
 import { githubProfileUrl } from "./constants";
 import type { Page } from "./types";
+
+const project = projectById("fpga");
 
 export const fpgaPage: Page = {
     title: "FPGA and digital hardware.",
     eyebrow: "Project / FPGA",
-    description: "FPGA work by Caleb Lin: a class-leading Verilog multiplier, VGA and audio interfaces, and ternary LLM inference on a Xilinx Alveo U250.",
+    kind: "project",
+    section: "Projects",
+    description: project.description,
+    keywords: project.keywords,
     content: `<article class="article">
 <p class="kicker">Project / FPGA</p>
 <h1>Digital hardware, measured.</h1>

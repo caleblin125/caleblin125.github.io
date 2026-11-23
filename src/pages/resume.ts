@@ -6,7 +6,10 @@ import type { Page } from "./types";
 export const resumePage: Page = {
     title: "Résumé.",
     eyebrow: "Résumé",
+    kind: "profile",
+    section: "Résumé",
     description: "Caleb Lin's résumé: computer engineering and robotics at UC Santa Cruz, with FPGA, HPC, control, and software work.",
+    keywords: ["Caleb Lin", "résumé", "computer engineering", "robotics", "FPGA", "HPC", "UC Santa Cruz"],
     content: `<article class="article resume">
 <p class="kicker">Résumé</p>
 <h1>Caleb Lin.</h1>

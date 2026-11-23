@@ -1,5 +1,6 @@
 // Barrel file: assembles the `pages` record used by src/main.ts.
 // Add new routes here after creating their page file in this folder.
+import { aGameWithNoFramebufferPage } from "./a-game-with-no-framebuffer";
 import { aRobotOnAFieldWithNoMapPage } from "./a-robot-on-a-field-with-no-map";
 import { aboutPage } from "./about";
 import { blogPage } from "./blog";
@@ -25,6 +26,7 @@ export const pages: Record<string, Page> = {
     "/projects/fpga": fpgaPage,
     "/projects/hpc": hpcPage,
     "/blog": blogPage,
+    "/blog/a-game-with-no-framebuffer": aGameWithNoFramebufferPage,
     "/blog/a-robot-on-a-field-with-no-map": aRobotOnAFieldWithNoMapPage,
     "/blog/seeing-the-mandelbrot-set": seeingTheMandelbrotSetPage,
     "/blog/the-glove-is-the-controller": theGloveIsTheControllerPage,

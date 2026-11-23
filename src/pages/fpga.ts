@@ -26,7 +26,7 @@ export const fpgaPage: Page = {
 <p>That project made the trade-offs concrete: pipeline depth, adder structure, and the cost of widening a datapath all show up in the synthesis result. It also made benchmarking a habit rather than an afterthought.</p>
 
 <h2>Interfaces: VGA and audio</h2>
-<p>The same FPGA work extended into interfaces: a VGA display interface and a music generator that produces audio from hardware. Those projects were less about a single metric and more about making a digital design meet a real external timing contract.</p>
+<p>The same FPGA work extended into interfaces: a VGA display interface and a music generator that produces audio from hardware. Those projects were less about a single metric and more about making a digital design meet a real external timing contract. The VGA game from that lab is written up in <a href="/blog/a-game-with-no-framebuffer">A game with no framebuffer</a>.</p>
 
 <h2>Accelerator work</h2>
 <p>In the Hardware Systems Collective, I benchmarked and optimized ternary LLM inference on a Xilinx Alveo U250 FPGA and on NVIDIA Jetson edge GPUs. The work included enabling ONNX/TensorRT export of a matmul-free language model, working around CUDA Graph capture constraints, and patching fused Triton kernels with pure-PyTorch equivalents.</p>

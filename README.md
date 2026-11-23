@@ -43,6 +43,7 @@ as a way to learn rendering while keeping the projects visible.
 │   │   ├── fpga.ts         # "/projects/fpga"
 │   │   ├── hpc.ts          # "/projects/hpc"
 │   │   ├── blog.ts         # "/blog"
+│   │   ├── a-robot-on-a-field-with-no-map.ts   # "/blog/a-robot-on-a-field-with-no-map"
 │   │   ├── seeing-the-mandelbrot-set.ts        # "/blog/seeing-the-mandelbrot-set"
 │   │   ├── the-glove-is-the-controller.ts      # "/blog/the-glove-is-the-controller"
 │   │   └── where-the-file-meets-the-machine.ts # "/blog/where-the-file-meets-the-machine"

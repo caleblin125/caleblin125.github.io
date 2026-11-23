@@ -4,7 +4,8 @@ A personal website and portfolio for Caleb Lin: an engineering / graphics / HPC-
 homepage built around interactive **WebGL2** visual experiments. The site is a Vite +
 TypeScript single-page app that renders its content from an in-code page table, with
 KaTeX-rendered math and two canvas visualizations (Mandelbrot orbit points and a boids
-flocking simulation).
+flocking simulation). It also hosts a web-readable résumé at `/resume` and dedicated
+FPGA and HPC project pages.
 
 ## Purpose
 
@@ -22,11 +23,26 @@ as a way to learn rendering while keeping the projects visible.
 ├── tsconfig.json           # strict-ish TS config, bundler resolution, noEmit
 ├── _config.yml             # legacy Jekyll config (GitHub Pages theme); the site itself is the Vite app
 ├── public/                 # static assets copied verbatim into dist/
+│   ├── caleb-lin-resume.pdf
 │   ├── favicon.svg
 │   └── icons.svg
 ├── src/
-│   ├── main.ts             # SPA shell: page table, header/footer, routing, KaTeX init, canvas wiring
+│   ├── main.ts             # SPA shell: routing, header/footer, KaTeX init, canvas wiring
 │   ├── style.css           # all site styling: design tokens, layout, article, tables, diagrams
+│   ├── pages/              # one file per page; assembled into the `pages` record by index.ts
+│   │   ├── index.ts        # barrel: maps routes to the page modules below
+│   │   ├── types.ts        # the shared `Page` type ({ title, eyebrow, content })
+│   │   ├── constants.ts    # shared URL constants used inside content strings
+│   │   ├── home.ts         # "/"
+│   │   ├── projects.ts     # "/projects"
+│   │   ├── resume.ts       # "/resume" (web version + PDF download)
+│   │   ├── about.ts        # "/about"
+│   │   ├── mandelbrot.ts   # "/projects/mandelbrot"
+│   │   ├── boids.ts        # "/projects/boids"
+│   │   ├── fpga.ts         # "/projects/fpga"
+│   │   ├── hpc.ts          # "/projects/hpc"
+│   │   ├── blog.ts         # "/blog"
+│   │   └── seeing-the-mandelbrot-set.ts  # "/blog/seeing-the-mandelbrot-set"
 │   ├── boids/              # boids flocking visualization
 │   │   ├── renderer.ts     # BoidsRenderer: CPU simulation + instanced WebGL2 chevrons + trail fade
 │   │   └── shaders/
@@ -47,12 +63,18 @@ as a way to learn rendering while keeping the projects visible.
 
 ## How the app is put together
 
-- **`src/main.ts`** holds a `pages` record mapping routes (`/`, `/projects`, `/projects/boids`,
-  `/projects/mandelbrot`, `/blog`, `/blog/...`) to `{ title, eyebrow, content }`. The current
-  route's content is injected into `#app`, KaTeX auto-renders `$...$` / `$$...$$` math, and
-  every `canvas[data-visualization]` on the page is handed to its renderer:
+- **`src/pages/`** holds one module per page, each exporting a `Page`
+  (`{ title, eyebrow, content }`). `src/pages/index.ts` assembles them into the
+  `pages` record keyed by route (`/`, `/projects`, `/projects/fpga`,
+  `/projects/hpc`, `/projects/boids`, `/projects/mandelbrot`, `/resume`,
+  `/blog`, `/blog/...`).
+- **`src/main.ts`** imports that record, injects the current route's content into
+  `#app`, KaTeX auto-renders `$...$` / `$$...$$` math, and hands every
+  `canvas[data-visualization]` on the page to its renderer:
   - `data-visualization="boids"` → `new BoidsRenderer(canvas)`
   - anything else (currently `"mandelbrot"`) → `new ChaosRenderer(canvas, new Mandelbrot())`
+  To add a page: create a file in `src/pages/` and register it in
+  `src/pages/index.ts` — the shell and routing need no changes.
 - **Renderers** (`src/boids/renderer.ts`, `src/chaos/renderer.ts`) follow a common shape:
   grab a `webgl2` context (boids uses `{ preserveDrawingBuffer: true }` for trail persistence),
   compile shaders imported via Vite's `?raw` suffix, listen for `resize` (respecting

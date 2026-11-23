@@ -10,28 +10,43 @@ follow.
 
 | File | Use it for |
 |---|---|
-| `blog-post.html` | A blog index row + a blog article page (`/blog/...`). |
-| `project-page.html` | A project index row + a project article page (`/projects/...`). |
+| `blog-post.ts` | **TypeScript** page entry for a blog article (`/blog/...`) — the exact `{ title, eyebrow, content }` shape used by `src/main.ts`'s `pages` record. |
+| `project-page.ts` | **TypeScript** page entry for a project article (`/projects/...`) — same shape, with the canvas pattern, tables, and SVG diagram included. |
+| `blog-post.html` | Human-readable HTML skeleton of a blog article + blog index row. |
+| `project-page.html` | Human-readable HTML skeleton of a project article + project index row. |
 | `shaders/fragment.glsl` | A new WebGL2 fragment shader. |
 | `shaders/vertex.glsl` | A new WebGL2 vertex shader. |
 
+> **Which one to use?** The `.ts` files are the practical templates — their exported
+> objects are shape-compatible with the `pages` record in `src/main.ts`, so you can
+> copy the object straight in (or import it if you keep the file inside `src/`).
+> The `.html` files are the annotated reference versions of the same structure,
+> useful when you want to see every section explained inline with the markup.
+
 ## Adding a page (blog or project) — step by step
 
-1. **Open `src/main.ts`** and find the `pages` record (a plain object mapping
-   routes to `{ title, eyebrow, content }`).
-2. **Add a new entry**, e.g.:
+1. **Create a page module** in `src/pages/` (e.g. `src/pages/my-post.ts`)
+   exporting a `Page` object — the same `{ title, eyebrow, content }` shape
+   used by every existing page file.
+2. **Register it in `src/pages/index.ts`** under its route key, e.g.:
    ```ts
-   "/blog/my-new-post": {
-       title: "My new post.",
-       eyebrow: "Blog",
-       content: `<article class="article">…</article>`,
-   },
+   "/blog/my-new-post": myPostPage,
+   ```
+   (or `"/projects/my-project": myProjectPage`). The shell and routing in
+   `src/main.ts` need no changes.
+   The `.ts` templates (`blog-post.ts`, `project-page.ts`) export ready-made
+   objects — paste the object body into your new page file, or import it
+   directly into the barrel:
+   ```ts
+   import { blogPostPage } from "../templates/blog-post";
+   // in the pages record:
+   "/blog/my-new-post": blogPostPage,
    ```
 3. **Copy the `<article>` block** from the matching template into the `content`
    template literal, then replace the placeholder text.
 4. **If the page needs a canvas**, keep the `.visual-frame` + `<canvas
    data-visualization="...">` + `.visual-label` block, and add a branch in the
-   wiring loop at the bottom of `main.ts`:
+   wiring loop in `src/main.ts`:
    ```ts
    for (const canvas of document.querySelectorAll("canvas[data-visualization]")) {
        if (canvas.dataset.visualization === "my-viz") {
@@ -46,8 +61,9 @@ follow.
    Note the loop currently treats anything that is not `"boids"` as mandelbrot —
    extend it explicitly once you add a third visualization.
 5. **Index rows** (the `.post-row` / `.project-row` blocks at the top of each
-   template) go into the `content` of `/blog` or `/projects` respectively,
-   inside their existing `<section class="post-list">` / `.project-list`.
+   template) go into the `content` of `src/pages/blog.ts` / `src/pages/projects.ts`
+   respectively, inside their existing `<section class="post-list">` /
+   `.project-list`.
 6. **Verify** at `http://localhost:5173/<route>` after `npm run dev`.
 
 ### Escape rules for `content` strings

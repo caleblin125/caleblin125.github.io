@@ -43,9 +43,10 @@ component rules).
 
 ## 2. Page anatomy
 
-Every page is a value in the `pages` record in `src/main.ts`. The shell
+Every page is a module in `src/pages/` exporting a `Page` value; the `pages`
+record mapping routes to those modules lives in `src/pages/index.ts`. The shell
 (header/nav/footer) is rendered once by `main.ts`; the page contributes only its
-`content` string.
+`content`.
 
 ### Common elements
 
@@ -94,6 +95,28 @@ Every page is a value in the `pages` record in `src/main.ts`. The shell
   …
 </section>
 ```
+
+### Résumé page (`/resume`)
+
+```
+<article class="article resume">
+  <p class="kicker">Résumé</p><h1>Caleb Lin.</h1><p class="lede">…</p>
+  <div class="resume-contact">…email / LinkedIn / GitHub / location…</div>
+  <div class="link-row"><a class="text-link" href="/caleb-lin-resume.pdf">Download PDF ↗</a></div>
+  <section class="resume-section">
+    <h2>Education</h2>
+    <div class="resume-entry"><div><h3>…</h3><p class="resume-sub">…</p></div>
+         <div class="resume-date">Expected June 2027</div></div>
+    <p class="resume-note">GPA …</p>
+    <ul class="article-list"><li>…</li></ul>
+  </section>
+  <section class="resume-section"><h2>Skills</h2>
+    <div class="skill-grid"><div><span class="skill-label">Languages</span><p>…</p></div>…</div>
+  </section>
+</article>
+```
+
+The downloadable PDF lives at `public/caleb-lin-resume.pdf` and is served from `/caleb-lin-resume.pdf`.
 
 ### Article pages (`/projects/*`, `/blog/*`)
 
@@ -192,8 +215,8 @@ Use:
 - `$…$` inline in paragraphs.
 
 **Important:** page content strings are JS template literals, so backslashes must be
-escaped — write `\\text{sep}` in `main.ts` (renders as `\text{sep}`). See
-`src/main.ts` `/projects/boids` for examples.
+escaped — write `\\text{sep}` in the page module (renders as `\text{sep}`). See
+`src/pages/boids.ts` for examples.
 
 ### Tables
 
@@ -209,7 +232,17 @@ Wrap tables in a scroll container and use the shared class:
 ```
 
 `.spec-table` is full width (min-width 640px so it scrolls on mobile), mono uppercase
-headers in accent, body rows in muted text with `1px solid #51425a` row rules.
+headers in accent, body rows in muted text with `1px solid #51425a` row rules. Add the
+`wrap` class (`<table class="spec-table wrap">`) when cells contain prose rather than
+short numeric values; it lets body cells wrap instead of forcing horizontal scroll.
+
+### Lists
+
+Use `<ul class="article-list">` for bulleted content on article and résumé pages. It sets the muted body color, line height, and accent-colored markers. Avoid a bare `<ul>` — the base stylesheet does not reset its spacing or color.
+
+### Résumé
+
+The `/resume` page uses `.resume`, `.resume-section`, `.resume-entry`, `.resume-sub`, `.resume-date`, `.resume-note`, `.resume-contact`, `.skill-grid`, and `.skill-label`. Section headings are small mono uppercase, entries are a two-column grid, and the skill grid is two columns; both collapse to one column at `760px`.
 
 ### Vector diagrams (SVG)
 
@@ -230,16 +263,21 @@ At `max-width: 760px`:
 - `.header-note` hides; header/nav shrink.
 - Visual frames drop to `min-height: 360px` (article variant `320px`).
 - Tables rely on `.table-wrap { overflow-x: auto }` rather than resizing.
+- `.resume-entry` collapses to one column (dates go left) and `.skill-grid` becomes one column.
 
 ---
 
 ## 6. Adding a new page — quick checklist
 
-1. Add an entry to the `pages` record in `src/main.ts` keyed by route
-   (`{ title, eyebrow, content }`); the fallback is the home page.
-2. Write the `content` string as an `<article class="article">` (or a `page-intro` +
-   list section for index pages). Use the templates in `templates/`.
-3. If the page has a visualization, add a `<canvas data-visualization="…">` inside a
-   `.visual-frame` and a matching branch in the canvas wiring loop.
-4. Escape LaTeX backslashes (`\\`), keep `aria-label`s, and verify at
+1. Create a page module in `src/pages/` (e.g. `my-page.ts`) exporting a `Page`
+   `{ title, eyebrow, content }` — copy an existing page file or use the
+   templates in `templates/`.
+2. Register it in `src/pages/index.ts` under its route key (e.g.
+   `"/projects/my-page": myPage`). The shell, routing, and fallback in
+   `src/main.ts` need no changes.
+3. Write the `content` string as an `<article class="article">` (or a
+   `page-intro` + list section for index pages).
+4. If the page has a visualization, add a `<canvas data-visualization="…">` inside a
+   `.visual-frame` and a matching branch in the canvas wiring loop in `src/main.ts`.
+5. Escape LaTeX backslashes (`\\`), keep `aria-label`s, and verify at
    `http://localhost:5173/<route>`.

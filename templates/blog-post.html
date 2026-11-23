@@ -3,16 +3,11 @@
   ============================================================================
   BLOG POST SUBPAGE TEMPLATE
   ============================================================================
-  Copy this whole file's <article> block into src/main.ts as the `content`
-  value of a new entry in the `pages` record, e.g.:
+  Copy this whole file's <article> block into a page module in src/pages/,
+  which exports a `Page` and is registered in src/pages/index.ts. Also add the
+  post's metadata to src/data/posts.ts first.
 
-      "/blog/my-new-post": {
-          title: "My new post.",
-          eyebrow: "Blog",
-          content: `<article class="article"> …paste here… </article>`
-      }
-
-  IMPORTANT — the content string in main.ts is a JS *template literal*
+  IMPORTANT — the content string in a page module is a JS *template literal*
   (backticks), so:
 
     • Escape backticks     `  →  \`
@@ -39,11 +34,11 @@
 <body>
 
 <!-- =========================================================================
-     A) BLOG INDEX ENTRY (add a row to the /blog page's .post-list)
+     A) BLOG INDEX ENTRY (generated — shown for reference)
      =========================================================================
-     This block is pasted inside the existing `<section class="post-list">`
-     of the "/blog" page, AFTER the most recent post so the list stays newest
-     first. Each row is a link to the new article route. -->
+     The "/blog" page builds rows from src/data/posts.ts, newest first. Add a
+     PostEntry there; do not paste this row into the page. This is the markup
+     the generator produces. -->
 <a class="post-row" href="/blog/my-new-post">
   <!-- Post date: mono label, uppercase styling comes from .post-date -->
   <span class="post-date">2026 / 08 / 21</span>

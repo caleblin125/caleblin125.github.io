@@ -3,16 +3,11 @@
   ============================================================================
   PROJECT SUBPAGE TEMPLATE
   ============================================================================
-  Copy this whole file's <article> block into src/main.ts as the `content`
-  value of a new entry in the `pages` record, e.g.:
+  Copy this whole file's <article> block into a page module in src/pages/,
+  which exports a `Page` and is registered in src/pages/index.ts. Also add the
+  project's metadata to src/data/projects.ts first.
 
-      "/projects/my-project": {
-          title: "My project.",
-          eyebrow: "Project / My project",
-          content: `<article class="article"> …paste here… </article>`
-      }
-
-  IMPORTANT — the content string in main.ts is a JS *template literal*
+  IMPORTANT — the content string in a page module is a JS *template literal*
   (backticks), so:
 
     • Escape backticks     `  →  \`
@@ -35,11 +30,11 @@
 <body>
 
 <!-- =========================================================================
-     PROJECT INDEX ENTRY (add a row to the /projects page's .project-list)
+     PROJECT INDEX ENTRY (generated — shown for reference)
      =========================================================================
-     This block is pasted inside the existing `<section class="project-list">`
-     of the "/projects" page. Keep the numbering sequential (next number =
-     current count + 1; boids is 02, mandelbrot is 01). -->
+     The "/projects" page builds rows from src/data/projects.ts in list order.
+     Add a ProjectEntry there; do not paste this row into the page. This is the
+     markup the generator produces. -->
 <article class="project-row">
   <!-- Sequential project number -->
   <div class="project-number">03</div>

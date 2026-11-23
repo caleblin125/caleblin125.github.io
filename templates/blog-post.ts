@@ -6,21 +6,34 @@
 // the site actually uses: every page lives in src/pages/ as a module exporting
 // a `Page`-shaped object, and src/pages/index.ts maps routes to those modules.
 //
-//     type Page = { title: string; eyebrow: string; content: string };
+//     type Page = {
+//         title: string; eyebrow: string; description?: string;
+//         content: string; kind?: "post"; date?: string; keywords?: string[];
+//         section?: string;
+//     };
 //
 // so a completed page module looks like:
 //
 //     // src/pages/my-new-post.ts
-//     export const myNewPostPage = {
-//         title: "My new post.",
-//         eyebrow: "Blog",
+//     import { postById } from "../data/posts";
+//     const post = postById("my-new-post");
+//
+//     export const myNewPostPage: Page = {
+//         title: post.title,
+//         eyebrow: post.eyebrow,
+//         kind: "post",
+//         section: "Blog",
+//         date: post.date,
+//         description: post.description,
+//         keywords: post.keywords,
 //         content: `<article class="article">…</article>`,
 //     };
 //
 // ----------------------------------------------------------------------------
 // HOW TO USE
-//   1. Copy this file into src/pages/<slug>.ts and replace every placeholder.
-//   2. Register the export in src/pages/index.ts:
+//   1. Add a PostEntry to src/data/posts.ts (title, summary, date, keywords).
+//   2. Copy this file into src/pages/<slug>.ts and replace every placeholder.
+//   3. Register the export in src/pages/index.ts:
 //
 //          import { myNewPostPage } from "./my-new-post";
 //          // in the `pages` record:
@@ -28,8 +41,7 @@
 //
 //      (templates/ as it ships is outside src/, so tsc/Vite ignore it —
 //      copying the file into src/pages/ is the intended flow.)
-//   3. Add a matching `.post-row` link to the "/blog" page's `.post-list`
-//      (src/pages/blog.ts — see the commented snippet at the bottom of this file).
+//   4. The blog index row is generated from src/data/posts.ts. Do not add it by hand.
 //
 // ESCAPING (why the doubled backslashes)
 //   The content value is a JS *template literal* (backticks), so:
@@ -41,12 +53,21 @@
 // STYLING REFERENCE: STYLE.md §2 (page anatomy) and §4 (content components).
 // ============================================================================
 
-export const blogPostPage = {
+import type { Page } from "./types";
+
+export const blogPostPage: Page = {
     // Shown in the browser tab and used for the <title>; end with a period.
     title: "My new post.",
 
     // Small mono label in the site header (see .header-note in style.css).
     eyebrow: "Blog",
+
+    // Required for the static metadata, Markdown front matter, and JSON-LD.
+    kind: "post",
+    section: "Blog",
+    date: "2026-08-21",
+    description: "One sentence used for the meta description, Open Graph, and Markdown front matter.",
+    keywords: ["topic", "method", "result"],
 
     // The whole page body. One <article class="article"> so the shared
     // article typography (max-width 820px, h1/h2/h3, .lede, .math-display)
@@ -94,11 +115,11 @@ export const blogPostPage = {
 };
 
 // ----------------------------------------------------------------------------
-// BLOG INDEX ROW (optional second part)
+// BLOG INDEX ROW (generated — do not paste by hand)
 // ----------------------------------------------------------------------------
-// Add one of these inside the "/blog" page's `<section class="post-list">`,
-// AFTER the most recent post so the list stays newest first. This is HTML,
-// pasted into the "/blog" entry's content string, not code:
+// The "/blog" page builds its rows from src/data/posts.ts. Add the PostEntry
+// there and the index, sitemap, llms.txt, and Markdown front matter follow.
+// The generated row looks like:
 //
 //     <a class="post-row" href="/blog/my-new-post">
 //         <span class="post-date">2026 / 08 / 21</span>

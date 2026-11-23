@@ -2,11 +2,16 @@
 
 A personal website and portfolio for Caleb Lin: an engineering / graphics / HPC-focused
 homepage built around interactive **WebGL2** visual experiments. The site is a Vite +
-TypeScript single-page app that renders its content from an in-code page table, with
-KaTeX-rendered math and three canvas visualizations: a procedural seed-reproducible
-nebula on the homepage, Mandelbrot orbit points, and a boids flocking simulation. It
-also hosts a web-readable résumé at `/resume`, dedicated FPGA and HPC project pages,
-engineering notes, and a real 404 page.
+TypeScript app whose content lives in an in-code page table; at build time every route is
+pre-rendered to static HTML, and the client hydrates only the canvas visualizations and
+route-specific metadata. It has KaTeX-rendered math and three canvas visualizations: a
+procedural seed-reproducible nebula on the homepage, Mandelbrot orbit points, and a boids
+flocking simulation. It also hosts a web-readable résumé at `/resume`, dedicated FPGA and
+HPC project pages, engineering notes, and a real 404 page.
+
+The same source also produces agent-readable representations: Markdown for every page,
+`/llms.txt`, `/llms-full.txt`, `/sitemap.xml`, `/robots.txt`, and per-page JSON-LD. The
+human pages and those files share one content layer, so they cannot drift.
 
 ## Purpose
 
@@ -19,8 +24,8 @@ as a way to learn rendering while keeping the projects visible.
 ## Project structure
 
 ```
-├── index.html              # document head (meta/OG/canonical/JSON-LD/fonts), skip link, mounts #app
-├── package.json            # npm project: vite, typescript, katex
+├── index.html              # development shell: base metadata, skip link, mounts #app
+├── package.json            # npm project: vite, typescript, katex, turndown
 ├── tsconfig.json           # strict-ish TS config, bundler resolution, noEmit
 ├── _config.yml             # legacy Jekyll config (GitHub Pages theme); the site itself is the Vite app
 ├── public/                 # static assets copied verbatim into dist/
@@ -28,12 +33,22 @@ as a way to learn rendering while keeping the projects visible.
 │   ├── caleb-lin-resume.pdf
 │   ├── favicon.svg
 │   └── icons.svg
+├── scripts/
+│   ├── generate.mjs        # loads the TS generator through Vite's SSR module loader
+│   ├── generate-site.ts    # static HTML, Markdown, llms.txt, sitemap, robots
+│   └── validate.mjs        # serves dist/ and checks the agent-facing surface
 ├── src/
-│   ├── main.ts             # SPA shell: routing/404, header/footer, meta updates, KaTeX, canvas wiring
+│   ├── main.ts             # hydration: route check, dev rendering, meta updates, canvas wiring
+│   ├── render.ts           # shared shell (header/nav/footer), canonical/Markdown paths, page meta
+│   ├── math.ts             # build-time KaTeX rendering for static pages
+│   ├── structured-data.ts  # JSON-LD @graph per page
 │   ├── style.css           # all site styling: tokens, layout, article, tables, diagrams, nebula
+│   ├── data/               # shared source of truth for projects and notes
+│   │   ├── projects.ts     # project index, metrics, links, keywords, descriptions
+│   │   └── posts.ts        # note titles, dates, summaries, keywords
 │   ├── pages/              # one file per page; assembled into the `pages` record by index.ts
 │   │   ├── index.ts        # barrel: maps routes to the page modules below
-│   │   ├── types.ts        # the shared `Page` type ({ title, eyebrow, description?, content })
+│   │   ├── types.ts        # the shared `Page` type (title, kind, description, dates, keywords, content)
 │   │   ├── constants.ts    # shared URL constants used inside content strings
 │   │   ├── home.ts         # "/" (nebula + selected work)
 │   │   ├── not-found.ts    # 404 content for unknown routes
@@ -73,25 +88,41 @@ as a way to learn rendering while keeping the projects visible.
 └── docs-of-style: STYLE.md # design tokens, layout classes, and canvas-element conventions
 ```
 
-## How the app is put together
+## How the site is put together
 
-- **`src/pages/`** holds one module per page, each exporting a `Page`
-  (`{ title, eyebrow, description?, content }`). `src/pages/index.ts` assembles them
-  into the `pages` record keyed by route (`/`, `/projects`, `/projects/fpga`,
-  `/projects/hpc`, `/projects/boids`, `/projects/mandelbrot`, `/resume`,
-  `/blog`, `/blog/...`).
-- **`src/main.ts`** imports that record, injects the current route's content into
-  `#app`, and updates `document.title`, the meta description, Open Graph/Twitter tags,
-  the canonical link, and `robots` for the route. Unknown routes render
-  `src/pages/not-found.ts` with `noindex, nofollow`. It then KaTeX-renders `$...$` /
-  `$$...$$` math and hands every `canvas[data-visualization]` on the page to its
-  renderer inside a try/catch:
-  - `data-visualization="boids"` → `new BoidsRenderer(canvas)`
-  - `data-visualization="nebula"` → `new NebulaRenderer(canvas)`
-  - anything else (currently `"mandelbrot"`) → `new ChaosRenderer(canvas, new Mandelbrot())`
-  A failing renderer marks its frame `.is-fallback` and does not stop the page.
-  To add a page: create a file in `src/pages/` and register it in
-  `src/pages/index.ts` — the shell and routing need no changes.
+- **`src/pages/`** holds one module per page, each exporting a `Page`. `src/pages/index.ts`
+  assembles them into the `pages` record keyed by route (`/`, `/projects`,
+  `/projects/fpga`, `/projects/hpc`, `/projects/boids`, `/projects/mandelbrot`,
+  `/resume`, `/blog`, `/blog/...`).
+- **`src/data/`** is the shared source of truth for things that appear in more than one
+  place. `projects.ts` supplies the project index rows, the homepage selected work, the
+  project pages' descriptions and keywords, `llms.txt`, and JSON-LD. `posts.ts` supplies
+  the note index, post front matter, dates, and per-post metadata. Edit these files first
+  when a project or post changes; do not duplicate the same sentence in a page and in the
+  generated files.
+- **`src/render.ts`** owns the parts that must match between the static build and the
+  client: the header/nav/footer shell, canonical URL normalization (directory routes end
+  in `/`), Markdown paths, and document/meta title rules. `src/main.ts` and the generator
+  both call it.
+- **`scripts/generate-site.ts`** is the build-time renderer. `npm run generate:docs` writes
+  the machine-readable files to `public/` for the dev server; `npm run generate:html`
+  reads the Vite-built `dist/index.html` for the hashed asset tags, then writes static
+  `index.html` files for every route plus `404.html`, Markdown, `llms.txt`,
+  `llms-full.txt`, `sitemap.xml`, `robots.txt`, and `.nojekyll`.
+- **Hydration:** generated pages carry `data-prerendered="true"` and `data-route="…"` on
+  `#app`. `src/main.ts` skips re-rendering only when both match the current path; this
+  protects against a static host's SPA fallback serving another route's document. It still
+  updates metadata and starts the canvases.
+- **Math:** static pages render KaTeX at build time (with a MathML annotation), so
+  equations are readable without JavaScript. The dev server keeps KaTeX's
+  `auto-render` path. Write `$$...$$` for display math and `$...$` for inline; the
+  `math-display` class styles the block form.
+- **Markdown:** Turndown + GFM convert each page's content. Custom rules preserve fenced
+  code, protect math from escaping, turn canvas/SVG visuals into described placeholders,
+  flatten selected-work rows, and drop canvas-only interface chrome.
+- **JSON-LD:** `src/structured-data.ts` emits an `@graph` per page with Person, WebSite,
+  WebPage/AboutPage/ProfilePage/CollectionPage, BreadcrumbList where applicable, and
+  BlogPosting or CreativeWork for notes and projects.
 - **Renderers** (`src/nebula/renderer.ts`, `src/boids/renderer.ts`,
   `src/chaos/renderer.ts`) follow a common shape: grab a `webgl2` context (boids uses
   `{ preserveDrawingBuffer: true }` for trail persistence), compile shaders imported via
@@ -105,17 +136,35 @@ as a way to learn rendering while keeping the projects visible.
   shader.
 - **Shaders** are plain GLSL ES 3.00 files imported as raw strings. They live next to their
   renderer under `src/<viz>/shaders/`.
-- **Math** on pages is KaTeX. Write `$$...$$` for display math and `$...$` for inline; the
-  `math-display` class styles the block form.
+
+## Machine-readable surface
+
+| URL | Contents |
+|---|---|
+| `/llms.txt` | Site summary, project and note index, links to every page and representation |
+| `/llms-full.txt` | Every indexable page as Markdown in one file, separated by canonical URLs |
+| `/sitemap.xml` | Canonical URLs with `lastmod`, `changefreq`, and `priority` |
+| `/robots.txt` | Crawl permission and the sitemap location |
+| `/<route>.md` (`/index.md` for `/`) | YAML front matter plus the page body as Markdown |
+| JSON-LD in each page `<head>` | Person, WebSite, the page type, breadcrumbs, and the work/article |
+
+Every page also advertises its Markdown alternate and the sitemap through `<link>` tags,
+and carries canonical, Open Graph, and Twitter metadata in the raw HTML.
 
 ## Commands
 
 ```bash
-npm install       # install dependencies (vite, typescript, katex)
-npm run dev       # start the Vite dev server (hot reload)
-npm run build     # type-check with tsc, then build into dist/
-npm run preview   # serve the built dist/ locally
+npm install            # install dependencies (vite, typescript, katex, turndown)
+npm run dev            # generate the dev Markdown mirror, then start Vite (hot reload)
+npm run generate:docs  # refresh public/ Markdown, llms.txt, sitemap, robots
+npm run build          # tsc, Vite build, then static HTML + machine files into dist/
+npm run preview        # serve the built dist/ locally
+npm run validate       # serve dist/ and check HTML, Markdown, metadata, sitemap, 404
 ```
+
+`npm run dev` runs `generate:docs` through `predev`. Generated files in `public/` are
+gitignored; the build writes fresh copies into `dist/` from the same source modules.
+Run `npm run build && npm run validate` before shipping a content or metadata change.
 
 ## Styling and templates
 
@@ -126,8 +175,11 @@ npm run preview   # serve the built dist/ locally
 
 ## Deployment
 
-GitHub Pages serves the built app, not the repo root. `.github/workflows/deploy.yml`
-runs on every push to `main`: it installs dependencies, runs `npm run build`, copies
-`dist/index.html` to `dist/404.html` so deep links fall back to the SPA, adds
-`.nojekyll`, and deploys `dist/` as the Pages artifact. Pages must be configured with
+GitHub Pages serves the built output, not the repo root. `.github/workflows/deploy.yml`
+runs on every push to `main`: it installs dependencies, runs `npm run build`, adds
+`.nojekyll`, and deploys `dist/` as the Pages artifact. The build already writes a real
+`404.html` with `noindex`, so there is no SPA fallback step. Pages must be configured with
 **Build and deployment → Source: GitHub Actions**; nothing is committed from `dist/`.
+
+Because every route is emitted as `<route>/index.html`, GitHub Pages redirects
+`/projects/fpga` to `/projects/fpga/`; canonical URLs already use the trailing slash.

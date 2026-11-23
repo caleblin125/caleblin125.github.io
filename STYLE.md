@@ -54,16 +54,30 @@ component rules).
 
 Every page is a module in `src/pages/` exporting a `Page` value; the `pages`
 record mapping routes to those modules lives in `src/pages/index.ts`. The shell
-(header/nav/footer) is rendered once by `main.ts`; the page contributes only its
-`content`.
+(header/nav/footer) comes from `src/render.ts`, which both the static generator and the
+dev client call, so the page contributes only its `content`.
 
-`Page` is `{ title, eyebrow, content, description? }`. `description` is optional but
-should be set on every page: `main.ts` uses it for the meta description, Open Graph,
-and Twitter tags, and rewrites those tags on every route change.
+`Page` is `{ title, eyebrow, description?, content, kind?, date?, updated?, keywords?,
+section? }`. `description` should be set on every page: it is used for the meta
+description, Open Graph, Twitter tags, Markdown front matter, and the site indexes.
+`kind` (`home`, `project`, `post`, `index`, `profile`, `page`, `not-found`) selects the
+JSON-LD and Open Graph type. Notes set `date` (ISO) and often `keywords`; projects and
+posts set `section` for breadcrumbs.
 
-Unknown routes render `notFoundPage` (also exported from `src/pages/index.ts`), with
-`noindex, nofollow` and no canonical link. The deploy workflow copies `index.html` to
-`404.html`, so the same app boots for unknown deep links.
+Each project and note page derives its summary, keywords, and dates from
+`src/data/projects.ts` or `src/data/posts.ts`. Edit the data file first; the page module
+reads it, and the generated HTML, Markdown, `llms.txt`, sitemap, and JSON-LD follow. The
+project index and note index rows are generated from the same lists, so a new entry
+appears everywhere at once.
+
+**Static output:** `npm run build` emits `<route>/index.html` with `#app`
+marked `data-prerendered="true"` and `data-route="<route>"`. `src/main.ts` re-renders only
+when that route does not match the current path. Do not remove the marker unless you also
+change the generator. Do not put essential prose in client-only markup.
+
+Unknown routes render `notFoundPage` (also exported from `src/pages/index.ts`) with
+`noindex, nofollow` and no canonical link. The build writes a real `dist/404.html`; GitHub
+Pages serves it for unknown deep links, and no SPA fallback is used.
 
 ### Common elements
 
@@ -184,8 +198,8 @@ paragraph that says what the number is not, so the result is not overclaimed. Se
 
 `src/pages/not-found.ts` supplies the content for any route missing from the `pages`
 record. It uses `.page-intro`, `.mono-note` (a dim mono line), and a `.link-row` back to
-the main sections. Keep it useful, not cute. `main.ts` marks unknown routes with
-`noindex, nofollow`, removes the canonical link, and clears the active nav item.
+the main sections. Keep it useful, not cute. The generated `404.html` carries
+`noindex, nofollow`, has no canonical link, and clears the active nav item.
 
 ---
 
@@ -294,16 +308,20 @@ src/<viz>/shaders/
 
 ### Math (`KaTeX`)
 
-`main.ts` calls `renderMathInElement(app, { delimiters: [{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}] })`.
-Use:
+Write math in the page content with:
 
 - `$$…$$` inside a `<div class="math-display">` for display math — gets the accent left
   border and panel background.
 - `$…$` inline in paragraphs.
 
+The static build renders math in `src/math.ts` with KaTeX's `htmlAndMathml` output, so
+equations are visible with JavaScript disabled and remain machine-readable. The dev
+client falls back to `renderMathInElement`. Do not typeset math only in client code.
+
 **Important:** page content strings are JS template literals, so backslashes must be
 escaped — write `\\text{sep}` in the page module (renders as `\text{sep}`). See
-`src/pages/boids.ts` for examples.
+`src/pages/boids.ts` for examples. The Markdown generator protects `$…$` and `$$…$$`
+segments before conversion, so do not wrap math in extra code tags.
 
 ### Tables
 
@@ -366,7 +384,38 @@ Internal text uses `.diagram-title` (accent, mono, uppercase) and `.diagram-capt
 `marker-end="url(#…)"`. See the boids page for a three-panel example
 (separation / alignment / cohesion).
 
----
+### Machine-readable representations
+
+The same page content must remain legible outside a browser. The build converts each
+page's `content` to Markdown with Turndown and GFM, and writes:
+
+- `<route>.md` (or `/index.md` for the homepage) with YAML front matter.
+- `/llms.txt` and `/llms-full.txt` from the project and post data plus the page list.
+- `/sitemap.xml` and `/robots.txt` from the same route table.
+- A JSON-LD `@graph` in each page's `<head>`.
+
+Consequences for markup:
+
+- Write real `<h1>`/`<h2>`/`<h3>` structure and prose, not text baked into an image or
+  canvas.
+- Put the substantive description of a canvas or SVG in its `aria-label`; the Markdown
+  rule turns it into `[Interactive visualization: …]` or `[Diagram: …]`.
+- Use `<figure>` + `<figcaption>` for images so the caption survives conversion. Images
+  are made absolute in Markdown.
+- Avoid interactive-only claims. The controls on the nebula and boids are enhancements;
+  the surrounding prose must stand on its own.
+- Do not add an element whose only purpose is to carry metadata a crawler needs. Put
+  authors, dates, and keywords in `Page` and the data modules so they reach every output.
+
+### Content changes
+
+1. Update `src/data/projects.ts` or `src/data/posts.ts` for shared metadata, then the page
+   module for prose. Keep the two consistent when a metric or summary changes.
+2. Run `npm run build && npm run validate`. The validator fails on a missing canonical
+   URL, duplicate title, HTML left in Markdown, a missing sitemap entry, or a 404 that is
+   not `noindex`.
+3. Check one page with JavaScript disabled. The content, headings, math, and figure
+   captions must still be present.
 
 ## 5. Responsive behavior
 
@@ -406,20 +455,24 @@ At `max-width: 760px`:
 
 ## 7. Adding a new page — quick checklist
 
-1. Create a page module in `src/pages/` (e.g. `my-page.ts`) exporting a `Page`
-   `{ title, eyebrow, description, content }` — copy an existing page file or use the
-   templates in `templates/`.
+1. Create a page module in `src/pages/` (e.g. `my-page.ts`) exporting a `Page` — copy an
+   existing page file or use the templates in `templates/`. Set `description`, `kind`,
+   and, for notes, `date`; set `section` for breadcrumbs.
 2. Register it in `src/pages/index.ts` under its route key (e.g.
-   `"/projects/my-page": myPage`). The shell, routing, and 404 fallback in
-   `src/main.ts` need no changes.
-3. Write the `content` string as an `<article class="article">` (or a
-   `page-intro` + list section for index pages). Project pages with measurements get a
-   **Limitations** section.
-4. If the page has a visualization, add a `<canvas data-visualization="…" role="img"
+   `"/projects/my-page": myPage`). The shell, static generator, and 404 handling need no
+   changes.
+3. For a project or note, add the shared metadata to `src/data/projects.ts` or
+   `src/data/posts.ts` and have the page read it. Do not retype the summary in two
+   places.
+4. Write the `content` string as an `<article class="article">` (or a `page-intro` + list
+   section for index pages). Project pages with measurements get a **Limitations**
+   section.
+5. If the page has a visualization, add a `<canvas data-visualization="…" role="img"
    aria-label="…">` inside a `.visual-frame` and a matching branch in the canvas wiring
    loop in `src/main.ts`.
-5. Escape LaTeX backslashes (`\\`), keep `aria-label`s, and verify at
+6. Escape LaTeX backslashes (`\\`), keep `aria-label`s, and verify at
    `http://localhost:5173/<route>`.
-6. Check the page in the built app as well (`npm run build && npm run preview`); confirm
-   the title, description, and canonical URL update, and that unknown routes render the
-   404 page rather than the homepage.
+7. Run `npm run build && npm run preview`, then check the page at
+   `<route>/` and `<route>.md`, and run `npm run validate`. Confirm the title,
+   description, canonical URL, JSON-LD, and sitemap entry, and that unknown routes render
+   the 404 page rather than the homepage.

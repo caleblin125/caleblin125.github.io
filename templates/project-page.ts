@@ -6,21 +6,33 @@
 // the site actually uses: every page lives in src/pages/ as a module exporting
 // a `Page`-shaped object, and src/pages/index.ts maps routes to those modules.
 //
-//     type Page = { title: string; eyebrow: string; content: string };
+//     type Page = {
+//         title: string; eyebrow: string; description?: string;
+//         content: string; kind?: "project"; keywords?: string[]; section?: string;
+//     };
 //
 // so a completed page module looks like:
 //
 //     // src/pages/my-project.ts
-//     export const myProjectPage = {
+//     import { projectById } from "../data/projects";
+//     const project = projectById("my-project");
+//
+//     export const myProjectPage: Page = {
 //         title: "My project.",
 //         eyebrow: "Project / My project",
+//         kind: "project",
+//         section: "Projects",
+//         description: project.description,
+//         keywords: project.keywords,
 //         content: `<article class="article">…</article>`,
 //     };
 //
 // ----------------------------------------------------------------------------
 // HOW TO USE
-//   1. Copy this file into src/pages/<slug>.ts and replace every placeholder.
-//   2. Register the export in src/pages/index.ts:
+//   1. Add a ProjectEntry to src/data/projects.ts (title, summary, links,
+//      keywords, period).
+//   2. Copy this file into src/pages/<slug>.ts and replace every placeholder.
+//   3. Register the export in src/pages/index.ts:
 //
 //          import { myProjectPage } from "./my-project";
 //          // in the `pages` record:
@@ -28,10 +40,9 @@
 //
 //      (templates/ as it ships is outside src/, so tsc/Vite ignore it —
 //      copying the file into src/pages/ is the intended flow.)
-//   3. Add a matching `.project-row` link to the "/projects" page's
-//      `.project-list` (src/pages/projects.ts — see the commented snippet at
-//      the bottom of this file).
-//   4. If the page has a new visualization, add a branch in the canvas wiring
+//   4. The project index row is generated from src/data/projects.ts. Do not add
+//      it by hand.
+//   5. If the page has a new visualization, add a branch in the canvas wiring
 //      loop in src/main.ts:
 //
 //          if (canvas.dataset.visualization === "my-viz") {
@@ -49,12 +60,20 @@
 // and §4 (content components).
 // ============================================================================
 
-export const projectPage = {
+import type { Page } from "./types";
+
+export const projectPage: Page = {
     // Shown in the browser tab and used for the <title>; end with a period.
     title: "My project.",
 
     // Small mono label in the site header (see .header-note in style.css).
     eyebrow: "Project / My project",
+
+    // Required for the static metadata, Markdown front matter, and JSON-LD.
+    kind: "project",
+    section: "Projects",
+    description: "One sentence used for the meta description, Open Graph, and Markdown front matter.",
+    keywords: ["topic", "method", "result"],
 
     // The whole page body. One <article class="article"> so the shared
     // article typography (max-width 820px, h1/h2/h3, .lede, .math-display)
@@ -120,11 +139,11 @@ Inline math like $x^2$ is fine here.</p>
 };
 
 // ----------------------------------------------------------------------------
-// PROJECT INDEX ROW (optional second part)
+// PROJECT INDEX ROW (generated — do not paste by hand)
 // ----------------------------------------------------------------------------
-// Add one of these inside the "/projects" page's `<section class="project-list">`.
-// Keep the numbering sequential (mandelbrot is 01, boids is 02, next is 03).
-// This is HTML, pasted into the "/projects" entry's content string, not code:
+// The "/projects" page builds its rows from src/data/projects.ts. Add the
+// ProjectEntry there and the index, homepage selected work, sitemap, llms.txt,
+// and JSON-LD follow. Numbering comes from the order of that list:
 //
 //     <article class="project-row">
 //         <div class="project-number">03</div>

@@ -10,61 +10,58 @@ follow.
 
 | File | Use it for |
 |---|---|
-| `blog-post.ts` | **TypeScript** page entry for a blog article (`/blog/...`) — the exact `{ title, eyebrow, content }` shape used by `src/main.ts`'s `pages` record. |
+| `blog-post.ts` | **TypeScript** page entry for a blog article (`/blog/...`) — the exact `Page` shape used by the `pages` record in `src/pages/index.ts`. |
 | `project-page.ts` | **TypeScript** page entry for a project article (`/projects/...`) — same shape, with the canvas pattern, tables, and SVG diagram included. |
-| `blog-post.html` | Human-readable HTML skeleton of a blog article + blog index row. |
-| `project-page.html` | Human-readable HTML skeleton of a project article + project index row. |
+| `blog-post.html` | Human-readable HTML skeleton of a blog article, with the generated index row shown for reference. |
+| `project-page.html` | Human-readable HTML skeleton of a project article, with the generated index row shown for reference. |
 | `shaders/fragment.glsl` | A new WebGL2 fragment shader. |
 | `shaders/vertex.glsl` | A new WebGL2 vertex shader. |
 
 > **Which one to use?** The `.ts` files are the practical templates — their exported
-> objects are shape-compatible with the `pages` record in `src/main.ts`, so you can
-> copy the object straight in (or import it if you keep the file inside `src/`).
-> The `.html` files are the annotated reference versions of the same structure,
-> useful when you want to see every section explained inline with the markup.
+> objects are shape-compatible with the `pages` record in `src/pages/index.ts`, so you
+> can copy the object straight in. The `.html` files are the annotated reference
+> versions of the same structure, useful when you want to see every section explained
+> inline with the markup.
 
 ## Adding a page (blog or project) — step by step
 
-1. **Create a page module** in `src/pages/` (e.g. `src/pages/my-post.ts`)
-   exporting a `Page` object — the same `{ title, eyebrow, content }` shape
-   used by every existing page file.
-2. **Register it in `src/pages/index.ts`** under its route key, e.g.:
+1. **Add shared metadata.** For a note, add a `PostEntry` to
+   `src/data/posts.ts`; for a project with its own page, add a `ProjectEntry` to
+   `src/data/projects.ts`. The indexes, homepage selected work, Markdown front matter,
+   `llms.txt`, sitemap, and JSON-LD all read from these lists.
+2. **Create a page module** in `src/pages/` (e.g. `src/pages/my-post.ts`) exporting a
+   `Page`. Copy `blog-post.ts` or `project-page.ts` and replace the placeholders. Set
+   `description`, `kind`, `section`, and (for notes) `date`; read the shared entry with
+   `postById("...")` or `projectById("...")` rather than retyping the summary.
+3. **Register it in `src/pages/index.ts`** under its route key, e.g.:
    ```ts
    "/blog/my-new-post": myPostPage,
    ```
-   (or `"/projects/my-project": myProjectPage`). The shell and routing in
-   `src/main.ts` need no changes.
-   The `.ts` templates (`blog-post.ts`, `project-page.ts`) export ready-made
-   objects — paste the object body into your new page file, or import it
-   directly into the barrel:
-   ```ts
-   import { blogPostPage } from "../templates/blog-post";
-   // in the pages record:
-   "/blog/my-new-post": blogPostPage,
-   ```
-3. **Copy the `<article>` block** from the matching template into the `content`
-   template literal, then replace the placeholder text.
+   (or `"/projects/my-project": myProjectPage`). The shell, static generator, and 404
+   handling need no changes.
 4. **If the page needs a canvas**, keep the `.visual-frame` + `<canvas
    data-visualization="...">` + `.visual-label` block, and add a branch in the
    wiring loop in `src/main.ts`:
    ```ts
    for (const canvas of document.querySelectorAll("canvas[data-visualization]")) {
-       if (canvas.dataset.visualization === "my-viz") {
+       if (kind === "my-viz") {
            new MyRenderer(canvas).start();
-       } else if (canvas.dataset.visualization === "boids") {
+       } else if (kind === "boids") {
            new BoidsRenderer(canvas).start();
+       } else if (kind === "nebula") {
+           new NebulaRenderer(canvas).start();
        } else {
            new ChaosRenderer(canvas, new Mandelbrot()).start();
        }
    }
    ```
-   Note the loop currently treats anything that is not `"boids"` as mandelbrot —
-   extend it explicitly once you add a third visualization.
-5. **Index rows** (the `.post-row` / `.project-row` blocks at the top of each
-   template) go into the `content` of `src/pages/blog.ts` / `src/pages/projects.ts`
-   respectively, inside their existing `<section class="post-list">` /
-   `.project-list`.
-6. **Verify** at `http://localhost:5173/<route>` after `npm run dev`.
+   The final `else` treats anything unknown as Mandelbrot; add an explicit branch for
+   a new visualization.
+5. **Do not paste index rows by hand.** `src/pages/blog.ts`, `src/pages/projects.ts`,
+   and the homepage selected-work list are generated from the data entries. The rows in
+   the templates show the resulting markup, not something to edit separately.
+6. **Verify** at `http://localhost:5173/<route>` after `npm run dev`, then run
+   `npm run build && npm run validate` and check the page's `.md` sibling.
 
 ### Escape rules for `content` strings
 

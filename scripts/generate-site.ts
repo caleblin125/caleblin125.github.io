@@ -233,23 +233,32 @@ function buildLlmsTxt(): string {
 }
 
 function buildLlmsFull(markdownPages: Array<{ path: string; page: Page; markdown: string }>): string {
-    const order = [
+    const byPath = new Map(markdownPages.map((item) => [item.path, item]));
+    const preferred = [
         "/",
         "/projects",
-        "/projects/fpga",
-        "/projects/hpc",
-        "/projects/mandelbrot",
-        "/projects/boids",
+        ...projectEntries.flatMap((project) => (project.path ? [project.path] : [])),
         "/blog",
         ...postEntries.map((post) => post.path),
         "/about",
         "/resume"
     ];
-    const byPath = new Map(markdownPages.map((item) => [item.path, item]));
-    const blocks = order
-        .map((route) => byPath.get(route))
-        .filter(Boolean)
-        .map((item) => `<!-- ${canonicalUrl(item.path)} -->\n\n${item.markdown}`);
+    const seen = new Set<string>();
+    // Keep the preferred reading order, then include any route that was added
+    // later without being listed here. Nothing in the pages record can be
+    // silently left out of the corpus.
+    const order = [...preferred, ...markdownPages.map((item) => item.path)].filter((route) => {
+        if (seen.has(route) || !byPath.has(route)) {
+            return false;
+        }
+
+        seen.add(route);
+        return true;
+    });
+    const blocks = order.map((route) => {
+        const item = byPath.get(route);
+        return `<!-- ${canonicalUrl(item.path)} -->\n\n${item.markdown}`;
+    });
 
     return `# Caleb Lin — full site content\n\n> ${SITE_DESCRIPTION}\n\nThis file concatenates every indexable page as Markdown. Each section starts with its canonical URL and YAML front matter.\n\n---\n\n${blocks.join("\n\n---\n\n")}\n`;
 }

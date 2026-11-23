@@ -10,6 +10,7 @@ import { mandelbrotPage } from "./mandelbrot";
 import { projectsPage } from "./projects";
 import { resumePage } from "./resume";
 import { seeingTheMandelbrotSetPage } from "./seeing-the-mandelbrot-set";
+import { theGloveIsTheControllerPage } from "./the-glove-is-the-controller";
 import { whereTheFileMeetsTheMachinePage } from "./where-the-file-meets-the-machine";
 import type { Page } from "./types";
 
@@ -24,5 +25,6 @@ export const pages: Record<string, Page> = {
     "/projects/hpc": hpcPage,
     "/blog": blogPage,
     "/blog/seeing-the-mandelbrot-set": seeingTheMandelbrotSetPage,
+    "/blog/the-glove-is-the-controller": theGloveIsTheControllerPage,
     "/blog/where-the-file-meets-the-machine": whereTheFileMeetsTheMachinePage
 };

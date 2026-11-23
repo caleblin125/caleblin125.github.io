@@ -85,10 +85,13 @@ as a way to learn rendering while keeping the projects visible.
 │   │   ├── bench.ts        # Canvas 2D bar-chart explorer (no interpolation)
 │   │   └── filter.ts       # cascaded Sallen-Key bandpass model (anchored, not swept)
 │   ├── nebula/             # procedural nebula (homepage + laboratory)
-│   │   ├── renderer.ts     # NebulaRenderer: seeded uniforms, controls, quality, pause, fallback
-│   │   └── shaders/
-│   │       ├── nebula.glsl      # domain-warped fBm field, stars, palettes, dither
-│   │       └── nebula.vert.glsl # full-screen triangle from gl_VertexID
+│   │   ├── parameters.ts   # parameter model, six palettes, control schema, clamping
+│   │   ├── presets.ts      # six curated presets and preset detection
+│   │   ├── random.ts       # decimal seed helpers (1–999999)
+│   │   ├── controls.ts     # schema-driven control markup for both surfaces
+│   │   ├── renderer.ts     # site adapter: URL state, controls, pause, reduced motion, fallback
+│   │   ├── engine/         # vendored WebGL2 engine: renderer, programs, bloom, timing
+│   │   └── shaders/        # vertex, 2D field, volume, post, and shared GLSL includes
 │   ├── boids/              # boids flocking visualization
 │   │   ├── renderer.ts     # BoidsRenderer: CPU simulation + instanced WebGL2 chevrons + trail fade
 │   │   └── shaders/
@@ -158,22 +161,26 @@ as a way to learn rendering while keeping the projects visible.
   WebPage/AboutPage/ProfilePage/CollectionPage, BreadcrumbList where applicable, and
   BlogPosting or CreativeWork for notes and projects.
 - **Renderers** (`src/nebula/renderer.ts`, `src/boids/renderer.ts`,
-  `src/chaos/renderer.ts`) follow a common shape: grab a `webgl2` context (boids uses
-  `{ preserveDrawingBuffer: true }` for trail persistence), compile shaders imported via
-  Vite's `?raw` suffix, listen for `resize` (respecting `devicePixelRatio`), and drive a
-  `requestAnimationFrame` loop. Boids and nebula pause offscreen and when the tab is
-  hidden; the nebula also caps DPR, adapts its render scale to frame time, and draws a
-  static frame under `prefers-reduced-motion`.
-- **Nebula seeding:** the URL accepts `?seed=<hex>`; `0x1a2b3c4d` is the curated default.
-  The Reseed button updates the URL so a field can be shared and reproduced. Density,
-  scale, and palette (`violet` / `ice` / `ember`) are uniform inputs to the fragment
-  shader. The full URL state also carries `view`, `octaves`, `warp`, `variant`, and
-  `quality`; the homepage linker only exposes a subset, while `/lab/nebula` exposes all
-  of them plus fullscreen and copy-config actions.
+  `src/chaos/renderer.ts`) follow a common shape: they own a canvas, compile shaders
+  imported via Vite's `?raw` suffix, listen for layout changes (respecting
+  `devicePixelRatio`), and drive or request frames. The nebula adapter sits on top of a
+  vendored engine in `src/nebula/engine/`: the engine owns GL state, shader programs,
+  bloom, GPU timing, adaptive quality, and the 2D/volume samplers; the adapter owns URL
+  state, the DOM controls, intersection and visibility pausing, reduced motion, and the
+  fallback. Boids and nebula pause offscreen and when the tab is hidden; the nebula caps
+  DPR, adapts its render scale, and holds animation at zero for `prefers-reduced-motion`.
+- **Nebula state:** the seed is a decimal integer from 1 to 999999. The URL carries
+  `seed`, `preset`, `palette`, every numeric parameter, `mode` (`2d` or `volume`),
+  `debug`, and `quality`. Six presets (Orion Deep, Carina Core, Veil Filaments, Cold
+  Drift, Ember Bloom, Violet Hollow) and six five-stop palettes (Orion, Carina, Veil,
+  Ember, Violet, Ice) are complete starting points, not hidden shader modes. The homepage
+  exposes preset, density, scale, palette, seed, link, and reseed; `/lab/nebula` adds the
+  volume renderer, the five diagnostic channels, quality, fullscreen, copy-link, the seed
+  input, and every advanced parameter.
 - **Interactive lab:** `/lab` indexes every live experiment and labels it *Measured*,
   *Model*, *Synthetic*, or *Live*. The labels are a claim about provenance, so keep them
   accurate when adding an entry. `/lab/nebula` is the only page that owns a full control
-  surface; the homepage nebula shares the renderer and shader with it.
+  surface; the homepage nebula shares the engine and parameter model with it.
 - **Measured explorers:** `src/lab/bench-data.ts` holds the SCC Connect 2026 values
   exactly as reported, with the campaign note, run counts, and a matching HTML table.
   `src/lab/bench.ts` draws those points only; do not add interpolation, fitted trends, or

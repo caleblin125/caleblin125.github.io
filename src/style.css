@@ -432,6 +432,28 @@ h1 {
     letter-spacing: 0.04em;
 }
 
+.nebula-advanced {
+    border-top: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+}
+
+.nebula-advanced summary {
+    padding: 10px 16px;
+    color: var(--text-subtle);
+    font: 0.62rem var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.nebula-advanced summary:hover {
+    color: var(--accent);
+}
+
+.nebula-controls-advanced {
+    border-top: 1px solid var(--border-subtle);
+}
+
 .nebula-notes {
     padding: 0 16px;
     border-top: 1px solid var(--border-subtle);
@@ -477,13 +499,20 @@ h1 {
     text-align: center;
 }
 
+.nebula-frame.is-fallback .nebula-stage {
+    min-height: 0;
+}
+
 .nebula-frame.is-fallback .nebula-fallback {
+    position: static;
     display: flex;
+    padding: 64px 24px;
 }
 
 .nebula-frame.is-fallback .nebula-hud,
 .nebula-frame.is-fallback .nebula-caption,
-.nebula-frame.is-fallback .nebula-controls {
+.nebula-frame.is-fallback .nebula-controls,
+.nebula-frame.is-fallback .nebula-advanced {
     display: none;
 }
 
@@ -1920,6 +1949,10 @@ p.resume-note {
     font: inherit;
 }
 
+.nebula-lab .nebula-control input[type="range"] {
+    width: 82px;
+}
+
 .nebula-seed-input {
     width: 92px;
     padding: 3px 6px;
@@ -1950,7 +1983,8 @@ p.resume-note {
     min-height: 0;
 }
 
-.nebula-frame:fullscreen .nebula-notes {
+.nebula-frame:fullscreen .nebula-notes,
+.nebula-frame:fullscreen .nebula-advanced {
     display: none;
 }
 

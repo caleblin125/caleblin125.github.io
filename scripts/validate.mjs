@@ -280,7 +280,7 @@ try {
         ["/", ["I build systems, then make them legible.", "Problem.", "Contribution.", "Data-center load forecasting", "Interactive lab", "Instrument", "Measure"]],
         ["/projects", ["Work and projects.", "Flagship work", "Experiments", "Archive", "TreeSim", "SCC Connect 2026", "FPGA and digital hardware", "HPC and cluster tuning", "Robotics and state estimation", "Data-center load forecasting", "Computational visualization"]],
         ["/lab", ["Interactive laboratory.", "Nebula generator", "HPC benchmark explorer", "Beacon filter response", "Kalman filter", "Measured", "Model", "Synthetic", "Live"]],
-        ["/lab/nebula", ["Nebula laboratory.", "Base noise", "Warp field", "Octave bands", "Colour field", "prefers-reduced-motion"]],
+        ["/lab/nebula", ["Nebula laboratory.", "Density", "Cloud base", "Filaments", "Shape field", "Mask", "3D volume", "999999", "prefers-reduced-motion"]],
         ["/projects/treesim", ["A forest that grows itself.", "51,755", "10.65 m", "6.11 million", "UPGMA", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/scc-connect", ["One node, measured.", "4,403.6", "481.6", "249.9", "86.0%", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/fpga", ["Digital hardware, measured.", "Alveo U250", "Yosys", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],

@@ -362,3 +362,81 @@ state, quality, fullscreen), `src/pages/{hpc,robotics,forecasting,projects,home,
 `src/data/projects.ts` (group/demo), `src/main.ts` (explorer dispatch), `src/style.css`,
 `scripts/generate-site.ts` (lab entries in llms.txt and the full corpus), `scripts/validate.mjs`
 (new needles), `README.md`, and this file.
+
+## 11. Addendum: Nebula engine replacement (2026-11-23)
+
+This pass replaces the site's single-shader nebula with the fuller engine from the separate
+`nebula` project, without changing the site's framework, visual identity, or interaction
+layer. The components are now:
+
+- **Engine** (`src/nebula/engine/`) — WebGL2 context, shader programs with an `#include`
+  resolver, the 2D field and raymarched volume samplers, bloom, GPU timing, adaptive
+  quality, context recovery, and an on-demand render loop. It owns GL state and nothing
+  about the page.
+- **Shaders** (`src/nebula/shaders/`) — `vertex.glsl`, `nebula.frag`, `volume.frag`, and
+  `post.frag`, plus shared `noise.glsl`, `density.glsl`, `color.glsl`, and `stars.glsl`
+  includes. The old `nebula.glsl` and `nebula.vert.glsl` are gone.
+- **Site adapter** (`src/nebula/renderer.ts`) — URL state, the `data-nebula-*` control
+  contract, seeding, preset detection, reduced motion, intersection and visibility
+  pausing, fullscreen, copy-link, and the text fallback.
+- **Model and controls** (`parameters.ts`, `presets.ts`, `controls.ts`) — one parameter
+  model generates both control bars; six presets and six five-stop palettes; clamping and
+  formatting live with the schema.
+
+**What a visitor sees.** The homepage keeps its smaller bar over the Violet Hollow preset
+(seed 90210). `/lab/nebula` opens Orion Deep (seed 65521) and adds the renderer switch
+(2D field or 3D volume), five inspection channels (density, cloud base, filaments, shape
+field, mask), quality (adaptive, high, low), an explicit seed input, copy-link, fullscreen,
+and an advanced parameter disclosure. Inspection channels map to values the shader already
+computes, bypass palette/bloom/stars/vignette, and force the 2D sampler. The lab page now
+documents the model, the channels, all six presets, the measured performance, the URL
+state, and the limits; the `/lab` index entry was rewritten to match.
+
+**Reproducibility.** Seeds are decimal integers from 1 to 999999. The URL carries `seed`,
+`preset`, `palette`, every numeric parameter, `mode`, `debug`, and `quality`; preset
+detection adds `preset` only when the current values match a preset. Reopening a copied
+address restores the frame, including the volume renderer. The old `view=` key is ignored
+rather than misread.
+
+**Motion and fallback.** Under `prefers-reduced-motion`, the adapter passes
+`animationSpeed: 0` at runtime; the chosen speed stays in the URL and the engine stops
+advancing time, redrawing only when a parameter or the layout changes. Without WebGL2 the
+frame gains `is-fallback`: canvas, HUD, caption, controls, and advanced panel are hidden,
+and a note sets the stage height. The model description and the rest of the page remain.
+
+**Performance.** The page cites the engine's measured numbers rather than estimating: on
+one Intel iGPU (0xA7AC, ANGLE Direct3D11) under Windows Chromium, with adaptive quality
+off and a full-resolution buffer, the 2D field cost 33.1 ms per frame at 1920×1080
+(about 30 fps) and 15.1 ms at 1280×720; the volume cost 133.1 ms and 60.4 ms at the same
+sizes. Adaptive quality targets about 21 ms of GPU cost (22 ms frame time without the GPU
+timer), scales between 1.0 and 0.55, and the volume starts at 0.72 internal scale. Those
+are one machine's measurements, and the page says so.
+
+**Verification.** `npm run build` succeeds (`tsc`, Vite, static generation).
+`npm run validate` passes **1,132 checks, 0 failures** across 21 routes, including the
+updated lab needles for the five channels, the volume, the decimal seed range, and reduced
+motion. Browser checks at 1440 × 900 and 390 × 844 covered the homepage and laboratory:
+preset switching, the 3D volume, the density and mask channels, the Ice palette, low
+quality, reseed, and the resulting URL state. The control bar fits its 820 px frame in
+three rows at desktop width and reflows without overflow at 390 px.
+
+Two behaviors were checked outside the in-app browser. A headless Chrome run with
+`--force-prefers-reduced-motion` reported `reduced: true` and produced two identical
+screenshots 1.3 s apart; the same run without the flag produced different frames, which
+confirms the comparison is sensitive to motion. A run with WebGL disabled put the frame in
+`is-fallback`, hid the controls, showed the note, and kept the model text.
+
+**Known limits.** Fullscreen was invoked but the browser panel did not enter fullscreen, so
+only the entry point and the CSS contract were verified in that environment. The copy-link
+button was clicked, but the panel could not be read within its 1.6 s label window, so the
+clipboard result was not asserted. Seed reproducibility is fixed on one GPU; floating-point
+rounding may change the last bits across vendors. The diagnostic channels are 2D-only by
+design, and the volume is intentionally the expensive mode. The existing gaps still stand:
+no forecasting explorer, no FPGA synthesis panel, no robot video, and no Monte Carlo
+distribution for the filter.
+
+**Files changed.** `src/nebula/engine/*` and `src/nebula/shaders/*` (vendored engine and
+shaders), `src/nebula/{parameters,presets,random,controls,renderer}.ts`,
+`src/pages/{home,nebula-lab,lab}.ts`, `src/style.css`, `scripts/validate.mjs`,
+`scripts/generate-site.ts`, `README.md`, `STYLE.md`, and this file. The old
+`src/nebula/shaders/nebula.glsl` and `nebula.vert.glsl` were deleted.

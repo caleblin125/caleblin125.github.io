@@ -118,8 +118,8 @@ turndown.addRule("workRow", {
 // for the human page but would be noise in the Markdown representation.
 turndown.addRule("canvasChrome", {
     filter: (node) =>
-        node.nodeName === "DIV" &&
-        ["nebula-hud", "nebula-fallback", "nebula-controls"].some((name) => node.classList.contains(name)),
+        (node.nodeName === "DIV" || node.nodeName === "DETAILS") &&
+        ["nebula-hud", "nebula-fallback", "nebula-controls", "nebula-advanced"].some((name) => node.classList.contains(name)),
     replacement: () => ""
 });
 

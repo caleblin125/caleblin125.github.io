@@ -21,7 +21,7 @@ const entries: LabEntry[] = [
         href: "/lab/nebula",
         category: "WebGL2 / procedural",
         description:
-            "One fragment shader, opened up: seed, octave count, warp strength, palette, quality, and five inspection views that show the noise, the warp, the octave bands, and the color ramp separately.",
+            "One WebGL2 renderer, opened up: seed, six presets and palettes, every structural parameter, a screen-space field or a raymarched volume, and five diagnostic channels for density, cloud base, filaments, shape, and mask.",
         tag: "Live",
         tagTone: "live"
     },

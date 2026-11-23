@@ -12,6 +12,16 @@ dist
 dist-ssr
 *.local
 
+# Generated machine-readable content.
+# `npm run generate:docs` writes a dev mirror into public/; the build writes
+# fresh copies into dist/ from the same source modules.
+public/llms.txt
+public/llms-full.txt
+public/sitemap.xml
+public/robots.txt
+public/*.md
+public/**/*.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

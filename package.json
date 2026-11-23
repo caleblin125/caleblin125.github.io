@@ -4,12 +4,18 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "npm run generate:docs",
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "generate:docs": "node scripts/generate.mjs docs",
+    "generate:html": "node scripts/generate.mjs html",
+    "build": "tsc && vite build && npm run generate:html",
+    "preview": "vite preview",
+    "validate": "node scripts/validate.mjs"
   },
   "devDependencies": {
     "@types/katex": "^0.16.8",
+    "turndown": "^7.2.5",
+    "turndown-plugin-gfm": "^1.0.2",
     "typescript": "~6.0.2",
     "vite": "^8.2.0"
   },

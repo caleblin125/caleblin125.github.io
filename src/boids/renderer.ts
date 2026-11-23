@@ -25,6 +25,7 @@ export class BoidsRenderer {
     private visible = true;
     private renderHandle = 0;
     private readonly intersectionObserver: IntersectionObserver;
+    private readonly reducedMotionQuery: MediaQueryList;
     private readonly rules: Record<Species, Rules> = {
         prey1: { separation: [35, 1, 9999, 1], alignment: [2.5, -0.5, 1, 1], cohesion: [2, -1, -9999, 0.3], mouseFollow: 0, maxSpeed: 100, acceleration: 700, constantAcceleration: 100, resistance: -3, senseRange: 70, senseAngle: Math.PI, avoidDistance: 30, maxSee: 20 },
         prey2: { separation: [0, 75, 2000, 35], alignment: [0, 4.5, 1, 1], cohesion: [-1, 1, -9999, 1000], mouseFollow: 0, maxSpeed: 200, acceleration: 1000, constantAcceleration: 300, resistance: -7, senseRange: 90, senseAngle: Math.PI, avoidDistance: 10, maxSee: 20 },
@@ -45,6 +46,7 @@ export class BoidsRenderer {
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         this.createBoids();
         this.intersectionObserver = new IntersectionObserver(this.onIntersection, { threshold: 0.02 });
+        this.reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     }
 
     start(): void {
@@ -54,11 +56,25 @@ export class BoidsRenderer {
         this.canvas.addEventListener("pointerleave", this.onPointerLeave);
         this.intersectionObserver.observe(this.canvas);
         document.addEventListener("visibilitychange", this.onVisibilityChange);
-        this.startLoop();
+        this.reducedMotionQuery.addEventListener("change", this.onReducedMotionChange);
+
+        if (this.reducedMotionQuery.matches) {
+            this.runStaticFrame();
+        } else {
+            this.startLoop();
+        }
+    }
+
+    /** Advance a fixed opening and stop: the reduced-motion still frame. */
+    private runStaticFrame(): void {
+        for (let step = 0; step < 700; step++) {
+            for (const boid of this.boids) this.updateBoid(boid, 0.01);
+        }
+        this.draw();
     }
 
     private startLoop(): void {
-        if (this.running) return;
+        if (this.running || this.reducedMotionQuery.matches) return;
         this.running = true;
         this.lastTime = 0;
         this.renderHandle = requestAnimationFrame(this.render);
@@ -74,13 +90,22 @@ export class BoidsRenderer {
 
     private onIntersection = (entries: IntersectionObserverEntry[]): void => {
         this.visible = entries.some((entry) => entry.isIntersecting);
-        if (this.visible && !document.hidden) this.startLoop();
+        if (this.visible && !document.hidden && !this.reducedMotionQuery.matches) this.startLoop();
         else this.stopLoop();
     };
 
     private onVisibilityChange = (): void => {
         if (document.hidden) this.stopLoop();
-        else if (this.visible) this.startLoop();
+        else if (this.visible && !this.reducedMotionQuery.matches) this.startLoop();
+    };
+
+    private onReducedMotionChange = (): void => {
+        if (this.reducedMotionQuery.matches) {
+            this.stopLoop();
+            this.draw();
+        } else if (this.visible && !document.hidden) {
+            this.startLoop();
+        }
     };
 
     private resize = (): void => {
@@ -90,6 +115,10 @@ export class BoidsRenderer {
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
         this.gl.clearColor(0.06, 0.03, 0.10, 1);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+
+        // A resize clears the drawing buffer. In reduced-motion mode there is no
+        // animation loop to repaint it, so redraw the current still frame.
+        if (this.reducedMotionQuery.matches) this.draw();
     };
 
     private render = (time: number): void => {

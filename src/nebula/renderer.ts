@@ -21,6 +21,15 @@ const PALETTES: Record<string, { a: Palette; b: Palette; c: Palette }> = {
     ember: { a: [0.94, 0.64, 0.42], b: [0.52, 0.28, 0.20], c: [0.20, 0.10, 0.09] }
 };
 
+// Named presets are ordinary combinations of the three continuous controls.
+// They exist so a first-time visitor has a readable starting point and a
+// reproducible name for a look, not because the shader has hidden modes.
+const PRESETS: Record<string, { density: number; scale: number; palette: string }> = {
+    filament: { density: 0.55, scale: 1, palette: "violet" },
+    "ice-drift": { density: 0.72, scale: 1.35, palette: "ice" },
+    "ember-core": { density: 0.42, scale: 0.82, palette: "ember" }
+};
+
 // The first impression is a designed frame, not a random one. Passing ?seed=
 // or pressing Reseed hands control back to the generator; every other seed is
 // mapped to a decorrelated region of the noise field.
@@ -122,13 +131,36 @@ export class NebulaRenderer {
         const density = frame.querySelector<HTMLInputElement>("[data-nebula-density]");
         const scale = frame.querySelector<HTMLInputElement>("[data-nebula-scale]");
         const palette = frame.querySelector<HTMLSelectElement>("[data-nebula-palette]");
+        const preset = frame.querySelector<HTMLSelectElement>("[data-nebula-preset]");
         const seed = frame.querySelector<HTMLElement>("[data-nebula-seed]");
+        const link = frame.querySelector<HTMLAnchorElement>("[data-nebula-link]");
         const reseed = frame.querySelector<HTMLButtonElement>("[data-nebula-reseed]");
+
+        if (preset) {
+            preset.value = Object.entries(PRESETS).find(
+                ([, value]) => value.density === this.density && value.scale === this.scale && value.palette === this.palette
+            )?.[0] ?? "filament";
+
+            preset.addEventListener("change", () => {
+                const selected = PRESETS[preset.value];
+                if (!selected) return;
+
+                this.density = selected.density;
+                this.scale = selected.scale;
+                this.palette = selected.palette;
+
+                if (density) density.value = String(this.density);
+                if (scale) scale.value = String(this.scale);
+                if (palette) palette.value = this.palette;
+                this.draw();
+            });
+        }
 
         if (density) {
             density.value = String(this.density);
             density.addEventListener("input", () => {
                 this.density = this.readNumber(density, this.density);
+                this.syncPreset(preset);
                 this.draw();
             });
         }
@@ -137,6 +169,7 @@ export class NebulaRenderer {
             scale.value = String(this.scale);
             scale.addEventListener("input", () => {
                 this.scale = this.readNumber(scale, this.scale);
+                this.syncPreset(preset);
                 this.draw();
             });
         }
@@ -145,6 +178,7 @@ export class NebulaRenderer {
             palette.value = this.palette;
             palette.addEventListener("change", () => {
                 this.palette = palette.value;
+                this.syncPreset(preset);
                 this.draw();
             });
         }
@@ -153,15 +187,34 @@ export class NebulaRenderer {
             seed.textContent = `seed 0x${this.seed.toString(16).padStart(8, "0")}`;
         }
 
+        if (link) {
+            link.href = this.permalink();
+        }
+
         if (reseed) {
             reseed.addEventListener("click", () => {
                 this.seed = this.randomSeed();
                 this.offset = offsetForSeed(this.seed);
                 if (seed) seed.textContent = `seed 0x${this.seed.toString(16).padStart(8, "0")}`;
                 this.writeSeedToUrl();
+                if (link) link.href = this.permalink();
                 this.draw();
             });
         }
+    }
+
+    private syncPreset(preset: HTMLSelectElement | null): void {
+        if (!preset) return;
+
+        preset.value = Object.entries(PRESETS).find(
+            ([, value]) => value.density === this.density && value.scale === this.scale && value.palette === this.palette
+        )?.[0] ?? "";
+    }
+
+    private permalink(): string {
+        const url = new URL(window.location.href);
+        url.searchParams.set("seed", this.seed.toString(16).padStart(8, "0"));
+        return `${url.pathname}${url.search}`;
     }
 
     private writeSeedToUrl(): void {

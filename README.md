@@ -4,14 +4,16 @@ A personal website and portfolio for Caleb Lin: an engineering / graphics / HPC-
 homepage built around interactive **WebGL2** visual experiments. The site is a Vite +
 TypeScript app whose content lives in an in-code page table; at build time every route is
 pre-rendered to static HTML, and the client hydrates only the canvas visualizations and
-route-specific metadata. It has KaTeX-rendered math and three canvas visualizations: a
-procedural seed-reproducible nebula on the homepage, Mandelbrot orbit points, and a boids
-flocking simulation. It also hosts a web-readable résumé at `/resume`, dedicated FPGA and
-HPC project pages, engineering notes, and a real 404 page.
+route-specific metadata. It has KaTeX-rendered math and four canvas visualizations: a
+procedural seed-reproducible nebula on the homepage, Mandelbrot orbit points, a boids
+flocking simulation, and a synthetic Kalman-filter demo. It also hosts a web-readable
+résumé at `/resume`, seven project pages (FPGA, HPC, robotics, forecasting,
+visualization, Mandelbrot, boids), engineering notes, and a real 404 page.
 
 The same source also produces agent-readable representations: Markdown for every page,
-`/llms.txt`, `/llms-full.txt`, `/sitemap.xml`, `/robots.txt`, and per-page JSON-LD. The
-human pages and those files share one content layer, so they cannot drift.
+`/llms.txt`, `/llms-full.txt`, `/projects.json`, `/feed.xml` (Atom), `/sitemap.xml`,
+`/robots.txt`, and per-page JSON-LD. The human pages and those files share one content
+layer, so they cannot drift.
 
 ## Purpose
 
@@ -30,12 +32,14 @@ as a way to learn rendering while keeping the projects visible.
 ├── _config.yml             # legacy Jekyll config (GitHub Pages theme); the site itself is the Vite app
 ├── public/                 # static assets copied verbatim into dist/
 │   ├── blog/               # post figures (poster, robot CAD, glove plots, VGA frames and sprites)
+│   ├── projects/           # 3:2 project thumbnails (raster output + vector diagrams)
 │   ├── caleb-lin-resume.pdf
 │   ├── favicon.svg
 │   └── icons.svg
 ├── scripts/
 │   ├── generate.mjs        # loads the TS generator through Vite's SSR module loader
-│   ├── generate-site.ts    # static HTML, Markdown, llms.txt, sitemap, robots
+│   ├── generate-site.ts    # static HTML, Markdown, llms.txt, projects.json, feed, sitemap, robots
+│   ├── generate-thumbnails.mjs # re-renders the Mandelbrot and Boids raster thumbnails
 │   └── validate.mjs        # serves dist/ and checks the agent-facing surface
 ├── src/
 │   ├── main.ts             # hydration: route check, dev rendering, meta updates, canvas wiring
@@ -44,13 +48,14 @@ as a way to learn rendering while keeping the projects visible.
 │   ├── structured-data.ts  # JSON-LD @graph per page
 │   ├── style.css           # all site styling: tokens, layout, article, tables, diagrams, nebula
 │   ├── data/               # shared source of truth for projects and notes
-│   │   ├── projects.ts     # project index, metrics, links, keywords, descriptions
+│   │   ├── projects.ts     # project index, categories, problem/contribution, metrics, links
 │   │   └── posts.ts        # note titles, dates, summaries, keywords
 │   ├── pages/              # one file per page; assembled into the `pages` record by index.ts
 │   │   ├── index.ts        # barrel: maps routes to the page modules below
 │   │   ├── types.ts        # the shared `Page` type (title, kind, description, dates, keywords, content)
 │   │   ├── constants.ts    # shared URL constants used inside content strings
-│   │   ├── home.ts         # "/" (nebula + selected work)
+│   │   ├── project-ui.ts   # shared project header, fact list, result rows, footer links
+│   │   ├── home.ts         # "/" (nebula + five featured projects)
 │   │   ├── not-found.ts    # 404 content for unknown routes
 │   │   ├── projects.ts     # "/projects"
 │   │   ├── resume.ts       # "/resume" (web version + PDF download)
@@ -59,12 +64,18 @@ as a way to learn rendering while keeping the projects visible.
 │   │   ├── boids.ts        # "/projects/boids"
 │   │   ├── fpga.ts         # "/projects/fpga"
 │   │   ├── hpc.ts          # "/projects/hpc"
+│   │   ├── robotics.ts     # "/projects/robotics" (beacon receiver, control loop, Kalman demo)
+│   │   ├── forecasting.ts  # "/projects/forecasting"
+│   │   ├── visualization.ts # "/projects/visualization"
 │   │   ├── blog.ts         # "/blog"
 │   │   ├── a-game-with-no-framebuffer.ts       # "/blog/a-game-with-no-framebuffer"
 │   │   ├── a-robot-on-a-field-with-no-map.ts   # "/blog/a-robot-on-a-field-with-no-map"
 │   │   ├── seeing-the-mandelbrot-set.ts        # "/blog/seeing-the-mandelbrot-set"
 │   │   ├── the-glove-is-the-controller.ts      # "/blog/the-glove-is-the-controller"
 │   │   └── where-the-file-meets-the-machine.ts # "/blog/where-the-file-meets-the-machine"
+│   ├── kalman/             # synthetic 1D Kalman demo on the robotics page
+│   │   ├── filter.ts       # deterministic track, filter math, RMSE (testable without DOM)
+│   │   └── demo.ts         # Canvas 2D controls, step history, drawing
 │   ├── nebula/             # homepage procedural nebula
 │   │   ├── renderer.ts     # NebulaRenderer: seeded uniforms, controls, quality, pause, fallback
 │   │   └── shaders/
@@ -92,19 +103,28 @@ as a way to learn rendering while keeping the projects visible.
 
 - **`src/pages/`** holds one module per page, each exporting a `Page`. `src/pages/index.ts`
   assembles them into the `pages` record keyed by route (`/`, `/projects`,
-  `/projects/fpga`, `/projects/hpc`, `/projects/boids`, `/projects/mandelbrot`,
+  `/projects/fpga`, `/projects/hpc`, `/projects/robotics`, `/projects/forecasting`,
+  `/projects/visualization`, `/projects/boids`, `/projects/mandelbrot`,
   `/resume`, `/blog`, `/blog/...`).
 - **`src/data/`** is the shared source of truth for things that appear in more than one
-  place. `projects.ts` supplies the project index rows, the homepage selected work, the
-  project pages' descriptions and keywords, thumbnails, `llms.txt`, and JSON-LD.
-  `posts.ts` supplies the note index, post front matter, dates, and per-post metadata.
-  Edit these files first when a project or post changes; do not duplicate the same
-  sentence in a page and in the generated files.
+  place. `projects.ts` supplies the project index rows, categories, problem and
+  contribution text, homepage selected work, project pages' metadata, thumbnails,
+  `projects.json`, `llms.txt`, the sitemap, and JSON-LD.
+  `posts.ts` supplies the note index, post front matter, dates, the Atom feed, and
+  per-post metadata. Edit these files first when a project or post changes; do not
+  duplicate the same sentence in a page and in the generated files.
+- **Project pages:** use `src/pages/project-ui.ts` for the shared header, fact list
+  (category, work period, technologies, dates), result rows, and footer. The body follows
+  Overview → Architecture → Implementation → Results → Analysis; omit a section rather
+  than padding it. Diagrams are inline SVG inside a `.diagram-scroll` frame so they stay
+  legible on narrow screens.
 - **Project thumbnails:** every `ProjectEntry` needs an `image: { src, alt }`. Use an
   actual project output where one exists (`public/blog/` or `public/projects/`);
   otherwise add a 3:2 technical SVG under `public/projects/`. Raster thumbnails are
   480 × 320. `npm run generate:thumbnails` re-renders the Mandelbrot and Boids images
-  from the same rules as their canvases.
+  from the same rules as their canvases. Thumbnail SVGs must be self-contained: an SVG
+  loaded through `<img>` cannot fetch an external `<image href>`, so composite rasters
+  are stored as PNG instead.
 - **`src/render.ts`** owns the parts that must match between the static build and the
   client: the header/nav/footer shell, canonical URL normalization (directory routes end
   in `/`), Markdown paths, and document/meta title rules. `src/main.ts` and the generator
@@ -148,6 +168,8 @@ as a way to learn rendering while keeping the projects visible.
 |---|---|
 | `/llms.txt` | Site summary, project and note index, links to every page and representation |
 | `/llms-full.txt` | Every indexable page as Markdown in one file, separated by canonical URLs |
+| `/projects.json` | Structured project metadata: category, problem, contribution, technologies, dates, links, metrics |
+| `/feed.xml` | Atom feed of the engineering notes, newest first |
 | `/sitemap.xml` | Canonical URLs with `lastmod`, `changefreq`, and `priority` |
 | `/robots.txt` | Crawl permission and the sitemap location |
 | `/<route>.md` (`/index.md` for `/`) | YAML front matter plus the page body as Markdown |

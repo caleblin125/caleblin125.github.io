@@ -29,9 +29,12 @@ function personEntity(): Record<string, unknown> {
             "high-performance computing",
             "Slurm",
             "MPI",
+            "machine learning",
+            "time-series forecasting",
             "control and estimation",
             "robotics",
             "WebGL",
+            "computational visualization",
             "computer engineering"
         ]
     };
@@ -103,6 +106,8 @@ export function buildJsonLd(page: Page, path: string, isNotFound: boolean): Reco
             name: project.title,
             description: project.description,
             image: `${SITE_URL}${project.image.src}`,
+            genre: project.category,
+            keywords: project.technologies.join(", "),
             ...(project.path ? { url: canonicalUrl(project.path) } : project.titleHref ? { url: project.titleHref } : {})
         }));
     }
@@ -160,6 +165,10 @@ export function buildJsonLd(page: Page, path: string, isNotFound: boolean): Reco
             creator: { "@id": personId },
             inLanguage: "en",
             isPartOf: { "@id": websiteId },
+            ...(project?.dates?.started ? { dateCreated: project.dates.started } : {}),
+            ...(project?.dates?.published ? { datePublished: project.dates.published } : {}),
+            ...(project?.category ? { genre: project.category } : {}),
+            ...(project?.technologies ? { about: project.technologies.map((name) => ({ "@type": "Thing", name })) } : {}),
             ...(page.keywords ? { keywords: page.keywords.join(", ") } : {})
         });
     }

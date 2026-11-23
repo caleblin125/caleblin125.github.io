@@ -19,7 +19,7 @@ export const boidsPage: Page = {
 <h2>The three rules</h2>
 <p>Every boid builds a steering target once per 10&nbsp;ms simulation step. Three weighted forces are computed from the neighbours it can see, and the sum is clamped to the class's steering limit before it is applied as acceleration:</p>
 <div class="math-display">$$\\text{separation} + \\text{alignment} + \\text{cohesion}$$</div>
-<svg class="vector-diagram" viewBox="0 0 960 280" role="img" aria-label="Vector diagram of the three boid steering rules">
+<div class="diagram-scroll"><svg class="vector-diagram" viewBox="0 0 960 280" role="img" aria-label="Vector diagram of the three boid steering rules">
 <defs>
 <marker id="arrow-sep" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#ff6b6b"/></marker>
 <marker id="arrow-coh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5be584"/></marker>
@@ -60,7 +60,7 @@ export const boidsPage: Page = {
 <circle cx="160" cy="160" r="5" fill="#eee8f2"/>
 <text x="160" y="262" class="diagram-caption" text-anchor="middle">steer toward the centre of mass</text>
 </g>
-</svg>
+</svg></div>
 <h3>Separation — keep your distance</h3>
 <p>For every neighbour closer than its <em>avoid distance</em>, the boid pushes directly away from it. The push is scaled by the separation weight for that neighbour's class, so a Prey1 pressed against a Predator feels a far stronger push than one beside another Prey1:</p>
 <div class="math-display">$$\\mathbf{F}_{\\text{sep}} = \\sum_{j \\,:\\, d_{ij} < r_{\\text{avoid}}} s_{ij}\\,(\\mathbf{p}_i - \\mathbf{p}_j)$$</div>

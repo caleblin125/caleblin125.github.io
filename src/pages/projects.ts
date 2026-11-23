@@ -9,8 +9,9 @@ const projectRows = projectEntries
     .map((project) => {
         const title = project.titleHref ? `<a href="${project.titleHref}">${project.title}</a>` : project.title;
         const links = project.links.map((link) => `<a href="${link.href}">${link.label}</a>`).join("");
+        const technologies = project.technologies.map((technology) => `<li>${technology}</li>`).join("");
 
-        return `<article class="project-row"><div class="project-number">${project.number}</div><figure class="project-thumb"><img src="${project.image.src}" alt="${project.image.alt}" loading="lazy" decoding="async"></figure><div class="project-body"><h2>${title}</h2><p>${project.description}</p><div class="project-links">${links}</div><span class="tag">${project.tags}</span></div><div class="project-status">${project.period}</div></article>`;
+        return `<article class="project-row"><div class="project-number">${project.number}</div><figure class="project-thumb"><img src="${project.image.src}" alt="${project.image.alt}" loading="lazy" decoding="async"></figure><div class="project-body"><p class="work-category">${project.category}</p><h2>${title}</h2><p>${project.description}</p><div class="project-links">${links}</div><ul class="tech-list project-tech" aria-label="Technologies">${technologies}</ul></div><div class="project-status">${project.period}</div></article>`;
     })
     .join("\n                ");
 
@@ -19,10 +20,10 @@ export const projectsPage: Page = {
     eyebrow: "Projects",
     kind: "index",
     section: "Projects",
-    description: "A guided list of Caleb Lin's FPGA, HPC, graphics, AI, and research software projects, with measurements and technical write-ups.",
-    keywords: ["projects", "FPGA", "HPC", "graphics", "AI", "research software", "Caleb Lin"],
+    description: "A guided list of Caleb Lin's FPGA, HPC, robotics, machine-learning, graphics, AI, and research-software projects, with measurements and technical write-ups.",
+    keywords: ["projects", "FPGA", "HPC", "robotics", "machine learning", "graphics", "AI", "research software", "Caleb Lin"],
     content: `
-            <section class="page-intro"><p class="kicker">Projects</p><h1>Work and projects.</h1><p class="lede">A guided list of the things I have been building: digital hardware, high-performance computing, interactive graphics, AI-assisted learning tools, and local research software.</p><div class="link-row"><a class="text-link" href="${githubProfileUrl}">Full GitHub profile <span>↗</span></a></div></section>
+            <section class="page-intro"><p class="kicker">Projects</p><h1>Work and projects.</h1><p class="lede">A guided list of the things I have been building: digital hardware, high-performance computing, robotics and state estimation, machine-learning forecasting, computational visualization, AI-assisted learning tools, and local research software.</p><div class="link-row"><a class="text-link" href="${githubProfileUrl}">Full GitHub profile <span>↗</span></a></div></section>
             <section class="project-list">
                 ${projectRows}
             </section>`

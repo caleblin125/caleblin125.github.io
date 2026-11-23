@@ -1,9 +1,5 @@
 import "./style.css";
 import "katex/dist/katex.min.css";
-import { BoidsRenderer } from "./boids/renderer";
-import { ChaosRenderer } from "./chaos/renderer";
-import { Mandelbrot } from "./chaos/mandelbrot";
-import { NebulaRenderer } from "./nebula/renderer";
 import { notFoundPage, pages } from "./pages";
 import type { Page } from "./pages/types";
 import { normalizePath, pageMeta, renderPage } from "./render";
@@ -89,22 +85,35 @@ if (!prerendered) {
     });
 }
 
-for (const canvas of document.querySelectorAll<HTMLCanvasElement>("canvas[data-visualization]")) {
-    const kind = canvas.dataset.visualization;
+// Each renderer is imported only when its canvas is actually on the page. This
+// keeps the homepage nebula out of the project pages and the WebGL simulations
+// out of the text-only routes.
+async function setupVisualizations(): Promise<void> {
+    for (const canvas of document.querySelectorAll<HTMLCanvasElement>("canvas[data-visualization]")) {
+        const kind = canvas.dataset.visualization;
 
-    try {
-        if (kind === "boids") {
-            new BoidsRenderer(canvas).start();
-        } else if (kind === "nebula") {
-            new NebulaRenderer(canvas).start();
-        } else {
-            new ChaosRenderer(canvas, new Mandelbrot()).start();
+        try {
+            if (kind === "boids") {
+                const { BoidsRenderer } = await import("./boids/renderer");
+                new BoidsRenderer(canvas).start();
+            } else if (kind === "nebula") {
+                const { NebulaRenderer } = await import("./nebula/renderer");
+                new NebulaRenderer(canvas).start();
+            } else if (kind === "kalman") {
+                const { KalmanDemo } = await import("./kalman/demo");
+                new KalmanDemo(canvas).start();
+            } else {
+                const [{ ChaosRenderer }, { Mandelbrot }] = await Promise.all([import("./chaos/renderer"), import("./chaos/mandelbrot")]);
+                new ChaosRenderer(canvas, new Mandelbrot()).start();
+            }
+        } catch (error) {
+            console.error(`Unable to start the ${kind ?? "canvas"} visualization`, error);
+            canvas.closest<HTMLElement>(".visual-frame, .nebula-frame, .kalman-demo")?.classList.add("is-fallback");
         }
-    } catch (error) {
-        console.error(`Unable to start the ${kind ?? "canvas"} visualization`, error);
-        canvas.closest<HTMLElement>(".visual-frame, .nebula-frame")?.classList.add("is-fallback");
     }
 }
+
+void setupVisualizations();
 
 function setMeta(selector: string, content: string): void {
     const element = document.querySelector<HTMLMetaElement>(selector);

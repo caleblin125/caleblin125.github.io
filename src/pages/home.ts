@@ -1,59 +1,56 @@
-// Home page ("/") — a compact intro, the procedural nebula centerpiece, a
-// selected-work list with hard numbers, and a "home strip" pointing to About.
-// The selected-work rows come from src/data so project summaries do not drift.
-import { postEntries } from "../data/posts";
-import { projectEntries } from "../data/projects";
+// Home page ("/") — a compact intro, the procedural nebula centerpiece, five
+// selected projects with problem / contribution / technology / result, and a
+// "home strip" pointing to About. All project text comes from src/data so the
+// previews cannot drift from the project pages.
+import { featuredProjects } from "../data/projects";
 import { githubProfileUrl } from "./constants";
 import type { Page } from "./types";
 
-const featuredPost = postEntries.find((post) => post.id === "a-game-with-no-framebuffer");
+const projects = featuredProjects();
 
-if (!featuredPost?.image) {
-    throw new Error("The homepage selected-work list needs the VGA note and its thumbnail");
+if (projects.length !== 5) {
+    throw new Error(`The homepage needs exactly five featured projects; found ${projects.length}`);
 }
 
-const featuredWork = [
-    ...projectEntries
-        .filter((project) => project.featured)
-        .map((project) => ({
-            number: project.number,
-            href: project.path ?? project.titleHref ?? "/projects",
-            title: project.title,
-            description: project.description,
-            image: project.image,
-            metric: project.metric ?? "",
-            metricLabel: project.metricLabel ?? ""
-        })),
-    {
-        number: "03",
-        href: featuredPost.path,
-        title: featuredPost.title.replace(/\.$/, ""),
-        description: featuredPost.description,
-        image: featuredPost.image,
-        metric: featuredPost.metric ?? "",
-        metricLabel: featuredPost.metricLabel ?? ""
-    }
-];
+function escapeHtml(value: string): string {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
 
-const workRows = featuredWork
-    .map(
-        (work) =>
-            `<a class="work-row" href="${work.href}"><span class="work-number">${work.number}</span><span class="work-thumb"><img src="${work.image.src}" alt="" loading="lazy" decoding="async"></span><div class="work-body"><h2>${work.title}</h2><p>${work.description}</p></div><span class="work-metric"><strong>${work.metric}</strong><span>${work.metricLabel}</span></span></a>`
-    )
+const workRows = projects
+    .map((project) => {
+        const href = project.path ?? project.titleHref ?? "/projects";
+        const technologies = project.technologies.map((technology) => `<li>${escapeHtml(technology)}</li>`).join("");
+
+        return `<a class="work-row" href="${escapeHtml(href)}">
+<span class="work-number">${escapeHtml(project.number)}</span>
+<span class="work-thumb"><img src="${escapeHtml(project.image.src)}" alt="${escapeHtml(project.image.alt)}" loading="lazy" decoding="async"></span>
+<div class="work-body">
+<p class="work-category">${escapeHtml(project.category)}</p>
+<h2>${escapeHtml(project.title)}</h2>
+<p class="work-problem"><strong>Problem.</strong> ${escapeHtml(project.problem)}</p>
+<p class="work-contribution"><strong>Contribution.</strong> ${escapeHtml(project.contribution)}</p>
+<ul class="work-tech" aria-label="Technologies">${technologies}</ul>
+<span class="work-link">Full project <span aria-hidden="true">↗</span></span>
+</div>
+<span class="work-metric"><strong>${escapeHtml(project.metric ?? "")}</strong><span>${escapeHtml(project.metricLabel ?? "")}</span></span>
+</a>`;
+    })
     .join("");
 
 export const homePage: Page = {
     title: "Engineering and visual experiments.",
     eyebrow: "Caleb Lin",
     kind: "home",
-    description: "Caleb Lin is a computer engineering and robotics student at UC Santa Cruz. He works on FPGA acceleration, HPC clusters, control and estimation, and visual systems that make technical results legible.",
-    keywords: ["Caleb Lin", "computer engineering", "robotics", "FPGA", "HPC", "WebGL", "UC Santa Cruz"],
+    updated: "2026-11-22",
+    description:
+        "Caleb Lin is a computer engineering and robotics student at UC Santa Cruz. He works on FPGA acceleration, HPC clusters, machine learning, control and estimation, and computational visualization systems that make technical results legible.",
+    keywords: ["Caleb Lin", "computer engineering", "robotics", "FPGA", "HPC", "machine learning", "WebGL", "UC Santa Cruz"],
     content: `
             <section class="hero-grid">
                 <div class="hero-copy">
-                    <p class="kicker">Engineering / visual systems</p>
+                    <p class="kicker">Computer engineering / robotics / HPC / ML / visualization</p>
                     <h1>I build systems, then make them legible.</h1>
-                    <p class="lede">I’m Caleb Lin, a computer engineering and robotics student at UC Santa Cruz. I work on FPGA acceleration, HPC clusters, and control and estimation systems — and I build visual tools that make the results legible.</p>
+                    <p class="lede">I’m Caleb Lin, a computer engineering and robotics student at UC Santa Cruz. I work across digital hardware and FPGA acceleration, high-performance computing, machine learning, robotics and state estimation, and computational visualization. The through-line is instrumentation: build the system, measure it, then give someone a way to see what it is doing.</p>
                     <div class="link-row"><a class="text-link" href="#selected-work">Selected work <span>↓</span></a><a class="text-link" href="/resume">Résumé <span>↗</span></a><a class="text-link" href="${githubProfileUrl}">GitHub <span>↗</span></a></div>
                 </div>
                 <div class="nebula-frame" data-nebula>
@@ -64,20 +61,26 @@ export const homePage: Page = {
                         <div class="nebula-fallback">This field needs WebGL2. The rest of the page is unaffected.</div>
                     </div>
                     <div class="nebula-controls">
+                        <label class="nebula-control">Preset <select data-nebula-preset><option value="filament">Filament</option><option value="ice-drift">Ice drift</option><option value="ember-core">Ember core</option></select></label>
                         <label class="nebula-control">Density <input type="range" min="0" max="1" step="0.01" value="0.55" data-nebula-density></label>
                         <label class="nebula-control">Scale <input type="range" min="0.4" max="2.2" step="0.01" value="1" data-nebula-scale></label>
                         <label class="nebula-control">Palette <select data-nebula-palette><option value="violet">Violet</option><option value="ice">Ice</option><option value="ember">Ember</option></select></label>
-                        <span class="nebula-seed-group"><span class="nebula-seed" data-nebula-seed aria-live="polite">seed 00000000</span><button class="nebula-reseed" type="button" data-nebula-reseed>Reseed</button></span>
+                        <span class="nebula-seed-group"><span class="nebula-seed" data-nebula-seed aria-live="polite">seed 0x00000000</span><a class="nebula-reseed" data-nebula-link href="?seed=00000000">Link</a><button class="nebula-reseed" type="button" data-nebula-reseed>Reseed</button></span>
                     </div>
+                    <details class="nebula-notes">
+                        <summary>How this field is generated</summary>
+                        <p>The image is a fragment shader, not a video. Three octaves of fractional Brownian motion are domain-warped by a slower noise field; the seed selects the offset. Density and scale change the field, and the palette swaps the three-stop color ramp. The browser writes the seed into the URL, so the same frame can be reopened.</p>
+                        <p>Rendering is adaptive: if frames run slow, the drawing buffer drops resolution before it stops animating. With <code>prefers-reduced-motion</code>, the shader draws one still frame at a fixed time and pointer parallax is disabled. Without WebGL2, the text fallback remains and the rest of the page is unaffected.</p>
+                    </details>
                 </div>
             </section>
             <section class="selected-work" id="selected-work">
-                <div class="section-head"><p class="kicker">Selected work</p><a class="text-link" href="/projects">All projects <span>↗</span></a></div>
+                <div class="section-head"><p class="kicker">Selected work / 05</p><a class="text-link" href="/projects">All projects <span>↗</span></a></div>
                 <div class="work-list">${workRows}</div>
             </section>
             <section class="home-strip">
                 <p>At the moment</p>
-                <div><strong>Benchmarking inference and tuning clusters</strong><span>Currently researching ternary LLM inference on an Alveo U250 and data-center load forecasting, while tuning competition workloads with UCSC’s HPC team.</span></div>
+                <div><strong>Benchmarking inference, tuning clusters, and forecasting load</strong><span>Currently researching ternary LLM inference on an Alveo U250, forecasting data-center electricity load, and tuning competition workloads with UCSC’s HPC team.</span></div>
                 <a class="text-link" href="/about">A little more <span>↗</span></a>
             </section>`
 };

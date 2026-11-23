@@ -234,6 +234,37 @@ try {
     check(llmsFull.status === 200, "llms-full.txt is served");
     check(llmsFull.text.length > 20000, "llms-full.txt contains the full page corpus");
 
+    const feed = await get("/feed.xml");
+    check(feed.status === 200 && feed.type.startsWith("application/xml"), "feed.xml is served as XML");
+    check(feed.text.includes('<feed xmlns="http://www.w3.org/2005/Atom">'), "feed.xml uses the Atom namespace");
+    check((feed.text.match(/<entry>/g) ?? []).length === 5, "feed.xml lists every note");
+    check(feed.text.includes('rel="self" type="application/atom+xml"'), "feed.xml identifies itself");
+    check(feed.text.includes("A game with no framebuffer."), "feed.xml contains the newest note");
+    check(feed.text.includes("https://caleblin125.github.io/blog/a-game-with-no-framebuffer/"), "feed.xml uses canonical note URLs");
+
+    const projectsJson = await get("/projects.json");
+    check(projectsJson.status === 200 && projectsJson.type.startsWith("application/json"), "projects.json is served as JSON");
+
+    let projectData = null;
+
+    try {
+        projectData = JSON.parse(projectsJson.text);
+    } catch {
+        // The assertions below report the missing structure.
+    }
+
+    check(Boolean(projectData), "projects.json parses");
+    check(Array.isArray(projectData?.projects) && projectData.projects.length === 10, "projects.json lists every project");
+    check(projectData?.projects?.filter((project) => project.featured).length === 5, "projects.json marks five featured projects");
+
+    for (const project of projectData?.projects ?? []) {
+        check(Boolean(project.id && project.title && project.category), `projects.json entry has identity: ${project.id ?? "unknown"}`);
+        check(Boolean(project.problem && project.contribution), `projects.json entry has problem and contribution: ${project.id ?? "unknown"}`);
+        check(Array.isArray(project.technologies) && project.technologies.length > 0, `projects.json entry has technologies: ${project.id ?? "unknown"}`);
+        check(Boolean(project.dates === null || typeof project.dates === "object"), `projects.json entry has a dates field: ${project.id ?? "unknown"}`);
+        check(Boolean(project.image?.src?.startsWith(`${origin}/`)), `projects.json image is absolute: ${project.id ?? "unknown"}`);
+    }
+
     for (const route of routes) {
         const canonical = route === "/" ? `${origin}/` : `${origin}${route}/`;
         check(llmsFull.text.includes(`<!-- ${canonical} -->`), `llms-full.txt includes ${route}`);
@@ -243,10 +274,13 @@ try {
     const titles = new Map();
     const descriptions = new Map();
     const expected = [
-        ["/", ["I build systems, then make them legible."]],
-        ["/projects", ["Work and projects.", "FPGA and digital hardware", "HPC and cluster tuning"]],
-        ["/projects/fpga", ["Digital hardware, measured.", "Alveo U250", "Yosys"]],
-        ["/projects/hpc", ["Clusters, benchmarks, and sweeps.", "663 GFLOPS", "HPL"]],
+        ["/", ["I build systems, then make them legible.", "Problem.", "Contribution.", "Data-center load forecasting"]],
+        ["/projects", ["Work and projects.", "FPGA and digital hardware", "HPC and cluster tuning", "Robotics and state estimation", "Data-center load forecasting", "Computational visualization"]],
+        ["/projects/fpga", ["Digital hardware, measured.", "Alveo U250", "Yosys", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
+        ["/projects/hpc", ["Clusters, benchmarks, and sweeps.", "663 GFLOPS", "HPL", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
+        ["/projects/robotics", ["Finding a goal without a map.", "2000.33 Hz", "10 ms", "synthetic", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
+        ["/projects/forecasting", ["A decade of ten-minute load.", "3% MAPE", "10% MAPE", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
+        ["/projects/visualization", ["Rules made visible.", "44,200", "489", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/mandelbrot", ["Mandelbrot set."]],
         ["/projects/boids", ["Boids.", "separation"]],
         ["/blog", ["Notes.", "A game with no framebuffer."]],
@@ -301,6 +335,7 @@ try {
         check(page.text.includes('property="og:url"'), `${label} has Open Graph URL`);
         check(page.text.includes('href="/sitemap.xml"'), `${label} advertises the sitemap`);
         check(page.text.includes('href="/llms.txt"'), `${label} advertises llms.txt`);
+        check(page.text.includes('type="application/atom+xml"'), `${label} advertises the Atom feed`);
 
         const jsonLd = parseJsonLd(page.text);
         check(Boolean(jsonLd), `${label} has JSON-LD`);
@@ -369,7 +404,7 @@ try {
 
     const projectsHtml = await get("/projects");
     const projectImages = [...projectsHtml.text.matchAll(/<figure class="project-thumb"><img src="([^"]+)" alt="([^"]+)"/g)];
-    check(projectImages.length === 7, `every project row has a thumbnail (${projectImages.length} found)`);
+    check(projectImages.length === 10, `every project row has a thumbnail (${projectImages.length} found)`);
 
     const projectImageSources = new Set();
 
@@ -384,7 +419,7 @@ try {
     }
 
     const homeImages = [...(await get("/")).text.matchAll(/<span class="work-thumb"><img src="([^"]+)"/g)];
-    check(homeImages.length === 3, `homepage selected work has a thumbnail per row (${homeImages.length} found)`);
+    check(homeImages.length === 5, `homepage selected work has a thumbnail per row (${homeImages.length} found)`);
 
     for (const [, src] of homeImages) {
         const image = await get(src);

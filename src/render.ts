@@ -8,9 +8,9 @@ export const SITE_URL = "https://caleblin125.github.io";
 export const SITE_NAME = "Caleb Lin";
 export const SITE_TITLE = "Caleb Lin — Engineering and visual experiments";
 export const SITE_DESCRIPTION =
-    "Caleb Lin is a computer engineering and robotics student at UC Santa Cruz. He works on FPGA acceleration, HPC clusters, control and estimation, and visual systems that make technical results legible.";
+    "Caleb Lin is a computer engineering and robotics student at UC Santa Cruz. He works on FPGA acceleration, high-performance computing, machine learning, robotics and state estimation, and computational visualization that makes technical results legible.";
 export const AUTHOR_DESCRIPTION =
-    "Computer engineering and robotics student at UC Santa Cruz, working on FPGA acceleration, high-performance computing, control and estimation, and visual systems.";
+    "Computer engineering and robotics student at UC Santa Cruz, working on FPGA acceleration, high-performance computing, machine learning, control and estimation, and computational visualization.";
 export const SITE_UPDATED = "2026-11-22";
 
 export const navItems: Record<string, string> = {

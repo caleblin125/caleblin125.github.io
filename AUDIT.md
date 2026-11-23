@@ -1,0 +1,181 @@
+# Site audit and implementation report
+
+Date: 2026-11-22
+Scope: `caleblin125.github.io` as it stood at commit `9ad8c76`, plus the changes in this
+working tree.
+
+The goal was to move the site from a portfolio with three technical pages toward an
+inspectable engineering record: every featured system states its problem, the part that is
+mine, the technologies, and one measured result, and the same facts are available to
+humans, crawlers, and agents without being maintained twice.
+
+---
+
+## 1. What was already strong
+
+- **A real build pipeline.** Vite + TypeScript, pre-rendered HTML per route, and a small
+  hydration layer. No client-side router and no framework to carry.
+- **Static output with no server dependency.** Every route is a directory with an
+  `index.html`; GitHub Pages can serve it as-is.
+- **A distinct visual identity.** The dark surface, monospace labels, hairline borders, and
+  the WebGL nebula are consistent and worth keeping. Nothing here needed a redesign.
+- **A working content layer.** `src/data/projects.ts` and `src/data/posts.ts` already fed
+  the index, project rows, sitemap, and JSON-LD, so a single edit propagated.
+- **Machine-readable output before this pass.** `/llms.txt`, `/llms-full.txt`,
+  `/sitemap.xml`, `/robots.txt`, per-page Markdown, and JSON-LD already existed and were
+  validated at build time.
+- **A validation script that serves `dist/` and checks the generated surface.** This is the
+  reason the changes below could be verified without a browser for every route.
+
+## 2. Problems found
+
+| # | Problem | Severity | Effect |
+|---|---|---|---|
+| 1 | The homepage showed six projects in a flat list with no problem/contribution/result structure. | High | A reader could not tell what was built, what was measured, or what was the author's contribution. |
+| 2 | Only FPGA and HPC had project pages. Robotics, forecasting, and visualization existed only as résumé lines or blog posts. | High | The strongest work was the least inspectable. |
+| 3 | `/projects` rendered one free-form `tags` string per project. | Medium | Categories and technologies could not be filtered, styled, or emitted as structured data. |
+| 4 | Project pages had no shared shape. | Medium | Each page invented its own headings, metadata, and links, so they drifted. |
+| 5 | The nebula was impressive but unexplained. Seed, density, scale, and palette were not exposed as reproducible controls. | Medium | A visitor could not reproduce a frame or understand what they were looking at. |
+| 6 | The site had no feed, no `projects.json`, and no feed discovery links. | Medium | Notes and project metadata were not subscribable or machine-consumable as data. |
+| 7 | No interactive demonstration of estimation, simulation, or geometry beyond Mandelbrot and Boids. | Medium | The "laboratory" claim rested on two visual toys. |
+| 8 | Architecture was described in prose only. | Low | Readers had to reconstruct signal and data flow themselves. |
+| 9 | Thumbnails were inconsistent: some were real output, some were decorative SVGs, and two composite SVGs referenced external `<image href>` files that cannot load through `<img>`. | Low | Two thumbnails would silently render blank. |
+| 10 | Wide diagrams were not handled on small screens. | Low | Labels became unreadable below ~600 px. |
+
+## 3. What changed
+
+### 3.1 Central project model
+
+`src/data/projects.ts` is now the single source for the project index, homepage previews,
+project pages, `projects.json`, `llms.txt`, the sitemap, Markdown front matter, and JSON-LD.
+`ProjectEntry` gained:
+
+- `category` — one stable label per project, used for display and grouping.
+- `problem` — the constraint the project addresses.
+- `contribution` — the part that is specifically the author's.
+- `technologies` — a structured list replacing the free-form `tags` string.
+- `dates` — optional `started`, `measured`, and `published` fields, kept separate from the
+  human-readable `period` so a write-up date is never presented as an experiment date.
+
+Ten projects remain. Exactly five are `featured`: FPGA, HPC, robotics, forecasting, and
+computational visualization. Mandelbrot and Boids stay as individual project pages.
+
+### 3.2 New and rebuilt pages
+
+| Route | State |
+|---|---|
+| `/` | Rebuilt around the five featured projects. Each preview states problem, contribution, technologies, one measured result, and links to the full project. |
+| `/projects` | Rebuilt to render category plus structured technology lists. |
+| `/projects/fpga` | Reframed as Overview → Architecture → Implementation → Results → Analysis, with an inline architecture diagram. |
+| `/projects/hpc` | Same structure, with an HPL sweep and scaling diagram. |
+| `/projects/robotics` | New. Beacon receiver, control loop, state estimation, the synthetic Kalman demo, and an explicit note that the shipped match code used reactive tape logic and IR peak tracking, while the particle filter, opponent EKF, and A* were built and simulated but did not ship. |
+| `/projects/forecasting` | New. Data-center load forecasting, 3% MAPE against a 10% baseline, and the feature/validation pipeline. |
+| `/projects/visualization` | New. Mandelbrot orbit seeds and Boids as two views of the same rendering problem, with numbers drawn from the existing code and notes. |
+| `/projects/mandelbrot`, `/projects/boids` | Unchanged in scope; Boids now honors reduced motion with a still frame. |
+
+`src/pages/project-ui.ts` holds the shared project header, fact list (category, period,
+technologies, dates), result rows, and footer links. A project page that lacks a fact simply
+omits it; no page pads a section it cannot support.
+
+### 3.3 Demonstrations
+
+- **Synthetic 1D Kalman filter** (`src/kalman/filter.ts`, `src/kalman/demo.ts`). Deterministic
+  seed `0x5eed1234`, constant-velocity track, adjustable process and measurement noise,
+  Run/Pause/Reset, live estimate and RMSE, and a faint truth path for context. The page
+  states that the data is synthetic, that the RMSE is computed from that run only, and that
+  it says nothing about the robot's field performance.
+- **Nebula controls.** Presets (Filament, Ice drift, Ember core), density, scale, and palette
+  sliders; a `?seed=` parameter; a permalink control; a Reseed button that writes the new
+  seed back to the URL; a live seed readout; and an expandable explanation of the field,
+  reduced-motion behavior, and the WebGL fallback.
+- **Architecture diagrams.** Inline SVG for FPGA, HPC, robotics, forecasting, and
+  visualization, each wrapped in `.diagram-scroll` so wide labels stay legible on narrow
+  screens instead of shrinking.
+
+### 3.4 Machine-readable surface
+
+- `/projects.json` — every project as structured data: category, problem, contribution,
+  technologies, dates, links, metrics, thumbnail, and route.
+- `/feed.xml` — Atom feed of the engineering notes, newest first, with discovery links in
+  every page `<head>`.
+- `/llms.txt` — site summary, project and note index, and links to every representation.
+- `/llms-full.txt` — every indexable page as Markdown, separated by canonical URLs.
+- JSON-LD — `Person`, `WebSite`, the page type, breadcrumbs, and the work or article, with
+  robotics, machine learning, forecasting, and visualization described explicitly.
+
+### 3.5 Delivery and accessibility
+
+- Canvas renderers, including the Kalman demo, are dynamically imported, so the initial
+  bundle does not carry code a route never uses.
+- The nebula canvas is absolutely positioned inside its stage; this fixes a `ResizeObserver`
+  feedback loop that previously logged console errors during layout.
+- Boids renders a still frame under `prefers-reduced-motion: reduce`.
+- Project images have descriptive alt text; robot and visualization thumbnails are raster
+  PNGs at 480 × 320 because an SVG loaded through `<img>` cannot fetch an external image.
+- Nebula controls are native `<select>` and `<input type="range">`, so they work with a
+  keyboard and expose their values to assistive technology.
+
+## 4. Verification performed
+
+- `npm run build` succeeds (`tsc`, `vite build`, `generate:html`).
+- `npm run validate` passes **870 checks, 0 failures**, covering all 17 routes, the five
+  homepage thumbnails, the new routes, the Atom feed, `projects.json`, sitemap and robots,
+  per-page feed discovery, JSON-LD, and Markdown representations.
+- Bundle after the changes: main JS ~129 kB (gzip ~44 kB), CSS ~49 kB (gzip ~12.6 kB),
+  with renderers and the Kalman demo in lazy chunks. KaTeX auto-render remains the largest
+  single asset at ~255 kB and is only fetched by pages that contain math.
+- Browser checks at 1440 × 900 and 390 × 844 for `/`, `/projects`, `/projects/robotics`,
+  `/projects/forecasting`, and `/projects/visualization`: layout, thumbnails, diagrams,
+  results, and the Kalman controls all render and operate.
+- Generated HTML, Markdown, XML, and JSON were re-read as UTF-8 and contain the intended
+  characters (`—`, `±`). PowerShell console output shows mojibake; the files do not.
+
+## 5. Known limitations
+
+- **No automated accessibility or performance audit.** Keyboard order, contrast, and
+  reduced motion were checked by inspection and by the browser where it was available, not
+  by axe or Lighthouse in CI.
+- **The in-app browser became undriveable** after roughly ten tabs
+  (`No OpenChamber client connected here can control a page`). Nebula preset/reseed clicks,
+  forced reduced-motion emulation, and the WebGL-disabled fallback were reviewed in code
+  but not re-clicked in that final session.
+- **No benchmark explorer.** The spec prioritizes one; shipping it would require sweep data
+  that does not exist in the repository. Rather than invent a dataset, the pages report only
+  documented values (3× class throughput, 663 GFLOPS / 47% of peak, 10 ms control period,
+  3% vs 10% MAPE, 44,200 orbit seeds).
+- **Dates are partial.** Several projects have a period but no exact start or measurement
+  date, so those fields are omitted rather than guessed.
+- **The Kalman demo is not the robot's filter.** It is a synthetic, clearly labeled
+  demonstration of the same estimation idea, not a replay of field data.
+- **Robotics scope is stated conservatively.** The page separates what shipped from what was
+  built and simulated; it does not claim the filter ran on the competition robot.
+- **KaTeX is still large.** It is lazy-loaded and route-scoped, so it does not affect the
+  homepage, but a future pass could split it further.
+
+## 6. Files changed
+
+- `src/data/projects.ts` — extended model, 10 projects, 5 featured entries, new thumbnails.
+- `src/pages/home.ts` — five-project homepage and nebula controls/explanation.
+- `src/pages/projects.ts` — categories and structured technologies.
+- `src/pages/project-ui.ts` — shared project header, facts, results, footer.
+- `src/pages/fpga.ts`, `src/pages/hpc.ts` — restructured with architecture diagrams.
+- `src/pages/robotics.ts`, `src/pages/forecasting.ts`, `src/pages/visualization.ts` — new.
+- `src/pages/boids.ts`, `src/pages/index.ts` — diagram frame, route registration.
+- `src/kalman/filter.ts`, `src/kalman/demo.ts` — synthetic filter and demo UI.
+- `src/nebula/renderer.ts` — presets, permalink, seed, reduced motion, adaptive quality.
+- `src/boids/renderer.ts` — reduced-motion still frame.
+- `src/main.ts` — dynamic renderer imports, Kalman wiring.
+- `src/render.ts`, `src/structured-data.ts`, `index.html` — feed discovery and metadata.
+- `src/style.css` — project, chip, result, nebula-note, demo, and `.diagram-scroll` styles.
+- `scripts/generate-site.ts` — Atom feed, `projects.json`, expanded `llms.txt`.
+- `scripts/validate.mjs` — 870-check matrix.
+- `public/projects/forecasting.svg`, `robotics.png`, `visualization.png` — new thumbnails.
+- `README.md` — routes, modules, machine-readable files, thumbnail constraints.
+
+## 7. Recommended next steps
+
+1. Add a CI accessibility check (axe or Lighthouse) and a link checker.
+2. Build a benchmark explorer only once real sweep data is exported from the HPL runs.
+3. Add exact experiment dates where artifacts exist (benchmark logs, competition records).
+4. Re-run the nebula fallback and reduced-motion checks on a fresh browser session.
+5. Consider splitting KaTeX per page or replacing it with pre-rendered math for static pages.

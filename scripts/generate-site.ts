@@ -204,13 +204,15 @@ function buildLlmsTxt(): string {
         "",
         `Canonical site: ${SITE_URL}/`,
         `Full content: ${SITE_URL}/llms-full.txt`,
+        `Structured project metadata: ${SITE_URL}/projects.json`,
+        `Atom feed: ${SITE_URL}/feed.xml`,
         `Sitemap: ${SITE_URL}/sitemap.xml`,
         "",
         "## Projects",
         "",
         ...projectEntries.map((project) => {
             const href = project.path ? canonicalUrl(project.path) : project.titleHref ?? canonicalUrl("/projects");
-            return `- [${project.title}](${href}): ${project.description}`;
+            return `- [${project.title}](${href}): ${project.description} Technologies: ${project.technologies.join(", ")}.`;
         }),
         "",
         "## Writing",
@@ -231,6 +233,8 @@ function buildLlmsTxt(): string {
         "## Machine-readable",
         "",
         `- [Full site content](${SITE_URL}/llms-full.txt): every page as Markdown in one file.`,
+        `- [Project metadata](${SITE_URL}/projects.json): categories, technologies, dates, links, and measured metrics as JSON.`,
+        `- [Atom feed](${SITE_URL}/feed.xml): the engineering notes, newest first.`,
         `- [Sitemap](${SITE_URL}/sitemap.xml): canonical URLs and last-modified dates.`,
         ""
     ].join("\n");
@@ -284,6 +288,80 @@ function buildRobots(): string {
     return `# Agent-friendly content: ${SITE_URL}/llms.txt\nUser-agent: *\nAllow: /\nDisallow: /404.html\n\nSitemap: ${SITE_URL}/sitemap.xml\n`;
 }
 
+function buildProjectsJson(): string {
+    const payload = {
+        generated: SITE_UPDATED,
+        site: `${SITE_URL}/`,
+        source: "src/data/projects.ts",
+        projects: projectEntries.map((project) => ({
+            id: project.id,
+            number: project.number,
+            title: project.title,
+            category: project.category,
+            description: project.description,
+            problem: project.problem,
+            contribution: project.contribution,
+            period: project.period,
+            technologies: project.technologies,
+            dates: project.dates ?? null,
+            url: project.path ? canonicalUrl(project.path) : project.titleHref ?? canonicalUrl("/projects"),
+            image: {
+                src: `${SITE_URL}${project.image.src}`,
+                alt: project.image.alt
+            },
+            links: project.links.map((link) => ({
+                label: link.label,
+                href: absoluteUrl(link.href)
+            })),
+            keywords: project.keywords,
+            featured: Boolean(project.featured),
+            metric: project.metric ?? null,
+            metricLabel: project.metricLabel ?? null
+        }))
+    };
+
+    return `${JSON.stringify(payload, null, 2)}\n`;
+}
+
+function atomDate(date: string): string {
+    return `${date}T00:00:00Z`;
+}
+
+function buildFeed(): string {
+    const entries = [...postEntries].sort((a, b) => b.date.localeCompare(a.date));
+    const updated = entries.reduce((latest, post) => (post.date > latest ? post.date : latest), SITE_UPDATED);
+    const entryXml = entries
+        .map(
+            (post) => `  <entry>
+    <title>${escapeXml(post.title)}</title>
+    <id>${escapeXml(canonicalUrl(post.path))}</id>
+    <link rel="alternate" type="text/html" href="${escapeXml(canonicalUrl(post.path))}" />
+    <link rel="alternate" type="text/markdown" href="${escapeXml(`${SITE_URL}${markdownPath(post.path)}`)}" />
+    <published>${atomDate(post.date)}</published>
+    <updated>${atomDate(post.date)}</updated>
+    <summary type="text">${escapeXml(post.description)}</summary>
+${post.keywords.map((keyword) => `    <category term="${escapeXml(keyword)}" />`).join("\n")}
+  </entry>`
+        )
+        .join("\n");
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>${SITE_URL}/</id>
+  <title>${escapeXml(SITE_NAME)} — engineering notes</title>
+  <subtitle>${escapeXml(SITE_DESCRIPTION)}</subtitle>
+  <updated>${atomDate(updated)}</updated>
+  <link rel="self" type="application/atom+xml" href="${SITE_URL}/feed.xml" />
+  <link rel="alternate" type="text/html" href="${SITE_URL}/" />
+  <author>
+    <name>${escapeXml(SITE_NAME)}</name>
+    <uri>${SITE_URL}/</uri>
+  </author>
+${entryXml}
+</feed>
+`;
+}
+
 function docsFiles(): Record<string, string> {
     const files: Record<string, string> = {};
     const markdownPages = Object.entries(pages).map(([route, page]) => ({
@@ -300,6 +378,8 @@ function docsFiles(): Record<string, string> {
     files["llms-full.txt"] = buildLlmsFull(markdownPages);
     files["sitemap.xml"] = buildSitemap();
     files["robots.txt"] = buildRobots();
+    files["projects.json"] = buildProjectsJson();
+    files["feed.xml"] = buildFeed();
     return files;
 }
 
@@ -352,6 +432,7 @@ function renderDocument(page: Page, route: string, isNotFound: boolean, body: st
 ${canonical}    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
+    <link rel="alternate" type="application/atom+xml" href="/feed.xml" title="Caleb Lin — engineering notes" />
 ${markdown}    <meta property="og:type" content="${meta.ogType}" />
     <meta property="og:site_name" content="${SITE_NAME}" />
     <meta property="og:title" content="${escapeHtml(meta.title)}" />
@@ -405,9 +486,9 @@ async function writeHtml(distDir: string): Promise<void> {
 export async function run(mode: "docs" | "html" = "docs"): Promise<void> {
     if (mode === "html") {
         await writeHtml("dist");
-        console.log("Generated static pages, Markdown, llms.txt, sitemap.xml, and robots.txt in dist/");
+        console.log("Generated static pages, Markdown, llms.txt, sitemap.xml, robots.txt, projects.json, and feed.xml in dist/");
     } else {
         await writeDocs("public");
-        console.log("Generated Markdown, llms.txt, sitemap.xml, and robots.txt in public/");
+        console.log("Generated Markdown, llms.txt, sitemap.xml, robots.txt, projects.json, and feed.xml in public/");
     }
 }

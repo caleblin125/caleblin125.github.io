@@ -84,7 +84,7 @@ export function pageMeta(page: Page, path: string, isNotFound: boolean): PageMet
     };
 }
 
-export function renderHeader(page: Page, path: string, isNotFound: boolean): string {
+export function renderHeader(_page: Page, path: string, isNotFound: boolean): string {
     const nav = Object.entries(navItems)
         .map(([href, label]) => {
             const inSection = !isNotFound && (path === href || path.startsWith(`${href}/`));
@@ -93,7 +93,7 @@ export function renderHeader(page: Page, path: string, isNotFound: boolean): str
         })
         .join("");
 
-    return `<header class="site-header"><a class="brand" href="/" aria-label="Caleb Lin, home">CL<span>/</span></a><nav aria-label="Primary">${nav}</nav><span class="header-note">${page.eyebrow}</span></header>`;
+    return `<header class="site-header"><a class="brand" href="/" aria-label="Caleb Lin, home">CL<span>/</span></a><nav aria-label="Primary">${nav}</nav><span class="header-note">UC Santa Cruz / 2027</span></header>`;
 }
 
 export function renderFooter(): string {

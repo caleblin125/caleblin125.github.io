@@ -111,13 +111,13 @@ turndown.addRule("link", {
 // description, and metric. Unwrap them into a readable block instead of
 // letting Turndown nest an H2 inside a Markdown link.
 turndown.addRule("workRow", {
-    filter: (node) => node.nodeName === "A" && node.classList.contains("work-row"),
+    filter: (node) => node.nodeName === "A" && (node.classList.contains("work-row") || node.classList.contains("work-lead")),
     replacement: (_content, node) => {
         const href = node.getAttribute("href") ?? "";
-        const title = node.querySelector("h2")?.textContent?.trim() ?? "";
-        const description = node.querySelector("p")?.textContent?.trim() ?? "";
+        const title = node.querySelector("h2, h3")?.textContent?.trim() ?? "";
+        const description = (node.querySelector(".work-problem") ?? node.querySelector("p"))?.textContent?.trim() ?? "";
         const metric = node.querySelector(".work-metric strong")?.textContent?.trim() ?? "";
-        const metricLabel = node.querySelector(".work-metric span")?.textContent?.trim() ?? "";
+        const metricLabel = node.querySelector(".work-metric-note")?.textContent?.trim() ?? "";
         const metricLine = metric ? `\n\n**${metric}**${metricLabel ? ` ${metricLabel}` : ""}` : "";
         const image = node.querySelector("img");
         // The homepage hides the alt text because the row's own heading names the

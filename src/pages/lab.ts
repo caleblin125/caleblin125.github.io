@@ -87,6 +87,22 @@ const entries: LabEntry[] = [
     }
 ];
 
+const counts = entries.reduce(
+    (totals, entry) => {
+        totals[entry.tagTone] += 1;
+        return totals;
+    },
+    { live: 0, measured: 0, model: 0, synthetic: 0 }
+);
+
+const countLine = [
+    `${String(entries.length).padStart(2, "0")} instruments`,
+    `${String(counts.live).padStart(2, "0")} live in the browser`,
+    `${String(counts.measured).padStart(2, "0")} measured dataset`,
+    `${String(counts.model).padStart(2, "0")} analytic model`,
+    `${String(counts.synthetic).padStart(2, "0")} synthetic demo`
+].join(" / ");
+
 const rows = entries
     .map(
         (entry) => `<a class="lab-row" href="${entry.href}">
@@ -116,8 +132,12 @@ export const labPage: Page = {
                 <p class="kicker">Lab</p>
                 <h1>Interactive laboratory.</h1>
                 <p class="lede">The parts of the work that are easier to move than to describe. Some of these run on measured data; some are models or synthetic examples. Each one says which it is before it shows a number.</p>
-                <div class="link-row"><a class="text-link" href="/lab/nebula">Nebula generator <span>↗</span></a><a class="text-link" href="/projects/hpc#bench">Benchmark explorer <span>↗</span></a><a class="text-link" href="/projects/robotics#filter">Filter response <span>↗</span></a></div>
+                <p class="mono-note">${countLine}</p>
             </section>
+            <figure class="lab-hero">
+                <img src="/projects/aurora.jpg" alt="Green auroral curtains with faint red tops rise over a dark mountain ridge under a starfield and reflect in a rippled lake." decoding="async">
+                <figcaption><span>Live render / aurora borealis</span><a href="/lab/aurora/">Open the instrument <span aria-hidden="true">↗</span></a></figcaption>
+            </figure>
             <section class="lab-list" aria-label="Interactive experiments">
                 ${rows}
             </section>

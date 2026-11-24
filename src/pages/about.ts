@@ -20,8 +20,9 @@ export const aboutPage: Page = {
         "HPC",
         "control systems"
     ],
-    content: `<section class="page-intro"><p class="kicker">About</p><h1>Caleb Lin</h1><p class="lede">Robotics Engineering and Computer Engineering at the University of California, Santa Cruz.</p></section>
-<article class="article about-profile">
+    content: `<section class="page-intro"><p class="kicker">About</p><h1>Caleb Lin</h1><p class="lede">Robotics Engineering and Computer Engineering at the University of California, Santa Cruz. I build systems, instrument them, and report what the measurement can actually support.</p><div class="link-row"><a class="text-link" href="/resume">Résumé <span aria-hidden="true">↗</span></a><a class="text-link" href="/projects">Selected work <span aria-hidden="true">↗</span></a><a class="text-link" href="mailto:${email}">Email <span aria-hidden="true">↗</span></a></div></section>
+<div class="profile-layout">
+<article class="profile-main about-profile">
 <section>
 <h2>About</h2>
 <p>I’m Caleb Lin, a double major in robotics engineering and computer engineering at the University of California, Santa Cruz, with a minor in electrical engineering. I expect to graduate in June 2027.</p>
@@ -41,12 +42,24 @@ export const aboutPage: Page = {
 <li><strong><a href="/projects/forecasting">Data-center load forecasting</a></strong> — short-term load models reaching 3% MAPE on a decade of 10-minute data.</li>
 <li><strong><a href="/projects/treesim">TreeSim</a></strong> — an evolutionary forest simulation with a 51,755-year record and 6.11 million trees.</li>
 </ul>
-<p><a href="/projects">All projects</a> / <a href="/lab">Interactive lab</a> / <a href="/resume">Résumé</a></p>
 </section>
 <section>
 <h2>External Profiles</h2>
 <p>The same name and links appear on GitHub and LinkedIn. This site is the canonical home for the work.</p>
-<div class="link-row"><a class="text-link" href="${githubProfileUrl}">GitHub <span>↗</span></a><a class="text-link" href="${linkedinUrl}">LinkedIn <span>↗</span></a><a class="text-link" href="/">caleblin125.github.io <span>↗</span></a><a class="text-link" href="mailto:${email}">Email <span>↗</span></a></div>
+<div class="link-row"><a class="text-link" href="${githubProfileUrl}">GitHub <span aria-hidden="true">↗</span></a><a class="text-link" href="${linkedinUrl}">LinkedIn <span aria-hidden="true">↗</span></a><a class="text-link" href="/">This site <span aria-hidden="true">↗</span></a><a class="text-link" href="mailto:${email}">Email <span aria-hidden="true">↗</span></a></div>
 </section>
-</article>`
+</article>
+<aside class="profile-side" aria-label="At a glance">
+<dl>
+<div><dt>Affiliation</dt><dd>University of California, Santa Cruz</dd></div>
+<div><dt>Degrees</dt><dd>B.S. Robotics Engineering<br>B.S. Computer Engineering</dd></div>
+<div><dt>Minor</dt><dd>Electrical Engineering</dd></div>
+<div><dt>Graduating</dt><dd>June 2027</dd></div>
+<div><dt>Labs</dt><dd>Hardware Systems Collective<br>Smart Grids and Data Analytics Lab</dd></div>
+<div><dt>Also</dt><dd>UCSC HPC competition team</dd></div>
+<div><dt>Based in</dt><dd>Santa Cruz, California</dd></div>
+</dl>
+<div class="link-row"><a class="text-link" href="${githubProfileUrl}">GitHub <span aria-hidden="true">↗</span></a><a class="text-link" href="${linkedinUrl}">LinkedIn <span aria-hidden="true">↗</span></a><a class="text-link" href="mailto:${email}">Email <span aria-hidden="true">↗</span></a></div>
+</aside>
+</div>`
 };

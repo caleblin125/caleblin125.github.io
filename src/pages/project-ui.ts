@@ -32,8 +32,9 @@ export function projectFacts(project: ProjectEntry): string {
     return `<dl class="project-facts">
 <div><dt>Category</dt><dd>${escapeHtml(project.category)}</dd></div>
 <div><dt>Work</dt><dd>${escapeHtml(project.period)}</dd></div>
-<div class="project-facts-wide"><dt>Technologies</dt><dd><ul class="tech-list">${technologyItems}</ul></dd></div>
-${dates.length ? `<div class="project-facts-wide"><dt>Timeline</dt><dd class="project-timeline">${dates.join("<span aria-hidden=\"true\"> / </span>")}</dd></div>` : ""}
+<div><dt>My part</dt><dd>${escapeHtml(project.contribution)}</dd></div>
+<div><dt>Technologies</dt><dd><ul class="tech-list">${technologyItems}</ul></dd></div>
+${dates.length ? `<div><dt>Timeline</dt><dd class="project-timeline">${dates.join("<span aria-hidden=\"true\"> / </span>")}</dd></div>` : ""}
 </dl>`;
 }
 
@@ -43,11 +44,14 @@ export function projectHeader(project: ProjectEntry, kicker: string, heading: st
         .join("");
 
     return `<header class="project-header">
+<div class="project-header-main">
 <p class="kicker">${escapeHtml(kicker)}</p>
 <h1>${escapeHtml(heading)}</h1>
 <p class="lede">${escapeHtml(lede)}</p>
+<p class="project-problem"><span class="work-label">Problem</span>${escapeHtml(project.problem)}</p>
 <div class="link-row">${linkRow}</div>
-${projectFacts(project)}
+</div>
+<div class="project-header-side">${projectFacts(project)}</div>
 </header>`;
 }
 

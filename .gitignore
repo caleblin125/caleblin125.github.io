@@ -19,6 +19,8 @@ public/llms.txt
 public/llms-full.txt
 public/sitemap.xml
 public/robots.txt
+public/feed.xml
+public/projects.json
 public/*.md
 public/**/*.md
 

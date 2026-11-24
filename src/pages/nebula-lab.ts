@@ -17,7 +17,7 @@ export const nebulaLabPage: Page = {
         "An interactive procedural nebula laboratory: change the seed, structure, palette, and quality; compare the 2D field with a raymarched volume; and inspect the density, cloud, filament, shape, and mask channels separately.",
     keywords: ["procedural nebula", "WebGL2", "GLSL", "fractional Brownian motion", "domain warping", "raymarching", "generative art", "Caleb Lin"],
     content: `<article class="article">
-<header class="project-header">
+<header class="page-intro">
 <p class="kicker">Lab / Nebula</p>
 <h1>Nebula laboratory.</h1>
 <p class="lede">The full surface behind the homepage field. One WebGL2 renderer draws a seeded density model as a screen-space field or raymarches the same model as a volume; this page exposes the seed, every structural parameter, six presets and palettes, quality, and the five diagnostic channels the shader already computes.</p>

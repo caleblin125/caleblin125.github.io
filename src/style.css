@@ -30,6 +30,10 @@
     --font-body: "Space Grotesk", sans-serif;
     --font-mono: "DM Mono", monospace;
     --measure: 66ch;
+    /* The same reading measure expressed as a length, so rules, headings, and
+       media can align to the article text instead of re-resolving `ch` at a
+       larger font size. */
+    --reading-width: 43.125rem;
 
     /* Layout */
     --content-width: 1240px;
@@ -1576,6 +1580,7 @@ h3 {
 }
 
 .project-footer-links {
+    max-width: var(--reading-width);
     margin-top: var(--space-2xl);
     padding-top: var(--space-lg);
     border-top: 1px solid var(--rule-strong);
@@ -1599,6 +1604,7 @@ h3 {
 }
 
 .article h2 {
+    max-width: var(--reading-width);
     margin-top: var(--space-3xl);
     padding-top: var(--space-md);
     font-size: clamp(1.4rem, 2vw, 1.7rem);
@@ -1611,13 +1617,31 @@ h3 {
     margin-top: var(--space-xl);
 }
 
+.article > .page-intro {
+    padding-bottom: 0;
+}
+
+.article > .page-intro .lede {
+    max-width: var(--reading-width);
+}
+
 .article h3 {
+    max-width: var(--reading-width);
     margin-top: 44px;
     font-size: 1.15rem;
 }
 
 .article p {
+    max-width: var(--reading-width);
     font-size: 1.02rem;
+}
+
+/* Article paragraphs inherit their size from `.article p`, so restore the
+   intro line to the same step used on the index pages. */
+.article .lede {
+    max-width: var(--reading-width);
+    font-size: 1.08rem;
+    line-height: 1.6;
 }
 
 /* Media that needs more room than the reading column takes it, without
@@ -1625,10 +1649,11 @@ h3 {
 .article > :is(.diagram-scroll, .table-wrap, .result-grid, .kalman-demo, .bench, .filter-model, .figure-pair, .nebula-lab, .article-figure) {
     width: min(var(--wide), calc(100vw - 2 * var(--content-padding) - 8px));
     max-width: none;
-    margin-left: calc((min(var(--wide), 100vw - 2 * var(--content-padding) - 8px) - 100%) / 2);
+    margin-inline: calc((100% - min(var(--wide), 100vw - 2 * var(--content-padding) - 8px)) / 2);
 }
 
 .math-display {
+    max-width: var(--reading-width);
     margin: 28px 0;
     padding: 18px 22px;
     overflow-x: auto;
@@ -1642,6 +1667,7 @@ h3 {
 }
 
 .code-block {
+    max-width: var(--reading-width);
     margin: 28px 0;
     padding: 18px 22px;
     overflow-x: auto;
@@ -1657,6 +1683,7 @@ h3 {
 }
 
 .article-list {
+    max-width: var(--reading-width);
     margin: 14px 0 0;
     padding-left: 1.2rem;
     color: var(--text-muted);
@@ -2215,6 +2242,10 @@ h3 {
 
 .resume-contact a:hover {
     color: var(--accent);
+}
+
+.resume .link-row {
+    margin-top: var(--space-md);
 }
 
 .resume-section {

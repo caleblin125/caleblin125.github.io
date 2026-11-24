@@ -3,6 +3,7 @@
 // data the human pages use.
 import { postEntries } from "./data/posts";
 import { projectEntries } from "./data/projects";
+import { AFFILIATION_NAME, AFFILIATION_URL, PERSON_FAMILY_NAME, PERSON_GIVEN_NAME, PERSON_JOB_TITLE } from "./identity";
 import { githubProfileUrl, linkedinUrl } from "./pages/constants";
 import type { Page } from "./pages/types";
 import { AUTHOR_DESCRIPTION, SITE_DESCRIPTION, SITE_NAME, SITE_URL, canonicalUrl } from "./render";
@@ -15,12 +16,15 @@ function personEntity(): Record<string, unknown> {
         "@type": "Person",
         "@id": personId,
         name: SITE_NAME,
+        givenName: PERSON_GIVEN_NAME,
+        familyName: PERSON_FAMILY_NAME,
         url: `${SITE_URL}/`,
         description: AUTHOR_DESCRIPTION,
-        jobTitle: "Undergraduate Researcher",
+        jobTitle: PERSON_JOB_TITLE,
         affiliation: {
             "@type": "CollegeOrUniversity",
-            name: "University of California, Santa Cruz"
+            name: AFFILIATION_NAME,
+            url: AFFILIATION_URL
         },
         sameAs: [githubProfileUrl, linkedinUrl],
         knowsAbout: [
@@ -94,7 +98,11 @@ export function buildJsonLd(page: Page, path: string, isNotFound: boolean): Reco
 
     const url = canonicalUrl(path);
     const pageType =
-        path === "/about" ? "AboutPage" : path === "/resume" ? "ProfilePage" : path === "/projects" || path === "/blog" || path === "/lab" ? "CollectionPage" : "WebPage";
+        path === "/about" || path === "/resume"
+            ? "ProfilePage"
+            : path === "/projects" || path === "/blog" || path === "/lab"
+              ? "CollectionPage"
+              : "WebPage";
 
     const webpage: Record<string, unknown> = {
         "@type": pageType,

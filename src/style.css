@@ -1341,6 +1341,16 @@ h1 {
     font-weight: 500;
 }
 
+.article-list a {
+    color: var(--text);
+    text-decoration-color: var(--border);
+    text-underline-offset: 0.18em;
+}
+
+.article-list a:hover {
+    color: var(--accent);
+}
+
 .resume-contact {
     display: flex;
     flex-wrap: wrap;

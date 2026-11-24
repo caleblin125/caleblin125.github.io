@@ -40,19 +40,19 @@ const workRows = projects
     .join("");
 
 export const homePage: Page = {
-    title: "FPGA, HPC, and robotics engineering.",
+    title: "Robotics & Computer Engineering at UCSC",
     eyebrow: "Caleb Lin",
     kind: "home",
     updated: "2026-11-23",
     description:
-        "Caleb Lin is a computer engineering and robotics student at UC Santa Cruz. He works on FPGA acceleration, HPC clusters, machine learning, control and estimation, and computational visualization systems that make technical results legible.",
-    keywords: ["Caleb Lin", "computer engineering", "robotics", "FPGA", "HPC", "machine learning", "WebGL", "UC Santa Cruz"],
+        "Caleb Lin is a robotics engineering and computer engineering student at UC Santa Cruz. He builds FPGA accelerators, HPC clusters, robots, and computational visualizations.",
+    keywords: ["Caleb Lin", "robotics engineering", "computer engineering", "FPGA", "HPC", "machine learning", "WebGL", "University of California, Santa Cruz"],
     content: `
             <section class="hero-grid">
                 <div class="hero-copy">
                     <p class="kicker">Computer engineering + robotics / UC Santa Cruz / June 2027</p>
                     <h1>I build hardware, clusters, and robots, then measure them.</h1>
-                    <p class="lede">I’m Caleb Lin, a double major in computer engineering and robotics at UC Santa Cruz. I work on FPGA acceleration, high-performance computing, and control and estimation. Every project here states what I built, what I measured, and what the number cannot tell you.</p>
+                    <p class="lede">I’m Caleb Lin, a double major in robotics engineering and computer engineering at the University of California, Santa Cruz. I work on FPGA acceleration, high-performance computing, and control and estimation. Every project here states what I built, what I measured, and what the number cannot tell you.</p>
                     <ul class="proof-list" aria-label="Highlights">
                         <li><strong>1st place</strong><span>Winter Classical Invitational, vs. 8 U.S. colleges</span></li>
                         <li><strong>86% of peak</strong><span>4,403.6 GFLOPS HPL at SCC Connect 2026</span></li>

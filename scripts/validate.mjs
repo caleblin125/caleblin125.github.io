@@ -16,6 +16,11 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(fileURLToPath(new URL("../dist", import.meta.url)));
 const origin = "https://caleblin125.github.io";
 
+// Copied lab artifacts that are served as static HTML instead of being
+// generated from a Page object. They have their own canonical URL and belong
+// in the sitemap, but the generated-page assertions below do not apply.
+const standaloneRoutes = new Set(["/lab/aurora"]);
+
 const contentTypes = new Map([
     [".html", "text/html; charset=utf-8"],
     [".md", "text/markdown; charset=utf-8"],
@@ -200,14 +205,18 @@ try {
 
     const routes = ["/"];
     const routePattern = /<loc>([\s\S]*?)<\/loc>/g;
+    const sitemapLocs = [];
 
     const sitemap = await get("/sitemap.xml");
     check(sitemap.status === 200 && sitemap.type.startsWith("application/xml"), "sitemap.xml is served as XML");
     check(sitemap.text.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'), "sitemap uses the sitemap 0.9 namespace");
+    check(sitemap.text.trim().endsWith("</urlset>"), "sitemap.xml is a complete document");
 
     for (const match of sitemap.text.matchAll(routePattern)) {
         const loc = decodeEntities(match[1].trim());
         check(loc.startsWith(`${origin}/`), `sitemap loc is on the canonical origin: ${loc}`);
+        check(loc === `${origin}/` || loc.endsWith("/"), `sitemap loc uses a trailing slash: ${loc}`);
+        sitemapLocs.push(loc);
 
         if (loc.startsWith(`${origin}/`)) {
             const route = (loc.slice(origin.length) || "/").replace(/\/+$/, "") || "/";
@@ -218,7 +227,10 @@ try {
         }
     }
 
+    check(sitemapLocs.length === new Set(sitemapLocs).size, "sitemap has no duplicate URLs");
     check(routes.length >= 15, `sitemap lists every indexable route (${routes.length} found)`);
+
+    const generatedRoutes = routes.filter((route) => !standaloneRoutes.has(route));
 
     const robots = await get("/robots.txt");
     check(robots.status === 200, "robots.txt is served");
@@ -268,7 +280,7 @@ try {
         check(Boolean(project.image?.src?.startsWith(`${origin}/`)), `projects.json image is absolute: ${project.id ?? "unknown"}`);
     }
 
-    for (const route of routes) {
+    for (const route of generatedRoutes) {
         const canonical = route === "/" ? `${origin}/` : `${origin}${route}/`;
         check(llmsFull.text.includes(`<!-- ${canonical} -->`), `llms-full.txt includes ${route}`);
         check(llms.text.includes(canonical), `llms.txt links ${route}`);
@@ -298,8 +310,9 @@ try {
         ["/blog/a-robot-on-a-field-with-no-map", ["A robot on a field with no map.", "mecanum"]],
         ["/blog/where-the-file-meets-the-machine", ["Where the file meets the machine.", "moir"]],
         ["/blog/seeing-the-mandelbrot-set", ["Seeing the Mandelbrot set."]],
-        ["/about", ["A little about me."]],
-        ["/resume", ["Caleb Lin.", "Education", "Experience"]]
+        ["/about", ["Caleb Lin", "Research Interests", "Selected Work", "External Profiles", "University of California, Santa Cruz"]],
+        ["/resume", ["Caleb Lin.", "Education", "Experience"]],
+        ["/lab/aurora", ["AURORA", "Caleb Lin"]]
     ];
 
     const needlesByRoute = new Map(expected);
@@ -309,12 +322,18 @@ try {
     }
 
     for (const route of routes) {
+        check(needlesByRoute.has(route) || standaloneRoutes.has(route), `sitemap route is intentional: ${route}`);
+    }
+
+    for (const route of generatedRoutes) {
         const needles = needlesByRoute.get(route) ?? [];
         const page = await get(route);
         const label = route === "/" ? "/" : route;
 
         check(page.status === 200, `${label} returns 200`);
         check(page.type.startsWith("text/html"), `${label} is HTML`);
+        check(/<html lang="en"/i.test(page.text), `${label} declares English`);
+        check(!/name="robots" content="[^"]*noindex/i.test(page.text), `${label} is indexable`);
 
         check(page.text.includes('data-prerendered="true"'), `${label} is prerendered`);
         const dataRoute = page.text.match(/id="app"[^>]*data-route="([^"]*)"/)?.[1];
@@ -342,6 +361,10 @@ try {
         check(page.text.includes('property="og:title"'), `${label} has Open Graph title`);
         check(page.text.includes('property="og:description"'), `${label} has Open Graph description`);
         check(page.text.includes('property="og:url"'), `${label} has Open Graph URL`);
+        check(page.text.includes('property="og:image"'), `${label} has Open Graph image`);
+        check(page.text.includes('name="twitter:card" content="summary_large_image"'), `${label} uses a large Twitter card`);
+        check(page.text.includes('name="twitter:image"'), `${label} has Twitter image`);
+        check(page.text.includes('rel="me"'), `${label} links identity profiles with rel=me`);
         check(page.text.includes('href="/sitemap.xml"'), `${label} advertises the sitemap`);
         check(page.text.includes('href="/llms.txt"'), `${label} advertises llms.txt`);
         check(page.text.includes('type="application/atom+xml"'), `${label} advertises the Atom feed`);
@@ -374,6 +397,61 @@ try {
         pass(label);
     }
 
+    const homeHtml = await get("/");
+    const homeTitle = textOf(homeHtml.text, "title");
+    check(homeTitle === "Caleb Lin — Robotics & Computer Engineering at UCSC", "homepage title names Caleb Lin and the UCSC degree areas", `found "${homeTitle}"`);
+    const homeBodyText = stripTags(homeHtml.text);
+    check(homeBodyText.includes("Caleb Lin"), "homepage visible text names Caleb Lin");
+    check(homeBodyText.includes("University of California, Santa Cruz"), "homepage visible text names the full UCSC affiliation");
+    const homeJsonLd = parseJsonLd(homeHtml.text);
+    const homePerson = homeJsonLd?.["@graph"]?.find((node) => node?.["@type"] === "Person");
+    check(homePerson?.["@id"] === `${origin}/#person`, "homepage Person has the stable @id", homePerson?.["@id"] ?? "missing");
+    check(homePerson?.name === "Caleb Lin", "homepage Person is named Caleb Lin");
+    check(homePerson?.affiliation?.name === "University of California, Santa Cruz", "homepage Person names the full affiliation");
+    check(
+        Array.isArray(homePerson?.sameAs) &&
+            homePerson.sameAs.includes("https://github.com/caleblin125") &&
+            homePerson.sameAs.includes("https://www.linkedin.com/in/caleb-lin-5246b0324"),
+        "homepage Person links GitHub and LinkedIn"
+    );
+
+    const aboutHtml = await get("/about");
+    const aboutBodyText = stripTags(aboutHtml.text);
+    check(textOf(aboutHtml.text, "h1") === "Caleb Lin", "About page H1 is Caleb Lin");
+    for (const heading of ["About", "Research Interests", "Selected Work", "External Profiles"]) {
+        check(new RegExp(`<h2[^>]*>${escapeRegExp(heading)}</h2>`, "i").test(aboutHtml.text), `About page has the "${heading}" section`);
+    }
+    check(aboutBodyText.includes("University of California, Santa Cruz"), "About page names the full UCSC affiliation");
+    check(aboutHtml.text.includes('href="https://github.com/caleblin125"'), "About page links GitHub");
+    check(aboutHtml.text.includes('href="https://www.linkedin.com/in/caleb-lin-5246b0324"'), "About page links LinkedIn");
+    check(aboutHtml.text.includes('href="/"'), "About page links the homepage");
+    const aboutJsonLd = parseJsonLd(aboutHtml.text);
+    const aboutPageNode = aboutJsonLd?.["@graph"]?.find((node) => node?.["@id"]?.endsWith("#webpage"));
+    check(aboutPageNode?.["@type"] === "ProfilePage", "About page JSON-LD is a ProfilePage", aboutPageNode?.["@type"] ?? "missing");
+    check(aboutPageNode?.mainEntity?.["@id"] === `${origin}/#person`, "About ProfilePage points at the shared Person @id");
+    const aboutPerson = aboutJsonLd?.["@graph"]?.find((node) => node?.["@type"] === "Person");
+    check(aboutPerson?.["@id"] === `${origin}/#person`, "About Person uses the shared @id");
+    check(
+        Array.isArray(aboutPerson?.sameAs) &&
+            aboutPerson.sameAs.includes("https://github.com/caleblin125") &&
+            aboutPerson.sameAs.includes("https://www.linkedin.com/in/caleb-lin-5246b0324"),
+        "About Person has the same profile links"
+    );
+
+    const socialImage = homeHtml.text.match(/<meta property="og:image" content="([^"]+)"/i)?.[1] ?? "";
+    check(socialImage === `${origin}/projects/aurora.jpg`, "homepage OG image is the existing aurora render", `found "${socialImage}"`);
+    const socialImageResponse = await get(socialImage.replace(origin, ""));
+    check(socialImageResponse.status === 200 && socialImageResponse.type.startsWith("image/"), "OG image is served as an image");
+
+    const auroraHtml = await get("/lab/aurora/");
+    check(auroraHtml.status === 200 && auroraHtml.type.startsWith("text/html"), "live aurora is served as HTML");
+    check(!/name="robots" content="[^"]*noindex/i.test(auroraHtml.text), "live aurora is indexable");
+    check(auroraHtml.text.includes('href="https://github.com/caleblin125"'), "live aurora links the GitHub profile");
+    check(auroraHtml.text.includes('href="https://www.linkedin.com/in/caleb-lin-5246b0324"'), "live aurora links the LinkedIn profile");
+    const auroraCanonical = auroraHtml.text.match(/<link rel="canonical" href="([^"]+)"/i)?.[1] ?? "";
+    check(auroraCanonical === `${origin}/lab/aurora/`, "live aurora has a canonical URL", `found "${auroraCanonical}"`);
+    check(auroraHtml.text.includes('property="og:image"'), "live aurora has an Open Graph image");
+
     for (const [route, needles] of expected) {
         const page = await get(route);
 
@@ -381,6 +459,34 @@ try {
             check(page.text.includes(needle), `${route} raw HTML contains "${needle}"`);
         }
     }
+
+    const internalLinks = new Set();
+
+    for (const route of generatedRoutes) {
+        const page = await get(route);
+
+        for (const match of page.text.matchAll(/href="([^"]+)"/g)) {
+            const href = decodeEntities(match[1]);
+
+            if (!href.startsWith("/") || href.startsWith("//")) {
+                continue;
+            }
+
+            const pathOnly = href.split(/[?#]/, 1)[0];
+
+            if (pathOnly) {
+                internalLinks.add(pathOnly);
+            }
+        }
+    }
+
+    for (const href of [...internalLinks].sort()) {
+        const response = await get(href);
+        check(response.status === 200, `internal link resolves: ${href}`, `status ${response.status}`);
+    }
+
+    const favicon = await get("/favicon.svg");
+    check(favicon.status === 200 && favicon.type.startsWith("image/svg"), "favicon is served");
 
     const notFound = await get("/this-route-does-not-exist");
     check(notFound.status === 404, "unknown routes return a real 404", `status ${notFound.status}`);

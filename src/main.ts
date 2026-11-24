@@ -31,8 +31,13 @@ setMeta('meta[name="description"]', meta.description);
 setMeta('meta[property="og:title"]', meta.title);
 setMeta('meta[property="og:description"]', meta.description);
 setMeta('meta[property="og:type"]', meta.ogType);
+setMeta('meta[property="og:image"]', meta.image);
+setMeta('meta[property="og:image:alt"]', meta.imageAlt);
+setMeta('meta[name="twitter:card"]', meta.twitterCard);
 setMeta('meta[name="twitter:title"]', meta.title);
 setMeta('meta[name="twitter:description"]', meta.description);
+setMeta('meta[name="twitter:image"]', meta.image);
+setMeta('meta[name="twitter:image:alt"]', meta.imageAlt);
 setMeta('meta[name="robots"]', meta.robots);
 
 if (isNotFound) {

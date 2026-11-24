@@ -64,6 +64,10 @@ description, Open Graph, Twitter tags, Markdown front matter, and the site index
 JSON-LD and Open Graph type. Notes set `date` (ISO) and often `keywords`; projects and
 posts set `section` for breadcrumbs.
 
+The name, affiliation, degree programs, and social-preview image live in
+`src/identity.ts`. The page modules, `src/render.ts`, and `src/structured-data.ts` read
+those values instead of repeating the strings, so visible copy and metadata stay aligned.
+
 Each project and note page derives its summary, keywords, and dates from
 `src/data/projects.ts` or `src/data/posts.ts`. Edit the data file first; the page module
 reads it, and the generated HTML, Markdown, `llms.txt`, sitemap, and JSON-LD follow. The
@@ -446,8 +450,11 @@ page's `content` to Markdown with Turndown and GFM, and writes:
 
 - `<route>.md` (or `/index.md` for the homepage) with YAML front matter.
 - `/llms.txt` and `/llms-full.txt` from the project and post data plus the page list.
-- `/sitemap.xml` and `/robots.txt` from the same route table.
-- A JSON-LD `@graph` in each page's `<head>`.
+- `/sitemap.xml` and `/robots.txt` from the same route table, including the copied
+  `/lab/aurora/` artifact, which has its own canonical URL.
+- A JSON-LD `@graph` in each page's `<head>`. The homepage `Person` and the About
+  `ProfilePage` share the `#person` identifier and the same GitHub/LinkedIn `sameAs`
+  links.
 
 Consequences for markup:
 

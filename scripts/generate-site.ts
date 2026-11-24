@@ -14,6 +14,7 @@ import { postEntries } from "../src/data/posts";
 import { projectEntries } from "../src/data/projects";
 import { renderMath } from "../src/math";
 import { notFoundPage, pages } from "../src/pages";
+import { githubProfileUrl, linkedinUrl } from "../src/pages/constants";
 import type { Page } from "../src/pages/types";
 import {
     SITE_DESCRIPTION,
@@ -27,6 +28,18 @@ import {
 } from "../src/render";
 import type { PageMeta } from "../src/render";
 import { buildJsonLd } from "../src/structured-data";
+
+// A few lab artifacts are copied static pages rather than entries in the
+// `pages` record. They still have canonical URLs, so they belong in the
+// sitemap even though they are not generated from a Page object.
+const standaloneSitemapEntries = [
+    {
+        route: "/lab/aurora",
+        lastmod: SITE_UPDATED,
+        changefreq: "monthly",
+        priority: "0.6"
+    }
+];
 
 const turndown = new TurndownService({
     headingStyle: "atx",
@@ -228,6 +241,7 @@ function buildLlmsTxt(): string {
         `- [Projects index](${canonicalUrl("/projects")}): ${projects?.description ?? ""}`,
         `- [Interactive lab](${canonicalUrl("/lab")}): ${lab?.description ?? ""}`,
         `- [Nebula laboratory](${canonicalUrl("/lab/nebula")}): ${nebula?.description ?? ""}`,
+        `- [Live aurora](${canonicalUrl("/lab/aurora")}): A real-time WebGL 2 aurora borealis driven by a small solar-wind and substorm model.`,
         `- [Notes index](${canonicalUrl("/blog")}): ${blog?.description ?? ""}`,
         "",
         "## Markdown",
@@ -287,7 +301,12 @@ function buildSitemap(): string {
         return `  <url>\n    <loc>${escapeXml(canonicalUrl(route))}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
     });
 
-    return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join("\n")}\n</urlset>\n`;
+    const standalone = standaloneSitemapEntries.map(
+        (entry) =>
+            `  <url>\n    <loc>${escapeXml(canonicalUrl(entry.route))}</loc>\n    <lastmod>${entry.lastmod}</lastmod>\n    <changefreq>${entry.changefreq}</changefreq>\n    <priority>${entry.priority}</priority>\n  </url>`
+    );
+
+    return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...entries, ...standalone].join("\n")}\n</urlset>\n`;
 }
 
 function buildRobots(): string {
@@ -423,6 +442,14 @@ function renderDocument(page: Page, route: string, isNotFound: boolean, body: st
     const markdown = isNotFound ? "" : `    <link rel="alternate" type="text/markdown" href="${escapeHtml(markdownPath(route))}" />\n`;
     const ogUrl = isNotFound ? "" : `    <meta property="og:url" content="${escapeHtml(meta.canonical)}" />\n`;
     const published = meta.publishedTime ? `    <meta property="article:published_time" content="${escapeHtml(meta.publishedTime)}" />\n` : "";
+    const socialImage = `    <meta property="og:image" content="${escapeHtml(meta.image)}" />
+    <meta property="og:image:alt" content="${escapeHtml(meta.imageAlt)}" />
+    <meta property="og:image:width" content="${meta.imageWidth}" />
+    <meta property="og:image:height" content="${meta.imageHeight}" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta name="twitter:image" content="${escapeHtml(meta.image)}" />
+    <meta name="twitter:image:alt" content="${escapeHtml(meta.imageAlt)}" />
+`;
     const jsonLdTag = jsonLd ? `    <script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, "\\u003c")}</script>\n` : "";
 
     return `<!doctype html>
@@ -439,11 +466,13 @@ ${canonical}    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
     <link rel="alternate" type="application/atom+xml" href="/feed.xml" title="Caleb Lin — engineering notes" />
+    <link rel="me" href="${escapeHtml(githubProfileUrl)}" />
+    <link rel="me" href="${escapeHtml(linkedinUrl)}" />
 ${markdown}    <meta property="og:type" content="${meta.ogType}" />
     <meta property="og:site_name" content="${SITE_NAME}" />
     <meta property="og:title" content="${escapeHtml(meta.title)}" />
     <meta property="og:description" content="${escapeHtml(meta.description)}" />
-${ogUrl}    <meta name="twitter:card" content="summary" />
+${ogUrl}${socialImage}    <meta name="twitter:card" content="${meta.twitterCard}" />
     <meta name="twitter:title" content="${escapeHtml(meta.title)}" />
     <meta name="twitter:description" content="${escapeHtml(meta.description)}" />
 ${published}    <link rel="preconnect" href="https://fonts.googleapis.com" />

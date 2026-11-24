@@ -43,6 +43,7 @@ as a way to learn rendering while keeping the projects visible.
 │   └── validate.mjs        # serves dist/ and checks the agent-facing surface
 ├── src/
 │   ├── main.ts             # hydration: route check, dev rendering, meta updates, canvas wiring
+│   ├── identity.ts         # single source for the name, affiliation, and social-preview image
 │   ├── render.ts           # shared shell (header/nav/footer), canonical/Markdown paths, page meta
 │   ├── math.ts             # build-time KaTeX rendering for static pages
 │   ├── structured-data.ts  # JSON-LD @graph per page
@@ -141,6 +142,10 @@ as a way to learn rendering while keeping the projects visible.
   client: the header/nav/footer shell, canonical URL normalization (directory routes end
   in `/`), Markdown paths, and document/meta title rules. `src/main.ts` and the generator
   both call it.
+- **`src/identity.ts`** is the single source for the author's name, affiliation, degree
+  programs, and social-preview image. `src/render.ts` and `src/structured-data.ts` read it;
+  `index.html` repeats the Person JSON-LD for the dev shell, so keep that copy in step with
+  the generated graph.
 - **`scripts/generate-site.ts`** is the build-time renderer. `npm run generate:docs` writes
   the machine-readable files to `public/` for the dev server; `npm run generate:html`
   reads the Vite-built `dist/index.html` for the hashed asset tags, then writes static

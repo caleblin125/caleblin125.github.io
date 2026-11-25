@@ -112,7 +112,7 @@ GitHub Pages serves it for unknown deep links, and no SPA fallback is used.
 
 - `.kicker` — small sienna mono label. On index pages it names the section; on records it
   names the project or note.
-- `.atlas-name` / `.atlas-claim` — the homepage's only "heading" pair: a mono name line
+- `.atlas-name` / `.atlas-claim` — the homepage's only "heading" pair: a mono place line
   and a serif sentence set at body-title size, not display size.
 - `.lede` — one-sentence summary under a title, in muted serif.
 - `.text-link` — inline link, underlined with a sienna rule on hover; trailing `↗`
@@ -125,7 +125,7 @@ GitHub Pages serves it for unknown deep links, and no SPA fallback is used.
 
 ```
 <section class="atlas-top">
-  <p class="atlas-name">Caleb Lin <span>Santa Cruz, California</span></p>
+  <p class="atlas-name"><span>Santa Cruz, California</span></p>
   <h1 class="atlas-claim">…one sentence…</h1>
   <p class="atlas-lede">…</p>
   <div class="atlas-links">Selected work · Interactive lab · Résumé · GitHub</div>

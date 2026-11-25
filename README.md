@@ -29,7 +29,6 @@ as a way to learn rendering while keeping the projects visible.
 ├── index.html              # development shell: base metadata, skip link, mounts #app
 ├── package.json            # npm project: vite, typescript, katex, turndown
 ├── tsconfig.json           # strict-ish TS config, bundler resolution, noEmit
-├── _config.yml             # legacy Jekyll config (GitHub Pages theme); the site itself is the Vite app
 ├── public/                 # static assets copied verbatim into dist/
 │   ├── blog/               # post figures (poster, robot CAD, glove plots, VGA frames and sprites)
 │   ├── projects/           # 3:2 project thumbnails (raster output + vector diagrams)
@@ -108,7 +107,8 @@ as a way to learn rendering while keeping the projects visible.
 │           └── vertex.glsl     # per-instance orbit iteration, HSV coloring by step angle
 ├── templates/              # copy-paste templates for new pages/shaders (see templates/README.md)
 ├── dist/                   # build output (gitignored; regenerate with `npm run build`)
-└── docs-of-style: STYLE.md # design tokens, layout classes, and canvas-element conventions
+├── STYLE.md                # design tokens, layout classes, and canvas-element conventions
+└── docs/AUDIT.md           # dated site audit and implementation report
 ```
 
 ## How the site is put together

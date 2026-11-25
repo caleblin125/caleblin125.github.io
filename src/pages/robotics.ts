@@ -53,7 +53,7 @@ ${projectHeader(
 <text x="48" y="230">BNO055 IMU</text><text x="48" y="304">2 kHz IR receiver</text>
 <text x="408" y="128">event service</text><text x="408" y="152" font-family="monospace" font-size="12" fill="#99a09d">debounce / overrun fallback</text>
 <text x="408" y="238">match state machine</text><text x="408" y="262" font-family="monospace" font-size="12" fill="#99a09d">yaw zero / heading PID</text>
-<text x="408" y="348">offline estimator</text><text x="408" y="372" font-family="monospace" font-size="12" fill="#99a09d">particle filter / EKF / A* — built, not shipped</text>
+<text x="408" y="348">offline estimator</text><text x="408" y="372" font-family="monospace" font-size="12" fill="#99a09d">PF / EKF / A* — not shipped</text>
 <text x="738" y="104">mecanum drive</text><text x="738" y="202">flywheel shooter</text>
 <text x="738" y="300">feeder servo</text>
 </g>
@@ -64,7 +64,7 @@ ${projectHeader(
 <line x1="620" y1="358" x2="714" y2="306"/>
 </g>
 <line x1="390" y1="286" x2="620" y2="286" stroke="#2b3439" stroke-width="1.5" stroke-dasharray="7 7"/>
-<text x="36" y="438" fill="#99a09d" font-family="monospace" font-size="14">The shipped match code used reactive tape logic and IR peak tracking. The general estimator stayed on the bench.</text>
+<text x="36" y="438" fill="#99a09d" font-family="sans-serif" font-size="16">The shipped match code used reactive tape logic and IR peak tracking. The general estimator stayed on the bench.</text>
 <defs><marker id="robot-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#d98a5f"/></marker></defs>
 </svg></div>
 <p>The important architectural fact is the separation between the fast event loop and the deliberate state machine. Tape and bumpers are debounced at the event layer; the match service runs every 10 ms; the estimator that would generalize across the field was built offline but did not replace the reactive logic that could be verified on the actual mat.</p>

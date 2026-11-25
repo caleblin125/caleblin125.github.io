@@ -58,7 +58,7 @@ ${projectHeader(
 <text x="736" y="194">WRF · MFC · ValQyriE</text><text x="736" y="206">separate deliverables</text>
 <text x="52" y="268">NODE LOCK</text><text x="52" y="286">one benchmark at a time</text>
 <text x="52" y="298">shared machine, private runs</text>
-<text x="280" y="268">TUNER</text><text x="280" y="286">SMAC3 for mixed, conditional spaces · one-change grids · interleaved repeats</text>
+<text x="280" y="268">TUNER</text><text x="280" y="286">SMAC3 for conditional spaces · one-change grids · interleaved repeats</text>
 <text x="280" y="298">search small, confirm at scale, restore after every run</text>
 <text x="736" y="268">RESTORE</text><text x="736" y="286">power, uncore, THP, EPB</text><text x="736" y="298">returned after each run</text>
 <text x="52" y="360">RUN RECORD</text><text x="52" y="382">exact command + environment · stdout log · HPL.dat / settings.txt · turbostat clocks, power, temperature · config JSON</text>

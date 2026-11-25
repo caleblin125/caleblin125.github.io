@@ -78,7 +78,7 @@ export const homePage: Page = {
     keywords: ["Caleb Lin", "robotics engineering", "computer engineering", "FPGA", "HPC", "machine learning", "WebGL", "University of California, Santa Cruz"],
     content: `
             <section class="atlas-top">
-                <p class="atlas-name">Caleb Lin <span>Santa Cruz, California</span></p>
+                <p class="atlas-name"><span>Santa Cruz, California</span></p>
                 <h1 class="atlas-claim">I build hardware, clusters, and robots, then measure them.</h1>
                 <p class="atlas-lede">Double major in robotics engineering and computer engineering at the University of California, Santa Cruz. The work runs from FPGA arithmetic and cluster tuning to state estimation, load forecasting, and the visual systems that make a result legible. Each record states what I built, what I measured, and what the number cannot tell you.</p>
                 <div class="atlas-links"><a class="text-link" href="#selected-work">Selected work <span aria-hidden="true">↓</span></a><a class="text-link" href="/lab">Interactive lab <span aria-hidden="true">↗</span></a><a class="text-link" href="/resume">Résumé <span aria-hidden="true">↗</span></a><a class="text-link" href="${githubProfileUrl}">GitHub <span aria-hidden="true">↗</span></a></div>

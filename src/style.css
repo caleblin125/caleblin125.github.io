@@ -149,7 +149,7 @@ img {
     gap: clamp(16px, 3vw, 40px);
     max-width: var(--content-width);
     margin: 0 auto;
-    padding: 26px var(--content-padding) 22px;
+    padding: 26px 0 22px;
 }
 
 .brand {
@@ -371,13 +371,10 @@ a {
 
 .atlas-name {
     margin: 0 0 14px;
-    color: var(--text-heading);
-    font-size: 1.3rem;
     line-height: 1.2;
 }
 
 .atlas-name span {
-    margin-left: 12px;
     color: var(--text-dim);
     font-family: var(--font-mono);
     font-size: 0.6rem;
@@ -1751,6 +1748,16 @@ a {
     height: auto;
 }
 
+/* Inline diagrams name generic families in their attributes; CSS outranks
+   presentation attributes, so map them onto the site's faces here. */
+.vector-diagram [font-family="sans-serif"] {
+    font-family: var(--font-body);
+}
+
+.vector-diagram [font-family="monospace"] {
+    font-family: var(--font-mono);
+}
+
 .diagram-title {
     fill: var(--accent);
     font-family: var(--font-mono);
@@ -1921,7 +1928,7 @@ a {
     gap: 10px 24px;
     max-width: var(--content-width);
     margin: 0 auto;
-    padding: 26px var(--content-padding) 40px;
+    padding: 26px 0 40px;
     color: var(--text-dim);
     font-family: var(--font-mono);
     font-size: 0.6rem;
@@ -2738,11 +2745,6 @@ a {
 
     .header-note {
         display: none;
-    }
-
-    .atlas-name span {
-        display: block;
-        margin: 5px 0 0;
     }
 
     .atlas-plates {

@@ -63,7 +63,7 @@ ${projectHeader(
 <line x1="696" y1="292" x2="738" y2="292"/>
 </g>
 <text x="30" y="60" fill="#d98a5f" font-family="monospace" font-size="15" letter-spacing="2">FORECASTING LOOP</text>
-<text x="30" y="390" fill="#99a09d" font-family="monospace" font-size="14">The public result is a single comparison. The holdout protocol and per-horizon errors are the next thing to document.</text>
+<text x="30" y="390" fill="#99a09d" font-family="sans-serif" font-size="16">The public result is a single comparison. The holdout protocol and per-horizon errors are the next thing to document.</text>
 <defs><marker id="forecast-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#d98a5f"/></marker></defs>
 </svg></div>
 <p>The pipeline is ordinary by design: keep the time index intact, build features that respect the sampling interval, fit on a training span, and score on a held-out span. The comparison matters more than the model name. A 3% result is only meaningful next to the 10% baseline on the same split.</p>

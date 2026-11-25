@@ -131,7 +131,7 @@ GitHub Pages serves it for unknown deep links, and no SPA fallback is used.
   <div class="atlas-links">Selected work · Interactive lab · Résumé · GitHub</div>
 </section>
 <section class="atlas-plates" id="selected-work">
-  <a class="plate" href="/projects/fpga">
+  <a class="plate" data-span="7" href="/projects/fpga">
     <span class="work-thumb"><img …></span>
     <div class="plate-cap">
       <span class="plate-no">01</span>
@@ -140,7 +140,7 @@ GitHub Pages serves it for unknown deep links, and no SPA fallback is used.
       <span class="plate-metric">3× — class throughput</span>
     </div>
   </a>
-  … five featured plates …
+  … featured plates, spans from `plateSpans(count)` …
 </section>
 <section class="live-plate">…nebula frame…</section>
 <section class="record-note">…how to read a record…</section>
@@ -149,12 +149,20 @@ GitHub Pages serves it for unknown deep links, and no SPA fallback is used.
 <section class="at-the-moment">…</section>
 ```
 
-- Five featured projects appear as **plates on a 12-column irregular grid**, each set at
-  a different span and alignment so the board reads as a specimen sheet rather than a
+- Featured projects appear as **plates on a 12-column irregular grid**, each set at a
+  different span and alignment so the board reads as a specimen sheet rather than a
   card wall. Plate caption text is mono; the title is serif. The metric sits on its own
   mono line under the caption.
+- **Spans are data.** `plateSpans(count)` in `src/pages/home.ts` returns a span for every
+  plate (`7, 5` then rows of `4`, with a trailing `12` or `6, 6`); each plate carries
+  `data-span="N"` and the CSS selects on that attribute, never on `:nth-child`. Adding or
+  removing a featured project is therefore a data edit, and `scripts/validate.mjs`
+  asserts the spans total a multiple of twelve.
 - The nebula is **one subordinate plate**, labelled `Field 01 / live`, not a second hero.
   It is the only visualization on the homepage; Mandelbrot and Boids live in `/lab`.
+  `public/nebula/home-poster.jpg` is a real captured frame of the default seed, shown
+  under the canvas until the engine reports its first drawn frame (`onStatus("ready")`)
+  and kept for clients without JavaScript or WebGL2.
 - `.record-note` carries the site's contract: every entry states **Problem**,
   **Contribution**, technologies, one measured result, and a limitation. This note is
   what replaces a "skills" band; do not add skill bars or percentage meters.
@@ -346,7 +354,10 @@ Each renderer (`src/boids/renderer.ts`, `src/chaos/renderer.ts`,
 4. **Loop.** `requestAnimationFrame` drives boids and the nebula; chaos renders on demand
    (`requestRender`) so it is idle when nothing changes. The nebula adapter calls
    `engine.setActive(false)` when the canvas leaves the viewport or the tab hides, and
-   the engine stops requesting frames until reactivated.
+   the engine stops requesting frames until reactivated. The engine emits `ready` after
+   its first draw; only then does the adapter add `is-live` and fade the canvas in over
+   the static poster, so a first paint, a failed context, or a no-JS client never shows
+   a black rectangle.
 5. **Instancing.** Boids uses `drawArraysInstanced` for 489 chevrons; chaos uses instanced
    `POINTS` with `gl_InstanceID` driving orbit iteration in the vertex shader. The
    nebula draws one full-screen triangle and evaluates the image in the fragment shader,

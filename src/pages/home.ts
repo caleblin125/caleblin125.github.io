@@ -1,5 +1,5 @@
 // Home page ("/") — a work-first record. The page opens with a short
-// identification strip, then five plates taken from the featured projects,
+// identification strip, then the featured plates taken from the projects,
 // one live field, the convention every record follows, the method, and the
 // most recent notes. All text comes from src/data so the previews cannot
 // drift from the pages they summarise.
@@ -12,24 +12,40 @@ import type { Page } from "./types";
 const projects = featuredProjects();
 const homeNebula = defaultParameters("home");
 
-if (projects.length !== 5) {
-    throw new Error(`The homepage needs exactly five featured projects; found ${projects.length}`);
-}
-
 const latestNotes = postEntries.slice(0, 3);
 
 function escapeHtml(value: string): string {
     return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
+// A 12-column board: the first two plates share a row as 7 + 5, then plates
+// run three to a row. A short trailing row splits evenly (6 + 6) or closes as
+// one full-width plate (12), so the board stays balanced as featured entries
+// are added or removed. Spans are data, not nth-child rules.
+function plateSpans(count: number): number[] {
+    if (count <= 0) return [];
+    if (count === 1) return [12];
+    if (count === 2) return [7, 5];
+
+    const spans = [7, 5];
+    const rest = count - 2;
+    for (let row = 0; row < Math.floor(rest / 3); row++) spans.push(4, 4, 4);
+    const tail = rest % 3;
+    if (tail === 1) spans.push(12);
+    else if (tail === 2) spans.push(6, 6);
+    return spans;
+}
+
+const spans = plateSpans(projects.length);
+
 const plates = projects
-    .map((project) => {
+    .map((project, index) => {
         const href = project.path ?? project.titleHref ?? "/projects";
         const metric = project.metric
             ? `<span class="plate-metric">${escapeHtml(project.metric)}${project.metricLabel ? ` — ${escapeHtml(project.metricLabel)}` : ""}</span>`
             : "";
 
-        return `<a class="plate" href="${escapeHtml(href)}">
+        return `<a class="plate" data-span="${spans[index]}" href="${escapeHtml(href)}">
 <span class="work-thumb"><img src="${escapeHtml(project.image.src)}" alt="${escapeHtml(project.image.alt)}" loading="lazy" decoding="async"></span>
 <div class="plate-cap">
 <span class="plate-no">${escapeHtml(project.number)}</span>
@@ -77,6 +93,7 @@ export const homePage: Page = {
                 </div>
                 <div class="nebula-frame" data-nebula data-nebula-variant="home">
                     <div class="nebula-stage">
+                        <img class="nebula-poster" src="/nebula/home-poster.jpg" alt="" aria-hidden="true" width="2464" height="939" decoding="async">
                         <canvas data-visualization="nebula" role="img" aria-label="A procedurally generated nebula: sparse shells and dust lanes around a dark void, with faint stars."></canvas>
                         <div class="nebula-hud" aria-hidden="true"><span>Field 01 / density + palette</span><span data-nebula-hud>2D field / 8 octaves</span></div>
                         <p class="nebula-caption">Nebula <span>seed-reproducible / six presets</span></p>

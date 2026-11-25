@@ -12,6 +12,7 @@ import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { gzipSync } from "node:zlib";
 
 const root = path.resolve(fileURLToPath(new URL("../dist", import.meta.url)));
 const origin = "https://caleblin125.github.io";
@@ -485,6 +486,48 @@ try {
         check(response.status === 200, `internal link resolves: ${href}`, `status ${response.status}`);
     }
 
+    // Structural accessibility: the cheap assertions a DOM audit starts with,
+    // run against the raw HTML of every generated route.
+    for (const route of generatedRoutes) {
+        const page = await get(route);
+        const html = page.text;
+
+        check(/<html[^>]+lang="en"/i.test(html), `${route} declares the document language`);
+        check(/<a class="skip-link" href="#main"/i.test(html) && /\sid="main"/.test(html), `${route} has a skip link to main`);
+        check((html.match(/<main\b/gi) || []).length === 1, `${route} has exactly one main landmark`);
+
+        const h1Count = (html.match(/<h1\b/gi) || []).length;
+        check(h1Count === 1, `${route} has exactly one h1`, `${h1Count} found`);
+
+        const images = [...html.matchAll(/<img\b[^>]*>/gi)].map((match) => match[0]);
+        const missingAlt = images.filter((tag) => !/\balt=/.test(tag));
+        check(missingAlt.length === 0, `${route} gives every image an alt attribute`, missingAlt.join(" "));
+
+        const unlabelledCanvases = [...html.matchAll(/<canvas\b[^>]*>/gi)]
+            .map((match) => match[0])
+            .filter((tag) => !/aria-label="[^"]+"/.test(tag));
+        check(unlabelledCanvases.length === 0, `${route} labels every canvas`, unlabelledCanvases.join(" "));
+
+        const unnamedLinks = [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)].filter(([, attrs, inner]) => {
+            if (/aria-label="/.test(attrs)) return false;
+            if (/<img\b[^>]*alt="[^"]+"/i.test(inner)) return false;
+            return stripTags(inner) === "";
+        });
+        check(unnamedLinks.length === 0, `${route} has no link without an accessible name`);
+
+        const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
+        const duplicateIds = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
+        check(duplicateIds.length === 0, `${route} has unique element ids`, duplicateIds.join(", "));
+
+        const current = (html.match(/aria-current="(?:page|true)"/g) || []).length;
+        const expectedCurrent = route === "/" ? 0 : 1;
+        check(
+            current === expectedCurrent,
+            route === "/" ? `${route} marks no nav item current` : `${route} marks exactly one current nav item`,
+            `${current} found`
+        );
+    }
+
     const favicon = await get("/favicon.svg");
     check(favicon.status === 200 && favicon.type.startsWith("image/svg"), "favicon is served");
 
@@ -537,12 +580,41 @@ try {
     }
 
     const homeImages = [...(await get("/")).text.matchAll(/<span class="work-thumb"><img src="([^"]+)"/g)];
-    check(homeImages.length === 5, `homepage selected work has a thumbnail per row (${homeImages.length} found)`);
+    check(homeImages.length >= 5, `homepage shows at least five selected-work plates (${homeImages.length} found)`);
 
     for (const [, src] of homeImages) {
         const image = await get(src);
         check(image.status === 200 && image.type.startsWith("image/"), `homepage thumbnail is served: ${src}`, `status ${image.status}, type "${image.type}"`);
     }
+
+    // The plate board closes every row: spans total a multiple of twelve, so a
+    // changed number of featured projects still lays out without a gap.
+    const homeText = (await get("/")).text;
+    const plateSpans = [...homeText.matchAll(/class="plate" data-span="(\d+)"/g)].map((match) => Number(match[1]));
+    check(plateSpans.length === homeImages.length, "every homepage plate declares its grid span", `${plateSpans.length} spans for ${homeImages.length} plates`);
+    check(plateSpans.reduce((total, span) => total + span, 0) % 12 === 0, "homepage plate spans fill whole rows", `total ${plateSpans.reduce((total, span) => total + span, 0)}`);
+
+    const poster = await get("/nebula/home-poster.jpg");
+    check(poster.status === 200 && poster.type.startsWith("image/"), "homepage nebula poster is served", `status ${poster.status}, type "${poster.type}"`);
+    check(homeText.includes('class="nebula-poster"'), "homepage nebula ships a static poster");
+    const posterBytes = (await readFile(path.join(root, "nebula", "home-poster.jpg"))).length;
+    check(posterBytes > 0 && posterBytes <= 400_000, `nebula poster stays under 400 kB (${Math.round(posterBytes / 1024)} kB)`);
+
+    // Entry transfer budgets. GitHub Pages serves these gzipped; a jump past the
+    // ceiling means a dependency or an asset joined the initial load.
+    const entryAssets = [...homeText.matchAll(/(?:href|src)="(\/assets\/[^"]+\.(?:css|js))"/g)].map((match) => match[1]);
+    let entryCss = 0;
+    let entryJs = 0;
+
+    for (const asset of new Set(entryAssets)) {
+        const bytes = gzipSync(await readFile(path.join(root, asset))).length;
+
+        if (asset.endsWith(".css")) entryCss += bytes;
+        else entryJs += bytes;
+    }
+
+    check(entryCss > 0 && entryCss <= 26_000, `entry CSS stays under 26 kB gzip (${(entryCss / 1024).toFixed(1)} kB)`);
+    check(entryJs > 0 && entryJs <= 110_000, `entry JS stays under 110 kB gzip (${(entryJs / 1024).toFixed(1)} kB)`);
 
     console.log(`\n${checks} checks, ${failures.length} failure${failures.length === 1 ? "" : "s"}`);
 

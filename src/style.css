@@ -426,24 +426,24 @@ a {
     text-decoration: none;
 }
 
-.plate:nth-child(1) {
-    grid-column: span 7;
+.plate[data-span="4"] {
+    grid-column: span 4;
 }
 
-.plate:nth-child(2) {
+.plate[data-span="5"] {
     grid-column: span 5;
 }
 
-.plate:nth-child(3) {
-    grid-column: span 4;
+.plate[data-span="6"] {
+    grid-column: span 6;
 }
 
-.plate:nth-child(4) {
-    grid-column: span 4;
+.plate[data-span="7"] {
+    grid-column: span 7;
 }
 
-.plate:nth-child(5) {
-    grid-column: span 4;
+.plate[data-span="12"] {
+    grid-column: span 12;
 }
 
 .work-thumb {
@@ -460,18 +460,21 @@ a {
     transition: opacity 240ms ease;
 }
 
-.plate .work-thumb {
-    aspect-ratio: 16 / 10;
+.plate[data-span="4"] .work-thumb,
+.plate[data-span="6"] .work-thumb {
+    aspect-ratio: 3 / 2;
 }
 
-.plate:nth-child(2) .work-thumb {
+.plate[data-span="5"] .work-thumb {
     aspect-ratio: 4 / 3.4;
 }
 
-.plate:nth-child(3) .work-thumb,
-.plate:nth-child(4) .work-thumb,
-.plate:nth-child(5) .work-thumb {
-    aspect-ratio: 3 / 2;
+.plate[data-span="7"] .work-thumb {
+    aspect-ratio: 16 / 10;
+}
+
+.plate[data-span="12"] .work-thumb {
+    aspect-ratio: 21 / 9;
 }
 
 .plate:hover .work-thumb img {
@@ -1222,8 +1225,16 @@ a {
     font-size: 0.9rem;
 }
 
-.post-row.muted {
-    opacity: 0.55;
+/* The placeholder entry is dimmed with colour rather than opacity: a 0.55
+   opacity pushed its date to 2.5:1 and its description to 3.6:1 on the ink
+   ground. Explicit tokens keep the same hierarchy above 4.5:1. */
+.post-row.muted h2 {
+    color: var(--text-subtle);
+}
+
+.post-row.muted p,
+.post-row.muted .post-date {
+    color: var(--text-dim);
 }
 
 .post-row.muted:hover h2 {
@@ -1960,6 +1971,23 @@ a {
     visibility: hidden;
 }
 
+/* A real frame of the default seed, shown until the shader draws and kept for
+   no-JS clients. The canvas fades in over it, so first paint is never a black
+   rectangle. */
+.nebula-poster {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+.nebula-frame.is-fallback .nebula-poster {
+    display: none;
+}
+
 .nebula-hud {
     position: absolute;
     top: 16px;
@@ -2613,17 +2641,16 @@ a {
         gap: 16px;
     }
 
-    .plate:nth-child(1) {
+    .plate[data-span="7"] {
         grid-column: span 8;
     }
 
-    .plate:nth-child(2) {
+    .plate[data-span="5"] {
         grid-column: span 4;
     }
 
-    .plate:nth-child(3),
-    .plate:nth-child(4),
-    .plate:nth-child(5) {
+    .plate[data-span="4"],
+    .plate[data-span="6"] {
         grid-column: span 4;
     }
 
@@ -2723,24 +2750,27 @@ a {
         gap: 14px;
     }
 
-    .plate:nth-child(1),
-    .plate:nth-child(2),
-    .plate:nth-child(3),
-    .plate:nth-child(4),
-    .plate:nth-child(5) {
+    .plate,
+    .plate[data-span="4"],
+    .plate[data-span="5"],
+    .plate[data-span="6"],
+    .plate[data-span="7"] {
         grid-column: span 1;
     }
 
-    .plate:nth-child(1) .work-thumb,
-    .plate:nth-child(2) .work-thumb {
+    .plate[data-span="7"] .work-thumb,
+    .plate[data-span="5"] .work-thumb,
+    .plate[data-span="6"] .work-thumb {
         aspect-ratio: 4 / 3;
     }
 
-    .plate:nth-child(5) {
+    .plate:last-child,
+    .plate[data-span="12"] {
         grid-column: span 2;
     }
 
-    .plate:nth-child(5) .work-thumb {
+    .plate:last-child .work-thumb,
+    .plate[data-span="12"] .work-thumb {
         aspect-ratio: 16 / 7;
     }
 
@@ -2918,13 +2948,23 @@ a {
         grid-template-columns: minmax(0, 1fr);
     }
 
-    .plate:nth-child(5) {
-        grid-column: span 1;
+    .plate,
+    .plate[data-span="4"],
+    .plate[data-span="5"],
+    .plate[data-span="6"],
+    .plate[data-span="7"],
+    .plate[data-span="12"],
+    .plate:last-child {
+        grid-column: 1 / -1;
     }
 
     .plate .work-thumb,
-    .plate:nth-child(2) .work-thumb,
-    .plate:nth-child(5) .work-thumb {
+    .plate[data-span="4"] .work-thumb,
+    .plate[data-span="5"] .work-thumb,
+    .plate[data-span="6"] .work-thumb,
+    .plate[data-span="7"] .work-thumb,
+    .plate[data-span="12"] .work-thumb,
+    .plate:last-child .work-thumb {
         aspect-ratio: 16 / 10;
     }
 

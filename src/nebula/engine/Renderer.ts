@@ -86,6 +86,7 @@ export class Renderer {
     private contextLost = false;
     private loopActive = false;
     private active = true;
+    private firstFrame = false;
 
     private bufferWidth = 1;
     private bufferHeight = 1;
@@ -356,6 +357,10 @@ export class Renderer {
                 this.draw();
                 this.monitor.markFrameRendered();
                 this.maybeAdaptQuality();
+                if (!this.firstFrame) {
+                    this.firstFrame = true;
+                    this.callbacks.onStatus?.("ready");
+                }
             }
         }
 

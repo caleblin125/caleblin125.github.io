@@ -127,12 +127,15 @@ export class NebulaRenderer {
             typeof IntersectionObserver === "undefined"
                 ? null
                 : new IntersectionObserver(this.onIntersection, { threshold: 0.01 });
+        // Without an observer there is no way to know, so assume visible.
+        if (!this.intersectionObserver) this.inView = true;
     }
 
     start(): void {
         try {
             this.renderer = new Renderer(this.canvas, this.runtimeParameters(), {
                 onStatus: (status) => {
+                    if (status === "ready") this.setLive(true);
                     if (status === "context-lost") this.setFallback(true, false);
                     if (status === "restored") this.setFallback(false, true);
                 },
@@ -154,19 +157,20 @@ export class NebulaRenderer {
         this.syncControls();
         this.applyParameters();
 
+        // The engine starts its own loop in the constructor. Idle it until the
+        // observer reports the canvas visible: nothing should animate offscreen,
+        // and the poster remains the only painted layer until then.
+        this.updateActive();
+
         this.intersectionObserver?.observe(this.canvas);
         window.addEventListener("resize", this.onLayoutChange);
         document.addEventListener("visibilitychange", this.onVisibilityChange);
         document.addEventListener("fullscreenchange", this.onFullscreenChange);
         this.reducedMotion.addEventListener("change", this.onReducedMotionChange);
 
-        // The renderer queues its first frame in the constructor; marking the
-        // canvas live on the next frame gives it a painted image to reveal.
-        requestAnimationFrame(() => {
-            if (this.failed) return;
-            if (this.frame?.classList.contains("is-fallback")) return;
-            this.setLive(true);
-        });
+        // `is-live` is set when the engine reports its first drawn frame, not on
+        // a timer: the static poster stays visible until there is an image to
+        // replace it, so a capture or a slow first frame never shows black.
     }
 
     // -------------------------------------------------------------------------

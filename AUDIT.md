@@ -478,11 +478,19 @@ heading announces the author.
 - **Shape.** Radius drops to `2px`; images are square plates with no border, radius, or
   shadow. Panels are separated by hairline rules rather than nested cards.
 - **Homepage.** The hero/visualization split is replaced by a name line, a quiet one-line
-  claim, a lede, and four links, followed by five featured plates on a 12-column irregular
-  grid. The nebula is demoted to one subordinate `Field 01 / live` plate. A "The record"
-  note states the shared structure (problem, contribution, technologies, one measured
-  result, limitation), which replaces the old skills band. The four-step method and notes
-  list follow, then a single "At the moment" line.
+  claim, a lede, and four links, followed by the featured plates on a 12-column irregular
+  grid. Plate spans are data: `plateSpans(count)` assigns `7, 5`, then rows of `4`, closing
+  with `12` or `6, 6`, and each plate carries `data-span` that the CSS selects on instead
+  of `:nth-child`. The nebula is demoted to one subordinate `Field 01 / live` plate. A
+  "The record" note states the shared structure (problem, contribution, technologies, one
+  measured result, limitation), which replaces the old skills band. The four-step method
+  and notes list follow, then a single "At the moment" line.
+- **First paint.** The homepage nebula now ships a real captured frame of its default
+  seed (`public/nebula/home-poster.jpg`, 2464×939, ~119 kB) beneath the canvas. The engine
+  reports `ready` after its first draw, and only then is the canvas faded in; a no-JS
+  client, a slow first frame, a failed context, or a full-page capture sees the poster
+  instead of an empty black rectangle. The offscreen loop is idled until the observer
+  reports the canvas visible.
 - **Catalogue.** `/projects` now has four hand-picked leads as irregular plates and the
   remaining entries as compact annotated rows, under Flagship work / Experiments /
   Archive. Technologies are inline `/`-separated mono text, not pills.
@@ -495,32 +503,46 @@ heading announces the author.
 ### Verification
 
 - `npx tsc --noEmit` and `npm run build` succeed.
-- `npm run validate` passes **1,541 checks, 0 failures** across all 23 routes, including
-  the five homepage plates, all 14 `figure.project-thumb` entries, the About headings, and
-  the Markdown homepage needle. Homepage plates gained a Turndown rule so the Markdown
-  copy reads as `### [Title](url)` with the plate image, metric, and category beneath.
+- `npm run validate` passes **1,755 checks, 0 failures** across all routes. The suite now
+  also runs structural accessibility assertions on every generated page: `lang="en"`, a
+  skip link to `#main`, one `<main>`, exactly one `<h1>`, `alt` on every image,
+  `aria-label` on every canvas, no link without an accessible name, unique element ids,
+  exactly one `aria-current` per inner route and none on `/`. Homepage checks cover at
+  least five plates, a `data-span` on each, spans totalling a multiple of twelve, and a
+  served poster under 400 kB. Transfer budgets hold entry CSS at or under 26 kB gzip and
+  entry JS at or under 110 kB gzip.
+- axe-core 4.10.2 (WCAG 2 A/AA and 2.1 A/AA) reports **zero violations** on `/`,
+  `/projects`, `/projects/fpga`, `/lab/nebula`, `/about`, `/resume`, and `/blog`. The
+  single earlier failure — the dimmed `/blog` placeholder row, whose date measured 2.49:1
+  and description 3.6:1 — was fixed by dimming with colour tokens instead of `opacity:
+  0.55`.
 - Full-page browser captures at 1440, 1024, 768, and 390 px covered `/`, `/projects`,
   `/lab`, `/blog`, `/about`, `/resume`, `/projects/fpga`, and `/lab/nebula`; the plate
   grids, the reflowed captions, the counters, the diagrams, and the result blocks were
-  checked in the Atlas palette. The nebula canvas was confirmed to draw when scrolled into
-  view; its black appearance in a full-page capture is an IntersectionObserver artefact,
-  not a rendering failure.
+  checked in the Atlas palette. No route overflows horizontally at those widths. The
+  nebula was confirmed to draw when scrolled into view and on `/lab/nebula`; with
+  JavaScript disabled, or before the first draw, the captured poster is what shows.
 
 ### Known limits
 
-- The benchmark figures carried over from §9 remain **unconfirmed**: 86% of peak /
-  4,403.6 GFLOPS HPL at SCC Connect 2026, 663 GFLOPS on Haydean (~47% of theoretical
-  peak), and "1st place Winter Classical, 9 teams" versus the earlier "vs. 8 U.S.
-  colleges". The redesign did not change or promote any of them.
-- No automated a11y or performance audit in CI; contrast, keyboard order, and reduced
-  motion were reviewed by inspection and in headless Chrome.
-- The homepage plate grid is hand-tuned at the five current entries. Adding a sixth
-  featured project needs a span decision, not only a data edit.
+- The benchmark figures carried over from §9 remain **unconfirmed and uncited**: 86% of
+  peak / 4,403.6 GFLOPS HPL at SCC Connect 2026, 663 GFLOPS on Haydean (~47% of
+  theoretical peak), and "1st place Winter Classical, 9 teams" versus the earlier "vs. 8
+  U.S. colleges". The redesign did not change or promote any of them; they are recorded as
+  supplied.
+- The axe-core pass is run manually, not in CI. `npm run validate` guards the structural
+  subset (landmarks, headings, alt text, labels, ids, current nav item) but cannot judge
+  computed contrast.
+- The poster is a captured frame of the current default seed and quality. If the default
+  preset, palette, or camera changes, regenerate it with the same script and check that it
+  still matches the live first frame.
 
 ### Files changed
 
-`src/style.css` (full Atlas system, ~2,960 lines), `src/pages/home.ts`,
-`src/pages/projects.ts`, `src/render.ts`, `scripts/generate-site.ts` (plate Markdown
-rule), `index.html` (font link), `public/favicon.svg`, `public/icons.svg`, the six
+`src/style.css` (full Atlas system, ~3,090 lines), `src/pages/home.ts`,
+`src/pages/projects.ts`, `src/render.ts`, `src/nebula/renderer.ts`,
+`src/nebula/engine/Renderer.ts`, `scripts/generate-site.ts` (plate Markdown rule),
+`scripts/validate.mjs` (structural a11y, grid/poster, gzip budgets), `index.html` (font
+link), `public/nebula/home-poster.jpg`, `public/favicon.svg`, `public/icons.svg`, the six
 `public/projects/*.svg` marks, the ten recoloured `src/pages/*.ts` records, `STYLE.md`
 (rewritten for Atlas), and this file.

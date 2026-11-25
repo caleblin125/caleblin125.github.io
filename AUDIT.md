@@ -468,13 +468,17 @@ heading announces the author.
   text `#e6e2d8` with three quieter steps, a single sienna accent `#d98a5f`
   (`--accent-deep #7d4026`), and neutral rules `#1b2226` / `#2b3439`. The old purple
   identity is gone from the shell, the article chrome, the inline SVG diagrams, the six
-  generated project SVGs, `public/icons.svg`, and the favicon. Chart series keep three
-  distinguishable hues (sienna, steel, sage); the nebula's own palettes are artwork presets
+  generated project SVGs, `public/icons.svg`, and the favicon. The lab canvases
+  (Kalman, benchmark, filter) use the same ink ground, chalk labels, neutral grid, and
+  sienna signal instead of the old purple family. Chart series use four distinguishable
+  Atlas hues (sienna, steel, amber, sage); the nebula's own palettes are artwork presets
   and were left untouched.
 - **Type.** Newsreader for prose and titles, IBM Plex Mono for numbers, dates, plate
   captions, and nav. Space Grotesk and DM Mono were removed from the font link. Uppercase
   is now confined to mono labels at or below `0.72rem`; headings are serif and never
-  display-sized.
+  display-sized. The generated static shell shares that font link and the ink
+  `theme-color`, and the canvas labels and SCC Connect mark use the same mono family, so
+  the deployed pages do not fall back to another face.
 - **Shape.** Radius drops to `2px`; images are square plates with no border, radius, or
   shadow. Panels are separated by hairline rules rather than nested cards.
 - **Homepage.** The hero/visualization split is replaced by a name line, a quiet one-line
@@ -503,19 +507,29 @@ heading announces the author.
 ### Verification
 
 - `npx tsc --noEmit` and `npm run build` succeed.
-- `npm run validate` passes **1,755 checks, 0 failures** across all routes. The suite now
+- `npm run validate` passes **1,824 checks, 0 failures** across all routes. The suite now
   also runs structural accessibility assertions on every generated page: `lang="en"`, a
   skip link to `#main`, one `<main>`, exactly one `<h1>`, `alt` on every image,
   `aria-label` on every canvas, no link without an accessible name, unique element ids,
-  exactly one `aria-current` per inner route and none on `/`. Homepage checks cover at
-  least five plates, a `data-span` on each, spans totalling a multiple of twelve, and a
-  served poster under 400 kB. Transfer budgets hold entry CSS at or under 26 kB gzip and
-  entry JS at or under 110 kB gzip.
+  exactly one `aria-current` per inner route and none on `/`. It also asserts that every
+  generated page requests the Atlas fonts (Newsreader and IBM Plex Mono), carries the ink
+  `theme-color`, and has no leftover Space Grotesk or DM Mono request. Homepage checks
+  cover at least five plates, a `data-span` on each, spans totalling a multiple of twelve,
+  and a served poster under 400 kB. Transfer budgets hold entry CSS at or under 26 kB gzip
+  and entry JS at or under 110 kB gzip.
 - axe-core 4.10.2 (WCAG 2 A/AA and 2.1 A/AA) reports **zero violations** on `/`,
   `/projects`, `/projects/fpga`, `/lab/nebula`, `/about`, `/resume`, and `/blog`. The
   single earlier failure — the dimmed `/blog` placeholder row, whose date measured 2.49:1
   and description 3.6:1 — was fixed by dimming with colour tokens instead of `opacity:
   0.55`.
+- A headless runtime pass loaded all 24 routes and clicked the header from four pages,
+  every internal footer link, and 97 unique in-content destinations. It recorded no
+  console errors, failed requests, broken images, or HTTP responses at or above 400.
+  Every in-page fragment resolves, the skip link focuses `#main`, and `#flagship` brings
+  the group into view. A separate crawl of the deployed origin ran 328 checks over the 24
+  pages and 133 unique internal references with no failures. All 21 external URLs resolve
+  except LinkedIn, which answers 999 to automated clients and shows its auth wall in a
+  browser without a session; the profile path is well formed.
 - Full-page browser captures at 1440, 1024, 768, and 390 px covered `/`, `/projects`,
   `/lab`, `/blog`, `/about`, `/resume`, `/projects/fpga`, and `/lab/nebula`; the plate
   grids, the reflowed captions, the counters, the diagrams, and the result blocks were
@@ -541,8 +555,11 @@ heading announces the author.
 
 `src/style.css` (full Atlas system, ~3,090 lines), `src/pages/home.ts`,
 `src/pages/projects.ts`, `src/render.ts`, `src/nebula/renderer.ts`,
-`src/nebula/engine/Renderer.ts`, `scripts/generate-site.ts` (plate Markdown rule),
-`scripts/validate.mjs` (structural a11y, grid/poster, gzip budgets), `index.html` (font
-link), `public/nebula/home-poster.jpg`, `public/favicon.svg`, `public/icons.svg`, the six
+`src/nebula/engine/Renderer.ts`, `scripts/generate-site.ts` (shell fonts and theme
+colour, plate Markdown rule), `scripts/validate.mjs` (shell fonts, structural a11y,
+grid/poster, gzip budgets), `index.html` (theme colour and font link),
+`src/kalman/demo.ts`, `src/lab/{bench,bench-data,filter}.ts` (canvas fonts, ground, and
+series colours),
+`public/nebula/home-poster.jpg`, `public/favicon.svg`, `public/icons.svg`, the six
 `public/projects/*.svg` marks, the ten recoloured `src/pages/*.ts` records, `STYLE.md`
 (rewritten for Atlas), and this file.

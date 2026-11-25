@@ -42,10 +42,12 @@ export type BenchDataset = {
     table: BenchTable;
 };
 
-const VIOLET = "#c59ad8";
-const BLUE = "#86b8d6";
-const AMBER = "#d9a06c";
-const GREEN = "#8fd6b4";
+// Atlas series hues: sienna, steel, amber, sage. Each is distinguishable from
+// the others and from the ink ground in the chart.
+const SIENNA = "#d98a5f";
+const STEEL = "#7fa6c9";
+const AMBER = "#e6a15f";
+const SAGE = "#8fb3a0";
 
 export const BENCH_DATASETS: BenchDataset[] = [
     {
@@ -57,7 +59,7 @@ export const BENCH_DATASETS: BenchDataset[] = [
         axisLabel: "GFLOPS",
         max: 4500,
         categories: ["N = 276,640", "N = 304,000", "N = 324,520", "N = 345,800"],
-        series: [{ name: "Mean of 6 runs", color: VIOLET, values: [4395.2, 4399.0, 4401.5, 4400.7] }],
+        series: [{ name: "Mean of 6 runs", color: SIENNA, values: [4395.2, 4399.0, 4401.5, 4400.7] }],
         ranges: [
             { min: 4394.0, max: 4396.1 },
             { min: 4396.2, max: 4401.7 },
@@ -87,8 +89,8 @@ export const BENCH_DATASETS: BenchDataset[] = [
         max: 4500,
         categories: ["1.0 GHz", "1.2 GHz", "0.8 GHz", "2.5 GHz (default)"],
         series: [
-            { name: "Median", color: VIOLET, values: [4262, 4237, 4148, 4025] },
-            { name: "Best", color: BLUE, values: [4288, 4272, 4265, 4216] }
+            { name: "Median", color: SIENNA, values: [4262, 4237, 4148, 4025] },
+            { name: "Best", color: STEEL, values: [4288, 4272, 4265, 4216] }
         ],
         note:
             "The four rows come from campaigns with 163, 38, 27, and 19 runs. Because the run counts and surrounding settings differ, read the direction of the effect rather than a precise delta between two bars.",
@@ -121,10 +123,10 @@ export const BENCH_DATASETS: BenchDataset[] = [
             "64 ch + -R 1"
         ],
         series: [
-            { name: "all_reduce", color: VIOLET, values: [233.5, 247.7, 243.3, 249.1, 247.6, 249.8, 172.9, 249.9] },
-            { name: "all_gather", color: BLUE, values: [196.6, 238.4, 235.1, 246.2, 238.2, 249.6, 235.9, 249.7] },
+            { name: "all_reduce", color: SIENNA, values: [233.5, 247.7, 243.3, 249.1, 247.6, 249.8, 172.9, 249.9] },
+            { name: "all_gather", color: STEEL, values: [196.6, 238.4, 235.1, 246.2, 238.2, 249.6, 235.9, 249.7] },
             { name: "reduce_scatter", color: AMBER, values: [201.6, 240.1, 240.0, 246.8, 239.7, 240.6, 176.2, 246.4] },
-            { name: "broadcast", color: GREEN, values: [246.2, 250.6, 249.1, 251.3, 250.6, 251.5, 251.5, 251.4] }
+            { name: "broadcast", color: SAGE, values: [246.2, 250.6, 249.1, 251.3, 250.6, 251.5, 251.5, 251.4] }
         ],
         note:
             "The 64-channel + -R 1 row is the best measured configuration for all three reducing collectives. The 32-channel + -R 2 row is the visible failure: all_reduce and reduce_scatter drop by roughly 70 GB/s while broadcast is unchanged. Peak NVLink bandwidth is 318.7 GB/s.",
@@ -161,7 +163,7 @@ export const BENCH_DATASETS: BenchDataset[] = [
             "68 threads",
             "72 threads"
         ],
-        series: [{ name: "Best of repeat loop", color: VIOLET, values: [479.2, 469.2, 465.6, 456.6, 441.9, 411.8, 354.8, 358.9, 361.9] }],
+        series: [{ name: "Best of repeat loop", color: SIENNA, values: [479.2, 469.2, 465.6, 456.6, 441.9, 411.8, 354.8, 358.9, 361.9] }],
         note:
             "Each bar changes one parameter from the tuned baseline; the rows are not a grid. The smallest array and the 62-thread setting were fastest. Oversubscribing past 64 threads cost about 100 GB/s. The selected final configuration measured 474.2 GB/s.",
         table: {

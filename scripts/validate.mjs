@@ -486,6 +486,22 @@ try {
         check(response.status === 200, `internal link resolves: ${href}`, `status ${response.status}`);
     }
 
+    // The static shell is generated separately from index.html, so assert the
+    // head the deployed pages actually carry: Atlas fonts, ink theme colour,
+    // and no leftovers from the previous palette.
+    for (const route of generatedRoutes) {
+        const page = await get(route);
+        check(
+            page.text.includes("family=IBM+Plex+Mono") && page.text.includes("family=Newsreader"),
+            `${route} requests the Atlas font families`
+        );
+        check(!/(Space\+Grotesk|DM\+Mono)/.test(page.text), `${route} has no legacy font request`);
+        check(
+            /<meta name="theme-color" content="#0a0d10"/.test(page.text),
+            `${route} theme-color matches the ink ground`
+        );
+    }
+
     // Structural accessibility: the cheap assertions a DOM audit starts with,
     // run against the raw HTML of every generated route.
     for (const route of generatedRoutes) {

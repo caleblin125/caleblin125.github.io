@@ -7,10 +7,10 @@
 // only way to read the result.
 import { BENCH_DATASETS } from "./bench-data";
 
-const TEXT = "#eee8f2";
-const MUTED = "#b9acbe";
-const DIM = "#9a8da0";
-const BORDER = "#51425a";
+const TEXT = "#e6e2d8";
+const MUTED = "#b3b8b3";
+const DIM = "#858c89";
+const BORDER = "#2b3439";
 
 function niceStep(raw: number): number {
     if (!Number.isFinite(raw) || raw <= 0) return 1;
@@ -134,7 +134,7 @@ export class BenchExplorer {
         const context = this.context;
         context.setTransform(dpr, 0, 0, dpr, 0, 0);
         context.clearRect(0, 0, width, height);
-        context.fillStyle = "#1a1320";
+        context.fillStyle = "#10161a";
         context.fillRect(0, 0, width, height);
 
         const narrow = width < 560;
@@ -144,12 +144,12 @@ export class BenchExplorer {
 
         // Grid and ticks
         const step = niceStep(dataset.max / 4);
-        context.font = `${narrow ? 9 : 10}px "DM Mono", monospace`;
+        context.font = `${narrow ? 9 : 10}px "IBM Plex Mono", monospace`;
         context.textBaseline = "top";
 
         for (let tick = 0; tick <= dataset.max + 0.001; tick += step) {
             const x = left + tick * scale;
-            context.strokeStyle = tick === 0 ? BORDER : "rgba(81, 66, 90, 0.45)";
+            context.strokeStyle = tick === 0 ? BORDER : "rgba(43, 52, 57, 0.55)";
             context.lineWidth = 1;
             context.beginPath();
             context.moveTo(Math.round(x) + 0.5, top);
@@ -166,7 +166,7 @@ export class BenchExplorer {
         if (!narrow) {
             context.fillStyle = DIM;
             context.textAlign = "right";
-            context.font = '10px "DM Mono", monospace';
+            context.font = '10px "IBM Plex Mono", monospace';
             context.fillText(dataset.axisLabel, width - right, height - 22);
         }
 
@@ -175,12 +175,12 @@ export class BenchExplorer {
             const rowTop = top + row * rowHeight;
 
             if (row === this.hoverRow) {
-                context.fillStyle = "rgba(197, 154, 216, 0.07)";
+                context.fillStyle = "rgba(217, 138, 95, 0.08)";
                 context.fillRect(0, rowTop, width, rowHeight);
             }
 
             context.fillStyle = row === this.hoverRow ? TEXT : MUTED;
-            context.font = `${narrow ? 9 : 11}px "DM Mono", monospace`;
+            context.font = `${narrow ? 9 : 11}px "IBM Plex Mono", monospace`;
             context.textAlign = "right";
             context.textBaseline = "middle";
             context.fillText(
@@ -218,7 +218,7 @@ export class BenchExplorer {
 
                     if (maxX - minX >= 1.5) {
                         const midY = y + barHeight / 2;
-                        context.strokeStyle = "rgba(238, 232, 242, 0.75)";
+                        context.strokeStyle = "rgba(230, 226, 216, 0.75)";
                         context.lineWidth = 1;
                         context.beginPath();
                         context.moveTo(minX, midY);
@@ -235,7 +235,7 @@ export class BenchExplorer {
                     const text = formatValue(value);
                     const textX = Math.min(left + length + 6, width - right - 2);
                     context.fillStyle = active ? TEXT : MUTED;
-                    context.font = '10px "DM Mono", monospace';
+                    context.font = '10px "IBM Plex Mono", monospace';
                     context.textAlign = "left";
                     context.textBaseline = "middle";
                     context.fillText(text, textX, y + barHeight / 2);
@@ -247,7 +247,7 @@ export class BenchExplorer {
         // phone widths so the last series is never clipped out of the key.
         if (dataset.series.length > 1) {
             context.textBaseline = "middle";
-            context.font = `${narrow ? 8 : 9}px "DM Mono", monospace`;
+            context.font = `${narrow ? 8 : 9}px "IBM Plex Mono", monospace`;
             const legendRows = narrow && dataset.series.length > 3 ? 2 : 1;
             const firstLineY = height - 43 - (legendRows - 1) * 13;
             const gap = 26;

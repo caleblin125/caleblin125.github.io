@@ -194,7 +194,7 @@ export class KalmanDemo {
         if (width < 2 || height < 2) return;
 
         context.clearRect(0, 0, width, height);
-        context.fillStyle = "#120d18";
+        context.fillStyle = "#0a0d10";
         context.fillRect(0, 0, width, height);
 
         const left = 54;
@@ -217,10 +217,10 @@ export class KalmanDemo {
         const xFor = (index: number): number => left + (index / (this.samples.length - 1)) * plotWidth;
         const yFor = (value: number): number => top + (1 - (value - low) / (high - low)) * plotHeight;
 
-        context.strokeStyle = "#403248";
+        context.strokeStyle = "#20272b";
         context.lineWidth = 1;
-        context.font = "11px 'DM Mono', monospace";
-        context.fillStyle = "#9a8da0";
+        context.font = "11px 'IBM Plex Mono', monospace";
+        context.fillStyle = "#858c89";
         context.textAlign = "right";
         context.textBaseline = "middle";
 
@@ -240,7 +240,7 @@ export class KalmanDemo {
         context.fillText("synthetic position", width - right, height - 12);
 
         // Full truth path, faint, so the current estimate has context.
-        context.strokeStyle = "rgba(238, 232, 242, 0.26)";
+        context.strokeStyle = "rgba(230, 226, 216, 0.26)";
         context.lineWidth = 1.5;
         context.beginPath();
         this.samples.forEach((sample, index) => {
@@ -264,11 +264,11 @@ export class KalmanDemo {
             context.lineTo(xFor(index), yFor((this.estimates[index] ?? 0) - 2 * (this.sigmas[index] ?? 0)));
         }
         context.closePath();
-        context.fillStyle = "rgba(197, 154, 216, 0.13)";
+        context.fillStyle = "rgba(217, 138, 95, 0.13)";
         context.fill();
 
         // Measurements.
-        context.fillStyle = "#d8c9df";
+        context.fillStyle = "#b3b8b3";
         for (let index = 0; index <= last; index++) {
             const sample = this.samples[index];
             context.beginPath();
@@ -277,7 +277,7 @@ export class KalmanDemo {
         }
 
         // Filtered estimate.
-        context.strokeStyle = "#5be584";
+        context.strokeStyle = "#d98a5f";
         context.lineWidth = 2.2;
         context.beginPath();
         for (let index = 0; index <= last; index++) {
@@ -289,7 +289,7 @@ export class KalmanDemo {
         context.stroke();
 
         // Current state marker.
-        context.fillStyle = "#f2ecf5";
+        context.fillStyle = "#f4f0e7";
         context.beginPath();
         context.arc(xFor(last), yFor(this.estimates[last] ?? 0), 4, 0, Math.PI * 2);
         context.fill();

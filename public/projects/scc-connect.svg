@@ -4,11 +4,11 @@
 <rect width="480" height="320" fill="#161d22"/>
 <rect x="1" y="1" width="478" height="318" fill="none" stroke="#2b3439"/>
 
-<text x="24" y="34" fill="#d98a5f" font-family="DM Mono, monospace" font-size="15" letter-spacing="2">SCC CONNECT 2026</text>
-<text x="24" y="55" fill="#99a09d" font-family="DM Mono, monospace" font-size="9" letter-spacing="0.5">TEAM 17 / UCSC / ONE LAUNCHPAD NODE</text>
+<text x="24" y="34" fill="#d98a5f" font-family="IBM Plex Mono, monospace" font-size="15" letter-spacing="2">SCC CONNECT 2026</text>
+<text x="24" y="55" fill="#99a09d" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="0.5">TEAM 17 / UCSC / ONE LAUNCHPAD NODE</text>
 <line x1="24" y1="68" x2="456" y2="68" stroke="#2b3439"/>
 
-<g font-family="DM Mono, monospace">
+<g font-family="IBM Plex Mono, monospace">
   <text x="24" y="105" fill="#e6e2d8" font-size="13">HPL</text>
   <text x="24" y="119" fill="#99a09d" font-size="8">4,403.6 GFLOPS</text>
   <rect x="132" y="94" width="272" height="14" fill="#10161a"/>
@@ -29,11 +29,11 @@
 </g>
 
 <line x1="24" y1="237" x2="404" y2="237" stroke="#2b3439" stroke-width="1"/>
-<g fill="#99a09d" font-family="DM Mono, monospace" font-size="8">
+<g fill="#99a09d" font-family="IBM Plex Mono, monospace" font-size="8">
   <text x="24" y="252">0</text>
   <text x="404" y="252" text-anchor="end">100% OF EACH HARDWARE PEAK</text>
 </g>
 <line x1="404" y1="86" x2="404" y2="226" stroke="#2b3439" stroke-dasharray="4 4"/>
 <line x1="24" y1="272" x2="456" y2="272" stroke="#2b3439"/>
-<text x="24" y="294" fill="#99a09d" font-family="DM Mono, monospace" font-size="8" letter-spacing="0.4">2× XEON 6548Y+ · 1 TiB DDR5 · 2× H100 NVL</text>
+<text x="24" y="294" fill="#99a09d" font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="0.4">2× XEON 6548Y+ · 1 TiB DDR5 · 2× H100 NVL</text>
 </svg>

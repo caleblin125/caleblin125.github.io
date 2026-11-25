@@ -467,7 +467,7 @@ function renderDocument(page: Page, route: string, isNotFound: boolean, body: st
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#120d18" />
+    <meta name="theme-color" content="#0a0d10" />
     <meta name="author" content="${SITE_NAME}" />
     <meta name="description" content="${escapeHtml(meta.description)}" />
     <meta name="robots" content="${meta.robots}" />
@@ -486,7 +486,7 @@ ${ogUrl}${socialImage}    <meta name="twitter:card" content="${meta.twitterCard}
     <meta name="twitter:description" content="${escapeHtml(meta.description)}" />
 ${published}    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
     <title>${escapeHtml(meta.title)}</title>
 ${jsonLdTag}${assetTags}
 </head>

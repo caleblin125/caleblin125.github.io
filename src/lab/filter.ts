@@ -9,11 +9,11 @@ const F_MIN = 1000;
 const F_MAX = 4000;
 const DB_MAX = 6;
 const DB_MIN = -72;
-const MUTED = "#b9acbe";
-const DIM = "#9a8da0";
-const BORDER = "#51425a";
-const ACCENT = "#c59ad8";
-const GHOST = "#6f6078";
+const MUTED = "#b3b8b3";
+const DIM = "#858c89";
+const BORDER = "#2b3439";
+const ACCENT = "#d98a5f";
+const GHOST = "#7d8580";
 
 /** Normalized magnitude of one second-order bandpass section. */
 function sectionGain(frequency: number, center: number, q: number): number {
@@ -172,7 +172,7 @@ export class FilterModel {
         const context = this.context;
         context.setTransform(dpr, 0, 0, dpr, 0, 0);
         context.clearRect(0, 0, width, height);
-        context.fillStyle = "#120d18";
+        context.fillStyle = "#0a0d10";
         context.fillRect(0, 0, width, height);
 
         const left = width < 520 ? 38 : 48;
@@ -187,13 +187,13 @@ export class FilterModel {
         const yFor = (db: number): number => top + ((DB_MAX - db) / (DB_MAX - DB_MIN)) * plotHeight;
 
         // Horizontal dB grid
-        context.font = `${width < 520 ? 9 : 10}px "DM Mono", monospace`;
+        context.font = `${width < 520 ? 9 : 10}px "IBM Plex Mono", monospace`;
         context.textAlign = "right";
         context.textBaseline = "middle";
 
         for (let db = 0; db >= DB_MIN; db -= 10) {
             const y = yFor(db);
-            context.strokeStyle = db === 0 || db === -3 ? "rgba(81, 66, 90, 0.85)" : "rgba(81, 66, 90, 0.35)";
+            context.strokeStyle = db === 0 || db === -3 ? "rgba(43, 52, 57, 0.9)" : "rgba(43, 52, 57, 0.45)";
             context.lineWidth = 1;
             context.beginPath();
             context.moveTo(left, Math.round(y) + 0.5);
@@ -210,7 +210,7 @@ export class FilterModel {
 
         for (const frequency of ticks) {
             const x = xFor(frequency);
-            context.strokeStyle = "rgba(81, 66, 90, 0.35)";
+            context.strokeStyle = "rgba(43, 52, 57, 0.45)";
             context.beginPath();
             context.moveTo(Math.round(x) + 0.5, top);
             context.lineTo(Math.round(x) + 0.5, height - bottom);
@@ -223,7 +223,7 @@ export class FilterModel {
         context.setLineDash([4, 4]);
         for (const frequency of [1500, 2500]) {
             const x = xFor(frequency);
-            context.strokeStyle = "rgba(197, 154, 216, 0.4)";
+            context.strokeStyle = "rgba(127, 166, 201, 0.45)";
             context.beginPath();
             context.moveTo(Math.round(x) + 0.5, top);
             context.lineTo(Math.round(x) + 0.5, height - bottom);
@@ -257,7 +257,7 @@ export class FilterModel {
 
         // −3 dB line and rejection markers
         const minusThree = yFor(-3);
-        context.strokeStyle = "rgba(238, 232, 242, 0.28)";
+        context.strokeStyle = "rgba(230, 226, 216, 0.28)";
         context.setLineDash([2, 5]);
         context.beginPath();
         context.moveTo(left, minusThree);
@@ -268,7 +268,7 @@ export class FilterModel {
         for (const frequency of [1500, 2500]) {
             const x = xFor(frequency);
             const y = yFor(cascadeDb(frequency, this.center, this.q, this.stages));
-            context.fillStyle = "#120d18";
+            context.fillStyle = "#0a0d10";
             context.strokeStyle = ACCENT;
             context.lineWidth = 1.5;
             context.beginPath();
@@ -279,7 +279,7 @@ export class FilterModel {
 
         // Axis titles
         context.fillStyle = MUTED;
-        context.font = `${width < 520 ? 9 : 10}px "DM Mono", monospace`;
+        context.font = `${width < 520 ? 9 : 10}px "IBM Plex Mono", monospace`;
         context.textAlign = "left";
         context.textBaseline = "top";
         context.fillText("dB, normalized", left, 0);

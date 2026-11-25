@@ -31,7 +31,7 @@ const entries: LabEntry[] = [
         href: "/lab/aurora/",
         category: "WebGL2 / space weather",
         description:
-            "Auroral curtains solved per ray and driven by a small solar-wind and substorm model. Trigger a substorm, change turbulence and emission altitude, and drag to look around. The physics is ordered, not forecast.",
+            "Auroral curtains solved per ray and driven by a small solar-wind and substorm model. Trigger a substorm, change turbulence and emission altitude, and drag to look around. The model is illustrative, not a forecast.",
         tag: "Live",
         tagTone: "live"
     },
@@ -71,7 +71,7 @@ const entries: LabEntry[] = [
         href: "/projects/mandelbrot",
         category: "WebGL2 / complex dynamics",
         description:
-            "A browser port of the orbit-point renderer: pan, zoom, change the iteration limit, and color each stable sequence by the direction it takes next.",
+            "A browser port of the orbit-point renderer: pan and zoom through stable sequences, each point colored by the direction it takes next.",
         tag: "Live",
         tagTone: "live"
     },
@@ -131,7 +131,7 @@ export const labPage: Page = {
             <section class="page-intro">
                 <p class="kicker">Lab</p>
                 <h1>Interactive laboratory.</h1>
-                <p class="lede">The parts of the work that are easier to move than to describe. Some of these run on measured data; some are models or synthetic examples. Each one says which it is before it shows a number.</p>
+                <p class="lede">The parts of the work that are easier to move than to describe. Each one is tagged as measured data, a model, a synthetic example, or a live renderer.</p>
                 <p class="mono-note">${countLine}</p>
             </section>
             <figure class="lab-hero">

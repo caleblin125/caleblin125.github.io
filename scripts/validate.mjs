@@ -290,7 +290,7 @@ try {
     const titles = new Map();
     const descriptions = new Map();
     const expected = [
-        ["/", ["I build hardware, clusters, and robots, then measure them.", "86% of peak", "Problem.", "Contribution.", "Data-center load forecasting", "Interactive lab", "Instrument", "Measure"]],
+        ["/", ["I build hardware, clusters, and robots, then measure them.", "86% of peak", "the part that was mine", "TreeSim", "Data-center load forecasting", "Interactive lab", "Instrument", "Measure"]],
         ["/projects", ["Work and projects.", "Flagship work", "Experiments", "Archive", "TreeSim", "SCC Connect 2026", "FPGA and digital hardware", "HPC and cluster tuning", "Robotics and state estimation", "Data-center load forecasting", "Computational visualization"]],
         ["/lab", ["Interactive laboratory.", "Nebula generator", "HPC benchmark explorer", "Beacon filter response", "Kalman filter", "Measured", "Model", "Synthetic", "Live"]],
         ["/lab/nebula", ["Nebula laboratory.", "Density", "Cloud base", "Filaments", "Shape field", "Mask", "3D volume", "999999", "prefers-reduced-motion"]],
@@ -299,7 +299,7 @@ try {
         ["/projects/fpga", ["Digital hardware, measured.", "Alveo U250", "Yosys", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/hpc", ["Clusters, benchmarks, and sweeps.", "663 GFLOPS", "HPL", "measured competition record", "4,403.6", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/robotics", ["Finding a goal without a map.", "2000.33 Hz", "10 ms", "synthetic", "Sallen-Key", "Model, not a measurement", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
-        ["/projects/forecasting", ["A decade of ten-minute load.", "3% MAPE", "10% MAPE", "experimental record", "no interactive forecasting explorer", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
+        ["/projects/forecasting", ["A decade of ten-minute load.", "3% MAPE", "10% MAPE", "Contribution and credit", "evaluation script", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/visualization", ["Rules made visible.", "44,200", "489", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/drawing-arm", ["A drawing stored in cams.", "8.6 s", "142 / 132 / 55 / 155 mm", "has not been printed", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
         ["/projects/aurora", ["Northern lights, solved per ray.", "557.7 nm", "/lab/aurora/", "not a forecast", "Overview", "Architecture", "Implementation", "Results", "Analysis"]],
@@ -311,8 +311,8 @@ try {
         ["/blog/a-robot-on-a-field-with-no-map", ["A robot on a field with no map.", "mecanum"]],
         ["/blog/where-the-file-meets-the-machine", ["Where the file meets the machine.", "moir"]],
         ["/blog/seeing-the-mandelbrot-set", ["Seeing the Mandelbrot set."]],
-        ["/about", ["Caleb Lin", "Research Interests", "Selected Work", "External Profiles", "University of California, Santa Cruz"]],
-        ["/resume", ["Caleb Lin.", "Education", "Experience"]],
+        ["/about", ["Caleb Lin", "Research Interests", "Selected Work", "Contact", "University of California, Santa Cruz"]],
+        ["/resume", ["Caleb Lin", "Education", "Experience"]],
         ["/lab/aurora", ["AURORA", "Caleb Lin"]]
     ];
 
@@ -419,7 +419,7 @@ try {
     const aboutHtml = await get("/about");
     const aboutBodyText = stripTags(aboutHtml.text);
     check(textOf(aboutHtml.text, "h1") === "Caleb Lin", "About page H1 is Caleb Lin");
-    for (const heading of ["About", "Research Interests", "Selected Work", "External Profiles"]) {
+    for (const heading of ["About", "Research Interests", "Selected Work", "Contact"]) {
         check(new RegExp(`<h2[^>]*>${escapeRegExp(heading)}</h2>`, "i").test(aboutHtml.text), `About page has the "${heading}" section`);
     }
     check(aboutBodyText.includes("University of California, Santa Cruz"), "About page names the full UCSC affiliation");

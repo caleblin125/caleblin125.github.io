@@ -27,21 +27,21 @@ const groups = [
     {
         id: "flagship",
         title: "Flagship work",
-        note: "Nine systems with a measured result and a full write-up. Four open the section; the rest follow as a list.",
+        note: "Nine projects with a full write-up.",
         projects: rest,
         leads
     },
     {
         id: "experiments",
         title: "Experiments",
-        note: "Smaller studies and browser tools. Some are still building, and each one says which part is finished.",
+        note: "Smaller studies and browser tools, some still in progress.",
         projects: projectEntries.filter((project) => project.group === "experiments"),
         leads: []
     },
     {
         id: "archive",
         title: "Archive",
-        note: "Earlier and exploratory work kept for context rather than as a headline result.",
+        note: "Earlier and exploratory work.",
         projects: projectEntries.filter((project) => project.group === "archive"),
         leads: []
     }
@@ -125,6 +125,6 @@ export const projectsPage: Page = {
     description: "A catalogue of Caleb Lin's evolutionary simulation, FPGA, HPC and cluster competition, robotics, mechanism design, machine-learning, real-time graphics, AI, and research-software projects, grouped into flagship work, experiments, and archive.",
     keywords: ["projects", "FPGA", "HPC", "cluster competition", "robotics", "machine learning", "graphics", "AI", "research software", "Caleb Lin"],
     content: `
-            <section class="page-intro"><p class="kicker">The catalogue</p><h1>Work and projects.</h1><p class="lede">Digital hardware, HPC and cluster competition, evolutionary simulation, robotics and state estimation, mechanism design, load forecasting, real-time graphics, and the computational visualizations that make the measurements legible.</p><p class="mono-note">${countLine}</p><div class="link-row"><a class="text-link" href="#flagship">Flagship work <span aria-hidden="true">↓</span></a><a class="text-link" href="#experiments">Experiments <span aria-hidden="true">↓</span></a><a class="text-link" href="/lab">Interactive lab <span aria-hidden="true">↗</span></a><a class="text-link" href="${githubProfileUrl}">GitHub <span aria-hidden="true">↗</span></a></div></section>
+            <section class="page-intro"><p class="kicker">The catalogue</p><h1>Work and projects.</h1><p class="lede">Digital hardware, cluster competitions, robots, simulations, and real-time graphics. Each flagship page covers the problem, my part, how it works, and the measured result.</p><p class="mono-note">${countLine}</p><div class="link-row"><a class="text-link" href="#flagship">Flagship work <span aria-hidden="true">↓</span></a><a class="text-link" href="#experiments">Experiments <span aria-hidden="true">↓</span></a><a class="text-link" href="/lab">Interactive lab <span aria-hidden="true">↗</span></a><a class="text-link" href="${githubProfileUrl}">GitHub <span aria-hidden="true">↗</span></a></div></section>
             ${groupSections}`
 };

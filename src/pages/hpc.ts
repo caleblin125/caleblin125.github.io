@@ -124,7 +124,6 @@ ${benchTables}
 
 <h2 id="analysis">Analysis</h2>
 <p>The 47% of peak is an HPL result for one cluster and configuration, not a general efficiency claim; a different problem size, network, or BLAS build changes the number. The competition work is team work, and the first-place finish belongs to the team. The 400 Haydean sweeps and the 10,000+ IndySCC sweeps are parameter sweeps, not independent experiments, so they show sensitivity rather than statistical significance.</p>
-<p>The loop is always the same: establish a baseline, change a parameter, measure, and keep the result only if it survives a rerun. That is how the HPL sweeps reached roughly 47% of peak, and how the IndySCC workloads were tuned without guessing.</p>
 ${projectFooter([
     { label: "IndySCC-UCSC-NSSS", href: repos.indyScc },
     { label: "SBCC 2026 UCSC", href: repos.sbcc }

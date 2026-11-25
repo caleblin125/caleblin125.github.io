@@ -143,7 +143,6 @@ GitHub Pages serves it for unknown deep links, and no SPA fallback is used.
   … featured plates, spans from `plateSpans(count)` …
 </section>
 <section class="live-plate">…nebula frame…</section>
-<section class="record-note">…how to read a record…</section>
 <ol class="method">…Build / Instrument / Measure / Understand…</ol>
 <section class="home-notes">…note rows…</section>
 <section class="at-the-moment">…</section>
@@ -163,9 +162,11 @@ GitHub Pages serves it for unknown deep links, and no SPA fallback is used.
   `public/nebula/home-poster.jpg` is a real captured frame of the default seed, shown
   under the canvas until the engine reports its first drawn frame (`onStatus("ready")`)
   and kept for clients without JavaScript or WebGL2.
-- `.record-note` carries the site's contract: every entry states **Problem**,
-  **Contribution**, technologies, one measured result, and a limitation. This note is
-  what replaces a "skills" band; do not add skill bars or percentage meters.
+- The lede states the record convention in one sentence (problem, my part, measured
+  result). There is no separate "how to read a record" band and no skills band; do not
+  add skill bars or percentage meters.
+- Plate order is `HOME_ORDER` in `src/pages/home.ts`, independent of catalogue
+  numbers. The widest plate goes to the project with the strongest real image.
 - `.method` is a four-step ordered list: Build → Instrument → Measure → Understand. It
   is prose about the practice, not a decorative timeline.
 - `.home-notes` is the notes list; `.at-the-moment` is a single quiet line about current

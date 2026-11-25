@@ -49,7 +49,7 @@ export const aRobotOnAFieldWithNoMapPage: Page = {
 </ul>
 
 <h2>The gap between built and shipped</h2>
-<p>The honest gap is worth naming. The robot has a full particle filter, an opponent EKF, and A* planning in the repository, but the match code that ran used reactive tape logic and IR peak tracking instead. The general solution was built and simulated; the one that shipped was the one that could be verified on the actual field in the time available. That is not a compromise I would hide. It is the same lesson as any physical build: the model is only as good as the measurement that confirms it.</p>
+<p>The robot has a full particle filter, an opponent EKF, and A* planning in the repository, but the match code that ran used reactive tape logic and IR peak tracking instead. The general solution was built and simulated; the one that shipped was the one that could be verified on the actual field in the time available. The lesson is the same as in any physical build: a model is only as good as the measurement that confirms it, and the estimator never got its measurement on the real mat.</p>
 <div class="link-row"><a class="text-link" href="/projects">Other projects <span>↗</span></a><a class="text-link" href="/resume">Résumé <span>↗</span></a></div>
 </article>`
 };

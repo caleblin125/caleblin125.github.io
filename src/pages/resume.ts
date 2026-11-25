@@ -12,7 +12,7 @@ export const resumePage: Page = {
     keywords: ["Caleb Lin", "résumé", "computer engineering", "robotics", "FPGA", "HPC", "UC Santa Cruz"],
     content: `<article class="article resume">
 <p class="kicker">Résumé</p>
-<h1>Caleb Lin.</h1>
+<h1>Caleb Lin</h1>
 <p class="lede">Computer engineering and robotics student working across digital hardware, high-performance computing, and control systems.</p>
 <div class="resume-contact">
 <a href="mailto:${email}">${email}</a>

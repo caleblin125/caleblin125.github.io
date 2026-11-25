@@ -21,7 +21,7 @@ export const nebulaLabPage: Page = {
 <p class="kicker">Lab / Nebula</p>
 <h1>Nebula laboratory.</h1>
 <p class="lede">The full surface behind the homepage field. One WebGL2 renderer draws a seeded density model as a screen-space field or raymarches the same model as a volume; this page exposes the seed, every structural parameter, six presets and palettes, quality, and the five diagnostic channels the shader already computes.</p>
-<div class="link-row"><a class="text-link" href="/lab">Lab index <span>↗</span></a><a class="text-link" href="/projects/visualization">Visualization project <span>↗</span></a><a class="text-link" href="/blog/seeing-the-mandelbrot-set">Visualization note <span>↗</span></a></div>
+<div class="link-row"><a class="text-link" href="/lab">Lab index <span>↗</span></a><a class="text-link" href="/projects/visualization">Visualization project <span>↗</span></a></div>
 </header>
 
 <div class="nebula-frame nebula-lab" data-nebula data-nebula-variant="lab">

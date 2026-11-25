@@ -58,7 +58,7 @@ ${projectHeader(
 <text x="413" y="276">exposed parameters</text><text x="783" y="276">reproducible seed</text>
 </g>
 <g fill="#99a09d" font-family="monospace" font-size="11" text-anchor="middle">
-<text x="413" y="300">zoom / iterations / density / scale</text><text x="783" y="300">?seed=0x… / presets / reset</text>
+<text x="413" y="300">pan / zoom / density / scale</text><text x="783" y="300">?seed=0x… / presets / reset</text>
 </g>
 <text x="28" y="52" fill="#d98a5f" font-family="monospace" font-size="15" letter-spacing="2">ONE PIPELINE, FOUR OUTPUTS</text>
 <text x="28" y="380" fill="#99a09d" font-family="monospace" font-size="14">If a parameter cannot be changed and a result cannot be reproduced, the image is not yet inspectable.</text>
@@ -76,8 +76,7 @@ ${projectHeader(
 <figure class="article-figure"><img src="/projects/boids.png" alt="A simulated flock of blue, green, red, and magenta chevrons leaving trails." loading="lazy"><figcaption>A still from the same steering rules the interactive canvas runs.</figcaption></figure>
 
 <h3>Nebula</h3>
-<p>The homepage field is a fragment shader built from domain-warped fractional Brownian motion. The seed chooses an offset, the density and scale controls change the field, and a palette select changes the three-color ramp. The URL carries the seed, so a view can be reopened exactly. Reduced-motion visitors get a single still frame instead of an animated field.</p>
-<p><a href="/#selected-work">Open the nebula controls</a> from the homepage. The rendering explanation and preset list sit below the canvas.</p>
+<p>The homepage field is a fragment shader built from domain-warped fractional Brownian motion and crossing ridged noise. Six presets and six five-stop palettes set the look; density, scale, and the seed change the structure. Every control writes into the URL, so a view can be reopened exactly, and reduced-motion visitors get a single still frame. The <a href="/lab/nebula">nebula laboratory</a> exposes every parameter, a raymarched volume renderer, and the shader's diagnostic channels.</p>
 
 <h3>Print study</h3>
 <p><em>The Resolution Limit</em> is a 48 × 36 inch poster built from one scalar field, warped into terrain and cut into five terraces. Each terrace spends its area on a different printing layer, so the artwork changes appearance at different viewing distances and exposes the printer's dot grid rather than hiding it. The arithmetic of the grid is in <a href="/blog/where-the-file-meets-the-machine">Where the file meets the machine</a>.</p>
@@ -86,17 +85,17 @@ ${projectHeader(
 <div class="table-wrap"><table class="spec-table wrap">
 <thead><tr><th>Work</th><th>Configured scale</th><th>What is exposed</th></tr></thead>
 <tbody>
-<tr><td>Mandelbrot drawer</td><td>44,200 orbit seeds (260 × 170)</td><td>Complex window, iterations, next-step angle</td></tr>
-<tr><td>Boids</td><td>489 agents (2 / 7 / 450 / 30)</td><td>Species constants, sense cone, steering weights</td></tr>
-<tr><td>Nebula</td><td>3 palettes, 2 continuous controls, seed URL</td><td>Density, scale, palette, seed, reduced motion</td></tr>
+<tr><td>Mandelbrot drawer</td><td>44,200 orbit seeds (260 × 170)</td><td>Complex window, next-step angle (140 iterations, fixed)</td></tr>
+<tr><td>Boids</td><td>489 agents (2 / 7 / 450 / 30)</td><td>Species constants, sense cone, steering weights (documented, not yet adjustable)</td></tr>
+<tr><td>Nebula</td><td>6 presets, 6 palettes, 2D field or volume</td><td>Every structural parameter, seed, five diagnostic channels</td></tr>
 <tr><td>Print study</td><td>48 × 36 in</td><td>Dot grid, halftone, viewing distance</td></tr>
 </tbody>
 </table></div>
-<p>The useful demonstration is not a single frame. It is being able to change a rule and see the consequence: a different seed, a different steering weight, a different iteration ceiling, a different dot pitch.</p>
+<p>The nebula is the most complete of the four: every parameter can be changed and every frame reopened from its URL. The Mandelbrot drawer and Boids are still closer to viewers than instruments.</p>
 
 <h2 id="analysis">Analysis</h2>
-<p>The page is honest about its limits. The Mandelbrot image is a sampled rendering, not a proof about the set. The boids still is one frame from a stochastic simulation; the code is deterministic only if the initial state is fixed, which the browser version does not yet expose as a seed. The nebula is an aesthetic field, not a physical simulation, and the print study is a designed artifact rather than a measurement of a specific printer's resolution.</p>
-<p>The next improvements are concrete: add a seed and reset control to Boids, expose iteration count and color mapping beside the Mandelbrot canvas, and publish the print study's dot pitch and viewing-distance calculations alongside the poster. Each one turns an attractive image into a more inspectable claim.</p>
+<p>Each piece has a limit worth knowing. The Mandelbrot image is a sampled rendering, not a proof about the set. The boids still is one frame from a stochastic simulation; the code is deterministic only if the initial state is fixed, which the browser version does not yet expose as a seed. The nebula is an aesthetic field, not a physical simulation, and the print study is a designed artifact rather than a measurement of a specific printer's resolution.</p>
+<p>Next: a seed, reset, and weight controls for Boids; iteration count and color mapping beside the Mandelbrot canvas; and a photograph of the printed poster to set against the predictions in the print note.</p>
 ${projectFooter([
     { label: "Mandelbrot drawer", href: "/projects/mandelbrot" },
     { label: "Boids", href: "/projects/boids" }

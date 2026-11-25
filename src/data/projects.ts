@@ -62,7 +62,7 @@ export type ProjectEntry = {
     keywords: string[];
     /** Section on the projects index. */
     group: ProjectGroup;
-    /** Set on the five projects shown in the homepage selected-work list. */
+    /** Set on the five projects shown on the homepage; home.ts sets their order. */
     featured?: boolean;
     /** Where a live demo or model lives, when one does. */
     demo?: ProjectDemo;
@@ -156,12 +156,40 @@ export const projectEntries: ProjectEntry[] = [
         group: "flagship",
         featured: true,
         demo: { href: "/projects/robotics#filter", label: "Filter response" },
-        metric: "10 ms",
-        metricLabel: "control period"
+        metric: "Met spec",
+        metricLabel: "final autonomous run"
+    },
+    {
+        id: "scc-connect",
+        number: "04",
+        title: "SCC Connect 2026",
+        category: "High-performance computing",
+        description:
+            "UC Santa Cruz's Not-So-Slow Slugs at SCC Connect 2026: tuning CPU HPL, CPU STREAM, and NCCL on one NVIDIA LaunchPad node, with the run logs behind each number.",
+        problem: "Reach a defensible share of one node's CPU, memory, and NVLink peaks in three graded benchmarks, and leave a record that makes each number reproducible.",
+        contribution: "Built the HPL and STREAM autotuning harnesses and the NCCL grid, ran the large-N and repeat campaigns, and wrote most of the team's benchmark report.",
+        period: "2026",
+        technologies: ["HPL", "STREAM", "NCCL", "NVLink", "SMAC3", "Intel MPI", "OpenMP", "WRF", "ValQyriE", "NVIDIA H100"],
+        dates: { started: "2026-09", measured: "2026-11", published: "2026-11-23" },
+        image: {
+            src: "/projects/scc-connect.svg",
+            alt: "Three horizontal bars showing the graded benchmarks as a share of hardware peak: HPL 86.0 percent, STREAM 72.4 percent, and NCCL 78.4 percent, over a line naming the node's 64 cores and two H100 GPUs."
+        },
+        path: "/projects/scc-connect",
+        titleHref: "/projects/scc-connect",
+        links: [
+            { label: "Project page", href: "/projects/scc-connect" },
+            { label: "Team repository", href: repos.sccConnect }
+        ],
+        keywords: ["SCC Connect", "student cluster competition", "HPL", "STREAM", "NCCL", "NVLink", "H100", "HPC benchmarking"],
+        group: "flagship",
+        demo: { href: "/projects/hpc#bench", label: "Benchmark explorer" },
+        metric: "4,403.6 GFLOPS",
+        metricLabel: "HPL, 86.0% of peak"
     },
     {
         id: "forecasting",
-        number: "04",
+        number: "05",
         title: "Data-center load forecasting",
         category: "Machine learning",
         description:
@@ -189,7 +217,7 @@ export const projectEntries: ProjectEntry[] = [
     },
     {
         id: "visualization",
-        number: "05",
+        number: "06",
         title: "Computational visualization",
         category: "Computational visualization",
         description:
@@ -213,14 +241,13 @@ export const projectEntries: ProjectEntry[] = [
         ],
         keywords: ["computational visualization", "WebGL", "Mandelbrot set", "boids", "procedural graphics", "printing"],
         group: "flagship",
-        featured: true,
         demo: { href: "/lab/nebula", label: "Nebula laboratory" },
         metric: "44,200",
         metricLabel: "Mandelbrot orbit seeds"
     },
     {
         id: "treesim",
-        number: "06",
+        number: "07",
         title: "TreeSim: an evolving forest",
         category: "Simulation",
         description:
@@ -241,35 +268,10 @@ export const projectEntries: ProjectEntry[] = [
             { label: "GitHub", href: repos.treeSimulation }
         ],
         keywords: ["tree simulation", "evolutionary simulation", "C++20", "MPI", "Slurm", "procedural growth", "forest", "computational biology"],
-        group: "flagship"
-    },
-    {
-        id: "scc-connect",
-        number: "07",
-        title: "SCC Connect 2026",
-        category: "High-performance computing",
-        description:
-            "UC Santa Cruz's Not-So-Slow Slugs at SCC Connect 2026: tuning CPU HPL, CPU STREAM, and NCCL on one NVIDIA LaunchPad node, with the run logs behind each number.",
-        problem: "Reach a defensible share of one node's CPU, memory, and NVLink peaks in three graded benchmarks, and leave a record that makes each number reproducible.",
-        contribution: "Built the HPL and STREAM autotuning harnesses and the NCCL grid, ran the large-N and repeat campaigns, and wrote most of the team's benchmark report.",
-        period: "2026",
-        technologies: ["HPL", "STREAM", "NCCL", "NVLink", "SMAC3", "Intel MPI", "OpenMP", "WRF", "ValQyriE", "NVIDIA H100"],
-        dates: { started: "2026-09", measured: "2026-11", published: "2026-11-23" },
-        image: {
-            src: "/projects/scc-connect.svg",
-            alt: "Three horizontal bars showing the graded benchmarks as a share of hardware peak: HPL 86.0 percent, STREAM 72.4 percent, and NCCL 78.4 percent, over a line naming the node's 64 cores and two H100 GPUs."
-        },
-        path: "/projects/scc-connect",
-        titleHref: "/projects/scc-connect",
-        links: [
-            { label: "Project page", href: "/projects/scc-connect" },
-            { label: "Team repository", href: repos.sccConnect }
-        ],
-        keywords: ["SCC Connect", "student cluster competition", "HPL", "STREAM", "NCCL", "NVLink", "H100", "HPC benchmarking"],
         group: "flagship",
-        demo: { href: "/projects/hpc#bench", label: "Benchmark explorer" },
-        metric: "4,403.6 GFLOPS",
-        metricLabel: "HPL, 86.0% of peak"
+        featured: true,
+        metric: "51,755 trees",
+        metricLabel: "235 simulated years, 24 MPI ranks"
     },
     {
         id: "drawing-arm",
@@ -330,7 +332,7 @@ export const projectEntries: ProjectEntry[] = [
         description:
             "A browser version of an earlier Java project that draws the points visited by stable Mandelbrot sequences and colors them by the direction they take next.",
         problem: "Show the structure inside stable Mandelbrot sequences instead of drawing only the boundary of the set.",
-        contribution: "Ported the orbit-point idea to WebGL and exposed pan, zoom, iteration count, and angle coloring.",
+        contribution: "Ported the orbit-point idea to WebGL with pan, zoom, and next-step angle coloring.",
         period: "Building",
         technologies: ["WebGL2", "TypeScript", "C++", "GLSL"],
         image: {
@@ -354,7 +356,7 @@ export const projectEntries: ProjectEntry[] = [
         category: "Computational visualization",
         description:
             "A WebGL remake of an older Java flocking simulation, with the three steering rules, species constants, and an interactive canvas.",
-        problem: "Preserve the behavior of a hand-built Java flocking system while making its rules readable and its constants adjustable in the browser.",
+        problem: "Preserve the behavior of a hand-built Java flocking system while making its rules and constants readable in the browser.",
         contribution: "Ported the steering update and species interactions to WebGL, including a reduced-motion still frame.",
         period: "Building",
         technologies: ["WebGL2", "TypeScript", "GLSL", "flocking simulation"],
@@ -375,7 +377,7 @@ export const projectEntries: ProjectEntry[] = [
         title: "AutoSentiment",
         category: "Research software",
         description:
-            "A local research dashboard for multi-source public sentiment intelligence. It searches the web, fetches source text, uses local language models for sentiment analysis, and keeps claims traceable to URLs and corroborating domains.",
+            "A local research dashboard for public sentiment. It searches the web, pulls source text, scores sentiment with local language models, and keeps every claim linked to the URLs and domains that support it.",
         problem: "Make model-generated sentiment claims auditable by keeping every claim attached to its source and corroborating domains.",
         contribution: "Built the local search, extraction, sentiment, and traceability pipeline.",
         period: "2026",
@@ -417,7 +419,7 @@ export const projectEntries: ProjectEntry[] = [
         title: "Exploratory systems",
         category: "Systems",
         description:
-            "Additional work in networking, digital design, and language experiments. These projects broaden the site beyond graphics into the systems I am learning by building.",
+            "Smaller builds in networking, digital design, and number systems: packet analysis with tshark, two Tiny Tapeout chip designs, and numeral-conversion tools.",
         problem: "Follow small technical questions far enough to learn the system underneath them.",
         contribution: "Built packet-analysis exercises, Tiny Tapeout experiments, and numeral-system tools.",
         period: "Archive",

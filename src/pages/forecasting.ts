@@ -88,33 +88,12 @@ ${resultRow("History", "10 years", "10-minute-resolution data")}
 </tbody>
 </table></div>
 
-<h2 id="record">The experimental record, as far as it is public</h2>
-<p>The headline comparison is verified. The protocol behind it is not fully published, and the difference matters: a 3% MAPE means one thing on a fixed chronological holdout and another on a shuffled or very short horizon. The table separates what the public record supports from what it does not.</p>
-<div class="table-wrap"><table class="spec-table wrap record-table">
-<thead><tr><th>Item</th><th>Status</th><th>What is known</th></tr></thead>
-<tbody>
-<tr><td>Dataset and span</td><td><span class="record-status" data-status="published">Published</span></td><td>A decade of data-center load at 10-minute resolution.</td></tr>
-<tr><td>Sampling interval</td><td><span class="record-status" data-status="published">Published</span></td><td>10 minutes; the annual sample count shown above follows from it.</td></tr>
-<tr><td>Input features</td><td><span class="record-status" data-status="partial">Partial</span></td><td>Short-horizon inputs with daily and weekly context are described; the exact feature list and lag set are not published.</td></tr>
-<tr><td>Missing-data treatment</td><td><span class="record-status" data-status="missing">Not published</span></td><td>No rule is stated for gaps, outages, or duplicated timestamps.</td></tr>
-<tr><td>Train / test split</td><td><span class="record-status" data-status="missing">Not published</span></td><td>No boundary dates, fold definition, or chronological split is given.</td></tr>
-<tr><td>Forecast horizon</td><td><span class="record-status" data-status="missing">Not published</span></td><td>The result is described as short-term; the horizon in samples is not stated.</td></tr>
-<tr><td>Model architecture</td><td><span class="record-status" data-status="partial">Partial</span></td><td>Described as time-series and machine-learning models; the exact family and hyperparameters are not published.</td></tr>
-<tr><td>Traditional baseline</td><td><span class="record-status" data-status="published">Published</span></td><td>Reported at 10% MAPE on the same problem context.</td></tr>
-<tr><td>Aggregate error</td><td><span class="record-status" data-status="published">Published</span></td><td>3% MAPE for the model.</td></tr>
-<tr><td>Error by horizon</td><td><span class="record-status" data-status="missing">Not published</span></td><td>No per-step or per-horizon error curve is available.</td></tr>
-<tr><td>Variance across periods</td><td><span class="record-status" data-status="missing">Not published</span></td><td>No fold-to-fold or seasonal breakdown is available.</td></tr>
-<tr><td>Robustness tests</td><td><span class="record-status" data-status="missing">Not published</span></td><td>Holiday, workload-change, and sensor-gap behavior are not documented.</td></tr>
-</tbody>
-</table></div>
-<p>Because the split, horizon, and per-horizon errors are missing, this page has no interactive forecasting explorer. An explorer needs a verified forecast series and a holdout boundary; without them, any chart would be a fabricated dataset wearing the lab's result. The right next artifact is an evaluation script and a table of error by horizon, and the explorer can follow.</p>
-
 <h2 id="credit">Contribution and credit</h2>
-<p>This is collaborative work in UC Santa Cruz's Smart Grids and Data Analytics Lab. The dataset and the traditional baseline belong to the lab project; my part was implementing and evaluating the time-series and machine-learning models against that baseline. The 10% figure is not my result, and the 3% figure should be read as the outcome of the team's evaluation rather than an independently replicated benchmark.</p>
+<p>This is collaborative work in UC Santa Cruz's Smart Grids and Data Analytics Lab. The dataset and the traditional baseline belong to the lab project; my part was implementing and evaluating the time-series and machine-learning models against that baseline. The 3% result comes from the lab's evaluation of those models.</p>
 
 <h2 id="analysis">Analysis</h2>
-<p>The 3% figure is a strong headline, but it is not yet a complete experimental record. The public résumé reports the comparison, not the exact train/test boundary, the forecast horizon, the per-horizon error curve, or the variance across folds. Those details matter: a model can look excellent on a calm week and fail on a holiday or a workload migration.</p>
-<p>The next version of this page should publish the split, the baseline definition, and error by horizon, with a reproducible evaluation script. Until then, the honest claim is the narrow one: on the lab's evaluation, the model reached 3% MAPE where the traditional approach reported 10%.</p>
+<p>A single MAPE figure depends heavily on how it was evaluated. The same model can look excellent on a calm week and fail on a holiday or a workload migration, and a 3% error means more on a fixed chronological holdout than on a shuffled split. This page reports the headline comparison; the train/test boundary, the forecast horizon, and error broken down by horizon and by season are not written up here yet.</p>
+<p>Those are the next additions, together with a reproducible evaluation script. Once that series exists, this page can carry an interactive forecast explorer the way the HPC page carries its benchmark data.</p>
 ${projectFooter()}
 </article>`
 };

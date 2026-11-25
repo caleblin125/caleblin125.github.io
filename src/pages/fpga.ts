@@ -99,7 +99,7 @@ ${resultRow("VGA game", "59.52 Hz", "frame rate with no framebuffer")}
 </table></div>
 
 <h2 id="analysis">Analysis</h2>
-<p>The 3× multiplier figure is a class comparison, not a portable benchmark; it depends on the synthesis settings and the workloads used in the course. The accelerator work is a comparison across FPGA and edge-GPU paths, not a production deployment, and the useful numbers move with the model, batch size, and toolchain version. The VGA game stores its sprite in logic rather than block RAM, so area is the constraint, and the checked-in sprite divider does not match the GIF’s intended timing.</p>
+<p>The 3× multiplier figure is a class comparison, not a portable benchmark; it depends on the synthesis settings and the workloads used in the course. The accelerator work is a comparison across FPGA and edge-GPU paths, not a production deployment, and the useful numbers move with the model, batch size, and toolchain version. The VGA game stores its sprite in logic rather than block RAM, so area is the constraint.</p>
 <p>Digital design is where the software stack becomes physical. A line of Verilog has a cost in area and timing; a kernel launch has a cost in synchronization; a benchmark only means something when the measurement is reproducible. I like working at that boundary.</p>
 ${projectFooter([{ label: "HPC work", href: "/projects/hpc" }])}
 </article>`

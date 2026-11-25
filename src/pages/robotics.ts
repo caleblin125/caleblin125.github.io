@@ -115,11 +115,11 @@ ${resultRow("Control period", "10 ms", "PIC32 main service")}
 <div class="filter-readout" data-filter-readout aria-live="polite">Adjust the center, Q, and stage count.</div>
 <canvas data-visualization="filter" role="img" aria-label="Modeled bandpass response of three cascaded second-order sections centered at two kilohertz with Q 20.3."></canvas>
 <div class="demo-legend"><span><i class="legend-line legend-model"></i><span data-filter-model-label>cascade model</span></span><span class="legend-ghost"><i class="legend-line legend-stage"></i>one section</span><span><i class="legend-line legend-beacon"></i>beacon tones</span></div>
-<p class="demo-note">Model, not a measurement. Dashed vertical lines mark the 1.5 and 2.5 kHz wall tones at the edges and the 2.0 kHz opponent beacon at the center. The Monte Carlo samples are not published, only the mean and standard deviation, so no distribution is drawn. Missing from the public record: component values, the other two sections' individual results, a swept Bode plot, and the on-field signal-to-noise ratio.</p>
+<p class="demo-note">Model, not a measurement. Dashed vertical lines mark the 1.5 and 2.5 kHz wall tones at the edges and the 2.0 kHz opponent beacon at the center. The Monte Carlo samples are not published, only the mean and standard deviation, so no distribution is drawn. A swept Bode plot of the assembled board would be the measured version of this curve.</p>
 </div>
 
 <h2 id="demo">Interactive: a synthetic Kalman filter</h2>
-<p>The robot's shipped match code did not use a Kalman filter. This demo is a separate, clearly synthetic 1D constant-velocity example: it shows how process noise and measurement noise change the estimate and its uncertainty. It is not a replay of robot data. The logic lives in <code>src/kalman/filter.ts</code>; the canvas only draws the state.</p>
+<p>The robot's shipped match code did not use a Kalman filter. This demo is a separate, clearly synthetic 1D constant-velocity example: it shows how process noise and measurement noise change the estimate and its uncertainty. It is not a replay of robot data.</p>
 <div class="kalman-demo" data-kalman>
 <div class="demo-toolbar">
 <label class="demo-control">Process noise q <input type="range" min="0.01" max="2" step="0.01" value="0.2" data-kalman-q></label>
@@ -133,8 +133,8 @@ ${resultRow("Control period", "10 ms", "PIC32 main service")}
 </div>
 
 <h2 id="analysis">Analysis</h2>
-<p>The honest gap is worth naming. The robot has a full particle filter, an opponent EKF, and A* planning in the repository, but the match code that ran used reactive tape logic and IR peak tracking instead. The general solution was built and simulated; the one that shipped was the one that could be verified on the actual field in the time available.</p>
-<p>The analog receiver is the part I trust most, because its tolerance was measured. The navigation stack is the part I would rebuild first, because the field rewarded a state machine over a model that had not been validated against the field. The glove study has its own limit: it is one 50-second recording from one person, not a user study, and some of its metrics were in incompatible units. The next version needs held-out gestures, several users, wrap-aware angles, and a task-level measure. No video of the final run is published here, so the minspec claim rests on the team's recorded result rather than a replayable artifact.</p>
+<p>One gap matters. The robot has a full particle filter, an opponent EKF, and A* planning in the repository, but the match code that ran used reactive tape logic and IR peak tracking instead. The general solution was built and simulated; the one that shipped was the one that could be verified on the actual field in the time available.</p>
+<p>The analog receiver is the part I trust most, because its tolerance was measured. The navigation stack is the part I would rebuild first, because the field rewarded a state machine over a model that had not been validated against the field. The glove study has its own limit: it is one 50-second recording from one person, not a user study, and some of its metrics were in incompatible units. The next version needs held-out gestures, several users, wrap-aware angles, and a task-level measure.</p>
 ${projectFooter([
     { label: "Robot note", href: "/blog/a-robot-on-a-field-with-no-map" },
     { label: "Glove note", href: "/blog/the-glove-is-the-controller" }

@@ -9,7 +9,11 @@ import { defaultParameters, nebulaControls } from "../nebula/controls";
 import { githubProfileUrl } from "./constants";
 import type { Page } from "./types";
 
-const projects = featuredProjects();
+// Display order for the featured plates. The first plate is the widest, so it
+// goes to the project with the strongest picture of real hardware.
+const HOME_ORDER = ["robotics", "hpc", "fpga", "forecasting", "treesim"];
+
+const projects = featuredProjects().sort((a, b) => HOME_ORDER.indexOf(a.id) - HOME_ORDER.indexOf(b.id));
 const homeNebula = defaultParameters("home");
 
 const latestNotes = postEntries.slice(0, 3);
@@ -80,7 +84,7 @@ export const homePage: Page = {
             <section class="atlas-top">
                 <p class="atlas-name"><span>Santa Cruz, California</span></p>
                 <h1 class="atlas-claim">I build hardware, clusters, and robots, then measure them.</h1>
-                <p class="atlas-lede">Double major in robotics engineering and computer engineering at the University of California, Santa Cruz. The work runs from FPGA arithmetic and cluster tuning to state estimation, load forecasting, and the visual systems that make a result legible. Each record states what I built, what I measured, and what the number cannot tell you.</p>
+                <p class="atlas-lede">I'm a robotics and computer engineering double major at the University of California, Santa Cruz, graduating June 2027. I do research on FPGA inference and data-center load forecasting, compete in cluster competitions with UCSC's HPC team, and build robots. Each project page covers the problem, the part that was mine, and the measured result.</p>
                 <div class="atlas-links"><a class="text-link" href="#selected-work">Selected work <span aria-hidden="true">↓</span></a><a class="text-link" href="/lab">Interactive lab <span aria-hidden="true">↗</span></a><a class="text-link" href="/resume">Résumé <span aria-hidden="true">↗</span></a><a class="text-link" href="${githubProfileUrl}">GitHub <span aria-hidden="true">↗</span></a></div>
             </section>
             <section class="atlas-plates" id="selected-work" aria-label="Selected work">
@@ -108,10 +112,6 @@ export const homePage: Page = {
                     </details>
                 </div>
             </section>
-            <section class="record-note" aria-label="How to read a record">
-                <h2>The record</h2>
-                <p>Every entry follows one structure, whether it is a board, a cluster, or a simulation. <strong>Problem.</strong> The constraint the system had to satisfy. <strong>Contribution.</strong> The part that is mine, separated from the team's. Then the approach, the measured result, and what that result cannot support. Where a number is missing, the record says so.</p>
-            </section>
             <ol class="method" aria-label="How the work is done">
                 <li><span class="step-no">01</span><strong>Build</strong><p>Make the system real enough to misbehave.</p></li>
                 <li><span class="step-no">02</span><strong>Instrument</strong><p>Give it a way to report what it is doing.</p></li>
@@ -121,7 +121,7 @@ export const homePage: Page = {
             <section class="home-notes" aria-labelledby="notes-title">
                 <header class="section-head">
                     <h2 class="section-title" id="notes-title">Notes</h2>
-                    <p class="section-note">Longer explanations of the measurements, the surprises, and the parts that did not work the first time.</p>
+                    <p class="section-note">Longer write-ups: how a project works, what broke, and what I would change.</p>
                     <a class="text-link" href="/blog">All notes <span aria-hidden="true">↗</span></a>
                 </header>
                 <div class="note-list">${noteRows}</div>

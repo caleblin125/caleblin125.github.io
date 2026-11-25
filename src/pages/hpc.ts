@@ -44,8 +44,8 @@ ${projectHeader(
 <div class="diagram-scroll"><svg class="vector-diagram" viewBox="0 0 960 430" role="img" aria-labelledby="hpc-arch-title hpc-arch-desc">
 <title id="hpc-arch-title">Haydean cluster architecture</title>
 <desc id="hpc-arch-desc">An admin and login node connects to a Slurm controller, shared NFS storage, and four compute nodes running MPI and OpenBLAS; HPL sweeps measure the result.</desc>
-<rect x="1" y="1" width="958" height="428" fill="#2a1e32" stroke="#51425a"/>
-<g fill="#1a1320" stroke="#51425a">
+<rect x="1" y="1" width="958" height="428" fill="#10161a" stroke="#2b3439"/>
+<g fill="#161d22" stroke="#2b3439">
 <rect x="40" y="60" width="200" height="74"/>
 <rect x="40" y="188" width="200" height="74"/>
 <rect x="40" y="316" width="200" height="74"/>
@@ -53,27 +53,27 @@ ${projectHeader(
 <rect x="370" y="260" width="210" height="76"/>
 <rect x="700" y="60" width="220" height="292"/>
 </g>
-<g fill="#eee8f2" font-family="sans-serif" font-size="17" text-anchor="middle">
-<text x="140" y="92">Admin / login</text><text x="140" y="118" font-family="monospace" font-size="12" fill="#9a8da0">SSH key mesh</text>
-<text x="140" y="220">Slurm + slurmdbd</text><text x="140" y="246" font-family="monospace" font-size="12" fill="#9a8da0">MariaDB / job state</text>
-<text x="140" y="348">NFS</text><text x="140" y="374" font-family="monospace" font-size="12" fill="#9a8da0">shared home / data</text>
-<text x="475" y="158">Compute nodes ×4</text><text x="475" y="184" font-family="monospace" font-size="12" fill="#9a8da0">srun / MPI ranks</text>
-<text x="475" y="294">HPL + OpenBLAS</text><text x="475" y="320" font-family="monospace" font-size="12" fill="#9a8da0">OpenMPI / thread binding</text>
+<g fill="#e6e2d8" font-family="sans-serif" font-size="17" text-anchor="middle">
+<text x="140" y="92">Admin / login</text><text x="140" y="118" font-family="monospace" font-size="12" fill="#99a09d">SSH key mesh</text>
+<text x="140" y="220">Slurm + slurmdbd</text><text x="140" y="246" font-family="monospace" font-size="12" fill="#99a09d">MariaDB / job state</text>
+<text x="140" y="348">NFS</text><text x="140" y="374" font-family="monospace" font-size="12" fill="#99a09d">shared home / data</text>
+<text x="475" y="158">Compute nodes ×4</text><text x="475" y="184" font-family="monospace" font-size="12" fill="#99a09d">srun / MPI ranks</text>
+<text x="475" y="294">HPL + OpenBLAS</text><text x="475" y="320" font-family="monospace" font-size="12" fill="#99a09d">OpenMPI / thread binding</text>
 </g>
-<g fill="#1a1320" stroke="#51425a">
+<g fill="#161d22" stroke="#2b3439">
 <rect x="726" y="86" width="168" height="52"/><rect x="726" y="164" width="168" height="52"/><rect x="726" y="242" width="168" height="52"/>
 </g>
-<g fill="#eee8f2" font-family="sans-serif" font-size="15" text-anchor="middle">
+<g fill="#e6e2d8" font-family="sans-serif" font-size="15" text-anchor="middle">
 <text x="810" y="117">parameter sweep</text><text x="810" y="195">measure GFLOPS</text><text x="810" y="273">keep / revert</text>
 </g>
-<g stroke="#c59ad8" stroke-width="2" marker-end="url(#hpc-arrow)">
+<g stroke="#d98a5f" stroke-width="2" marker-end="url(#hpc-arrow)">
 <line x1="240" y1="97" x2="364" y2="150"/><line x1="240" y1="225" x2="364" y2="172"/>
 <line x1="240" y1="353" x2="364" y2="312"/><line x1="580" y1="162" x2="694" y2="122"/>
 <line x1="580" y1="298" x2="694" y2="268"/><line x1="810" y1="138" x2="810" y2="158"/>
 <line x1="810" y1="216" x2="810" y2="236"/>
 </g>
-<text x="40" y="42" fill="#c59ad8" font-family="monospace" font-size="15" letter-spacing="2">HAYDEAN / 4 NODES</text>
-<defs><marker id="hpc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c59ad8"/></marker></defs>
+<text x="40" y="42" fill="#d98a5f" font-family="monospace" font-size="15" letter-spacing="2">HAYDEAN / 4 NODES</text>
+<defs><marker id="hpc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#d98a5f"/></marker></defs>
 </svg></div>
 <p>The cluster has the ordinary but essential pieces: account and job state, shared storage, a way to reach every node, and a benchmark that stresses the interconnect and the math libraries together. The sweep exists because none of those pieces has one universal best setting.</p>
 

@@ -38,20 +38,20 @@ ${projectHeader(
 <div class="diagram-scroll"><svg class="vector-diagram" viewBox="0 0 960 440" role="img" aria-labelledby="scc-arch-title scc-arch-desc">
 <title id="scc-arch-title">SCC Connect 2026 measurement and submission pipeline</title>
 <desc id="scc-arch-desc">One shared node feeds four workload groups: CPU HPL, CPU STREAM, NCCL over NVLink, and the separate WRF, MFC, and ValQyriE deliverables. A tuner searches each workload while a node lock keeps benchmarks from overlapping and a restore step puts system settings back. Every run writes a command, environment, log, and system counters. The best configuration is re-run, then collected into the report and submission archive.</desc>
-<rect x="1" y="1" width="958" height="438" fill="#2a1e32" stroke="#51425a"/>
-<text x="36" y="38" fill="#c59ad8" font-family="monospace" font-size="15" letter-spacing="2">SCC CONNECT 2026 / ONE NODE</text>
-<g fill="#1a1320" stroke="#51425a">
+<rect x="1" y="1" width="958" height="438" fill="#10161a" stroke="#2b3439"/>
+<text x="36" y="38" fill="#d98a5f" font-family="monospace" font-size="15" letter-spacing="2">SCC CONNECT 2026 / ONE NODE</text>
+<g fill="#161d22" stroke="#2b3439">
 <rect x="36" y="58" width="888" height="58"/>
 <rect x="36" y="146" width="204" height="66"/><rect x="264" y="146" width="204" height="66"/><rect x="492" y="146" width="204" height="66"/><rect x="720" y="146" width="204" height="66"/>
 <rect x="36" y="242" width="204" height="62"/><rect x="264" y="242" width="432" height="62"/><rect x="720" y="242" width="204" height="62"/>
 <rect x="36" y="334" width="888" height="66"/>
 </g>
-<g fill="#eee8f2" font-family="sans-serif" font-size="16">
+<g fill="#e6e2d8" font-family="sans-serif" font-size="16">
 <text x="52" y="84">2× XEON 6548Y+ · 64 CORES · 1 TiB DDR5-5200</text>
-<text x="52" y="106" fill="#9a8da0" font-family="monospace" font-size="11">2× H100 NVL 94 GB · NV12 318.7 GB/s per direction · Ubuntu 24.04.5</text>
+<text x="52" y="106" fill="#99a09d" font-family="monospace" font-size="11">2× H100 NVL 94 GB · NV12 318.7 GB/s per direction · Ubuntu 24.04.5</text>
 <text x="52" y="172">HPL / CPU</text><text x="280" y="172">STREAM / CPU</text><text x="508" y="172">NCCL / NVLink</text><text x="736" y="172">OTHER TASKS</text>
 </g>
-<g fill="#9a8da0" font-family="monospace" font-size="10">
+<g fill="#99a09d" font-family="monospace" font-size="10">
 <text x="52" y="194">Intel MKL HPL · Intel MPI</text><text x="52" y="206">one rank · 64 cores</text>
 <text x="280" y="194">stream.c 5.10 · icx</text><text x="280" y="206">64 threads · 1 GiB arrays</text>
 <text x="508" y="194">nccl-tests · NCCL 2.32.3</text><text x="508" y="206">64 channels · registered</text>
@@ -63,13 +63,13 @@ ${projectHeader(
 <text x="736" y="268">RESTORE</text><text x="736" y="286">power, uncore, THP, EPB</text><text x="736" y="298">returned after each run</text>
 <text x="52" y="360">RUN RECORD</text><text x="52" y="382">exact command + environment · stdout log · HPL.dat / settings.txt · turbostat clocks, power, temperature · config JSON</text>
 </g>
-<g stroke="#c59ad8" stroke-width="2" marker-end="url(#scc-arrow)" fill="none">
+<g stroke="#d98a5f" stroke-width="2" marker-end="url(#scc-arrow)" fill="none">
 <line x1="138" y1="212" x2="138" y2="236"/><line x1="366" y1="212" x2="366" y2="236"/><line x1="594" y1="212" x2="594" y2="236"/><line x1="822" y1="212" x2="822" y2="236"/>
 <line x1="138" y1="304" x2="138" y2="328"/><line x1="480" y1="304" x2="480" y2="328"/><line x1="822" y1="304" x2="822" y2="328"/>
 </g>
-<text x="404" y="46" fill="#9a8da0" font-family="monospace" font-size="10" text-anchor="end">BEST CONFIG → RUNBEST → REPEAT → REPORT</text>
-<text x="36" y="424" fill="#9a8da0" font-family="monospace" font-size="11">No number leaves this loop without the run that produced it.</text>
-<defs><marker id="scc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c59ad8"/></marker></defs>
+<text x="404" y="46" fill="#99a09d" font-family="monospace" font-size="10" text-anchor="end">BEST CONFIG → RUNBEST → REPEAT → REPORT</text>
+<text x="36" y="424" fill="#99a09d" font-family="monospace" font-size="11">No number leaves this loop without the run that produced it.</text>
+<defs><marker id="scc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#d98a5f"/></marker></defs>
 </svg></div>
 <p>The loop has one rule: the tuner proposes, but the submitted number comes from a named run. A search can produce thousands of points and still leave the winner unconfirmed at full problem size, so each campaign ended with a separate confirmation run: 24 large-N HPL runs, a best-configuration STREAM output saved beside its build line, and three repeats of every NCCL measurement. The report and the submission archive were generated from those records, not retyped from a summary.</p>
 <p>The node is shared by six people, so the harness takes a node lock before a benchmark and restores every setting it changed. That is also why the run record matters: a teammate can see that a result used 1.0 GHz uncore, THP <code>always</code>, or a specific channel count without reconstructing the session from memory.</p>

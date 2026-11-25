@@ -1,7 +1,7 @@
-// Home page ("/") — a compact intro, the procedural nebula centerpiece, the
-// four results that frame the work, five selected projects with problem /
-// contribution / approach / result, the method behind them, and the latest
-// notes. All project and note text comes from src/data so the previews cannot
+// Home page ("/") — a work-first record. The page opens with a short
+// identification strip, then five plates taken from the featured projects,
+// one live field, the convention every record follows, the method, and the
+// most recent notes. All text comes from src/data so the previews cannot
 // drift from the pages they summarise.
 import { featuredProjects } from "../data/projects";
 import { postEntries } from "../data/posts";
@@ -16,81 +16,38 @@ if (projects.length !== 5) {
     throw new Error(`The homepage needs exactly five featured projects; found ${projects.length}`);
 }
 
-const leadProjects = projects.slice(0, 2);
-const tailProjects = projects.slice(2);
 const latestNotes = postEntries.slice(0, 3);
 
 function escapeHtml(value: string): string {
     return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-function approachList(project: (typeof projects)[number]): string {
-    const technologies = project.technologies.map((technology) => `<li>${escapeHtml(technology)}</li>`).join("");
-
-    return `<div class="work-approach"><span class="work-label">Approach</span><ul class="work-tech" aria-label="Approach">${technologies}</ul></div>`;
-}
-
-function metric(project: (typeof projects)[number]): string {
-    return `<span class="work-metric"><span class="work-label">Result</span><strong>${escapeHtml(project.metric ?? "")}</strong><span class="work-metric-note">${escapeHtml(project.metricLabel ?? "")}</span></span>`;
-}
-
-function category(project: (typeof projects)[number]): string {
-    const badge = project.demo ? '<span class="demo-badge">Interactive</span>' : "";
-
-    return `<p class="work-category"><span class="work-number">${escapeHtml(project.number)}</span>${escapeHtml(project.category)}${badge}</p>`;
-}
-
-const leadRows = leadProjects
+const plates = projects
     .map((project) => {
         const href = project.path ?? project.titleHref ?? "/projects";
+        const metric = project.metric
+            ? `<span class="plate-metric">${escapeHtml(project.metric)}${project.metricLabel ? ` — ${escapeHtml(project.metricLabel)}` : ""}</span>`
+            : "";
 
-        return `<a class="work-lead" href="${escapeHtml(href)}">
+        return `<a class="plate" href="${escapeHtml(href)}">
 <span class="work-thumb"><img src="${escapeHtml(project.image.src)}" alt="${escapeHtml(project.image.alt)}" loading="lazy" decoding="async"></span>
-<div class="work-body">
-${category(project)}
+<div class="plate-cap">
+<span class="plate-no">${escapeHtml(project.number)}</span>
 <h3>${escapeHtml(project.title)}</h3>
-<p class="work-problem"><strong>Problem.</strong> ${escapeHtml(project.problem)}</p>
-<p class="work-contribution"><strong>Contribution.</strong> ${escapeHtml(project.contribution)}</p>
-${approachList(project)}
-<div class="work-foot">
-${metric(project)}
-<span class="work-link">Full project <span aria-hidden="true">↗</span></span>
+${metric}
 </div>
-</div>
-</a>`;
-    })
-    .join("\n");
-
-const tailRows = tailProjects
-    .map((project) => {
-        const href = project.path ?? project.titleHref ?? "/projects";
-
-        return `<a class="work-row" href="${escapeHtml(href)}">
-<span class="work-thumb"><img src="${escapeHtml(project.image.src)}" alt="${escapeHtml(project.image.alt)}" loading="lazy" decoding="async"></span>
-<div class="work-body">
-${category(project)}
-<h3>${escapeHtml(project.title)}</h3>
-<p class="work-problem"><strong>Problem.</strong> ${escapeHtml(project.problem)}</p>
-<p class="work-contribution"><strong>Contribution.</strong> ${escapeHtml(project.contribution)}</p>
-${approachList(project)}
-</div>
-<div class="work-metric">
-<span class="work-label">Result</span>
-<strong>${escapeHtml(project.metric ?? "")}</strong>
-<span class="work-metric-note">${escapeHtml(project.metricLabel ?? "")}</span>
-<span class="work-link">Full project <span aria-hidden="true">↗</span></span>
-</div>
+<div class="plate-meta"><span>${escapeHtml(project.category)}</span><span>${escapeHtml(project.period)}</span></div>
 </a>`;
     })
     .join("\n");
 
 const noteRows = latestNotes
     .map(
-        (post) => `<a class="note-item" href="${escapeHtml(post.path)}">
+        (post) => `<a class="note-row" href="${escapeHtml(post.path)}">
 <span class="post-date">${escapeHtml(post.dateDisplay)}</span>
 <h3>${escapeHtml(post.title)}</h3>
 <p>${escapeHtml(post.description)}</p>
-<span class="work-link">Read note <span aria-hidden="true">↗</span></span>
+<span class="note-arrow" aria-hidden="true">↗</span>
 </a>`
     )
     .join("\n");
@@ -99,21 +56,28 @@ export const homePage: Page = {
     title: "Robotics & Computer Engineering at UCSC",
     eyebrow: "Caleb Lin",
     kind: "home",
-    updated: "2026-11-23",
+    updated: "2026-11-24",
     description:
         "Caleb Lin is a robotics engineering and computer engineering student at UC Santa Cruz. He builds FPGA accelerators, HPC clusters, robots, and computational visualizations.",
     keywords: ["Caleb Lin", "robotics engineering", "computer engineering", "FPGA", "HPC", "machine learning", "WebGL", "University of California, Santa Cruz"],
     content: `
-            <section class="hero-grid">
-                <div class="hero-copy">
-                    <p class="kicker">Computer engineering + robotics / UC Santa Cruz / June 2027</p>
-                    <h1>I build hardware, clusters, and robots, then measure them.</h1>
-                    <p class="lede">I’m Caleb Lin, a double major in robotics engineering and computer engineering at the University of California, Santa Cruz. I work on FPGA acceleration, high-performance computing, and control and estimation. Every project here states what I built, what I measured, and what the number cannot tell you.</p>
-                    <div class="link-row"><a class="text-link" href="#selected-work">Selected work <span aria-hidden="true">↓</span></a><a class="text-link" href="/lab">Interactive lab <span aria-hidden="true">↗</span></a><a class="text-link" href="/resume">Résumé <span aria-hidden="true">↗</span></a><a class="text-link" href="${githubProfileUrl}">GitHub <span aria-hidden="true">↗</span></a></div>
+            <section class="atlas-top">
+                <p class="atlas-name">Caleb Lin <span>Santa Cruz, California</span></p>
+                <h1 class="atlas-claim">I build hardware, clusters, and robots, then measure them.</h1>
+                <p class="atlas-lede">Double major in robotics engineering and computer engineering at the University of California, Santa Cruz. The work runs from FPGA arithmetic and cluster tuning to state estimation, load forecasting, and the visual systems that make a result legible. Each record states what I built, what I measured, and what the number cannot tell you.</p>
+                <div class="atlas-links"><a class="text-link" href="#selected-work">Selected work <span aria-hidden="true">↓</span></a><a class="text-link" href="/lab">Interactive lab <span aria-hidden="true">↗</span></a><a class="text-link" href="/resume">Résumé <span aria-hidden="true">↗</span></a><a class="text-link" href="${githubProfileUrl}">GitHub <span aria-hidden="true">↗</span></a></div>
+            </section>
+            <section class="atlas-plates" id="selected-work" aria-label="Selected work">
+                ${plates}
+            </section>
+            <section class="live-plate" aria-label="Live field">
+                <div class="live-head">
+                    <p class="kicker">Field 01 / live</p>
+                    <p>A seeded density field drawn in a fragment shader. Change the seed, palette, or structure; the address keeps the frame.</p>
                 </div>
                 <div class="nebula-frame" data-nebula data-nebula-variant="home">
                     <div class="nebula-stage">
-                        <canvas data-visualization="nebula" role="img" aria-label="A procedurally generated nebula: sparse magenta shells and dust lanes around a dark void, with faint stars."></canvas>
+                        <canvas data-visualization="nebula" role="img" aria-label="A procedurally generated nebula: sparse shells and dust lanes around a dark void, with faint stars."></canvas>
                         <div class="nebula-hud" aria-hidden="true"><span>Field 01 / density + palette</span><span data-nebula-hud>2D field / 8 octaves</span></div>
                         <p class="nebula-caption">Nebula <span>seed-reproducible / six presets</span></p>
                         <div class="nebula-fallback">This field needs WebGL2. The rest of the page is unaffected.</div>
@@ -127,43 +91,26 @@ export const homePage: Page = {
                     </details>
                 </div>
             </section>
-            <ul class="signal-band" aria-label="Highlights">
-                <li><strong>1st place</strong><span>Winter Classical Invitational, vs. 8 U.S. colleges</span></li>
-                <li><strong>86% of peak</strong><span>4,403.6 GFLOPS HPL at SCC Connect 2026</span></li>
-                <li><strong>3× throughput</strong><span>Top FPGA multiplier in a class of ~100</span></li>
-                <li><strong>3.95 GPA</strong><span>Two undergraduate research labs</span></li>
-            </ul>
-            <section class="selected-work" id="selected-work">
-                <header class="section-head">
-                    <p class="kicker">Selected work / 05</p>
-                    <h2 class="section-title">Five systems, each with a number.</h2>
-                    <p class="section-note">Each entry names the constraint, the part I built, the approach, and the result — including what the result cannot support.</p>
-                    <a class="text-link" href="/projects">All projects <span aria-hidden="true">↗</span></a>
-                </header>
-                <div class="work-leads">${leadRows}</div>
-                <div class="work-list">${tailRows}</div>
+            <section class="record-note" aria-label="How to read a record">
+                <h2>The record</h2>
+                <p>Every entry follows one structure, whether it is a board, a cluster, or a simulation. <strong>Problem.</strong> The constraint the system had to satisfy. <strong>Contribution.</strong> The part that is mine, separated from the team's. Then the approach, the measured result, and what that result cannot support. Where a number is missing, the record says so.</p>
             </section>
-            <section class="method-strip" aria-label="How I work">
-                <div class="method-head"><p class="kicker">Method / 04</p><p class="method-note">The same loop runs through the hardware, the clusters, and the visual work.</p></div>
-                <ol class="method-steps">
-                    <li><span>01</span><strong>Build</strong><p>Make the system real enough to misbehave.</p></li>
-                    <li><span>02</span><strong>Instrument</strong><p>Give it a way to report what it is doing.</p></li>
-                    <li><span>03</span><strong>Measure</strong><p>Run it against a baseline and keep the raw numbers.</p></li>
-                    <li><span>04</span><strong>Understand</strong><p>Explain the result, including what it cannot support.</p></li>
-                </ol>
-            </section>
-            <section class="notes-strip">
+            <ol class="method" aria-label="How the work is done">
+                <li><span class="step-no">01</span><strong>Build</strong><p>Make the system real enough to misbehave.</p></li>
+                <li><span class="step-no">02</span><strong>Instrument</strong><p>Give it a way to report what it is doing.</p></li>
+                <li><span class="step-no">03</span><strong>Measure</strong><p>Run it against a baseline and keep the raw numbers.</p></li>
+                <li><span class="step-no">04</span><strong>Understand</strong><p>Explain the result, including what it cannot support.</p></li>
+            </ol>
+            <section class="home-notes" aria-labelledby="notes-title">
                 <header class="section-head">
-                    <p class="kicker">Writing / 05</p>
-                    <h2 class="section-title">Notes from inside the work.</h2>
+                    <h2 class="section-title" id="notes-title">Notes</h2>
                     <p class="section-note">Longer explanations of the measurements, the surprises, and the parts that did not work the first time.</p>
                     <a class="text-link" href="/blog">All notes <span aria-hidden="true">↗</span></a>
                 </header>
-                <div class="notes-list">${noteRows}</div>
+                <div class="note-list">${noteRows}</div>
             </section>
-            <section class="home-strip">
-                <p>At the moment</p>
-                <div><strong>Benchmarking inference, tuning clusters, and forecasting load</strong><span>Currently researching ternary LLM inference on an Alveo U250, forecasting data-center electricity load, and tuning competition workloads with UCSC’s HPC team.</span></div>
-                <a class="text-link" href="/about">A little more <span aria-hidden="true">↗</span></a>
+            <section class="at-the-moment" aria-label="At the moment">
+                <p class="kicker">At the moment</p>
+                <p>Researching ternary LLM inference on an Alveo U250, forecasting data-center load, and tuning competition workloads with UCSC's HPC team — most recently 4,403.6 GFLOPS at 86% of peak in SCC Connect 2026.</p>
             </section>`
 };

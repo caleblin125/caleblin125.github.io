@@ -440,3 +440,87 @@ shaders), `src/nebula/{parameters,presets,random,controls,renderer}.ts`,
 `src/pages/{home,nebula-lab,lab}.ts`, `src/style.css`, `scripts/validate.mjs`,
 `scripts/generate-site.ts`, `README.md`, `STYLE.md`, and this file. The old
 `src/nebula/shaders/nebula.glsl` and `nebula.vert.glsl` were deleted.
+
+## 12. Addendum: visual direction (2026-11-24)
+
+The site's content had become an inspectable record, but its visual language still read as
+a generic dark technical portfolio: a purple accent, Space Grotesk display headings, a
+uniform card grid, pills, a second hero-sized visualization, and glow-adjacent gradients.
+Three directions were prototyped. **Direction C — Atlas, "the work is the page"** was
+chosen: a printed specimen board where the actual outputs are the composition, and no
+heading announces the author.
+
+### Why Direction C
+
+- The evidence is the differentiator. Setting the real plates — the VGA game frames, CAD,
+  run metrics, benchmark figures — as the page means the site cannot be mistaken for a
+  template, and a reader meets the work before the copy.
+- It removes the gestures that signal generated design without requiring fabricated
+  content: no oversized hero, no glass, no neon, no gradients, no repeated rounded cards,
+  no pills, no skill bars, no fake terminal, no decorative metadata, no animation for its
+  own sake.
+- It scales down honestly. A plate board that degrades to a single column still reads as a
+  record, whereas a six-card grid at 390 px becomes the generic layout it started as.
+
+### What changed
+
+- **Ground and colour.** `--bg #0a0d10`, surfaces `#10161a` / `#161d22`, recess `#06090b`,
+  text `#e6e2d8` with three quieter steps, a single sienna accent `#d98a5f`
+  (`--accent-deep #7d4026`), and neutral rules `#1b2226` / `#2b3439`. The old purple
+  identity is gone from the shell, the article chrome, the inline SVG diagrams, the six
+  generated project SVGs, `public/icons.svg`, and the favicon. Chart series keep three
+  distinguishable hues (sienna, steel, sage); the nebula's own palettes are artwork presets
+  and were left untouched.
+- **Type.** Newsreader for prose and titles, IBM Plex Mono for numbers, dates, plate
+  captions, and nav. Space Grotesk and DM Mono were removed from the font link. Uppercase
+  is now confined to mono labels at or below `0.72rem`; headings are serif and never
+  display-sized.
+- **Shape.** Radius drops to `2px`; images are square plates with no border, radius, or
+  shadow. Panels are separated by hairline rules rather than nested cards.
+- **Homepage.** The hero/visualization split is replaced by a name line, a quiet one-line
+  claim, a lede, and four links, followed by five featured plates on a 12-column irregular
+  grid. The nebula is demoted to one subordinate `Field 01 / live` plate. A "The record"
+  note states the shared structure (problem, contribution, technologies, one measured
+  result, limitation), which replaces the old skills band. The four-step method and notes
+  list follow, then a single "At the moment" line.
+- **Catalogue.** `/projects` now has four hand-picked leads as irregular plates and the
+  remaining entries as compact annotated rows, under Flagship work / Experiments /
+  Archive. Technologies are inline `/`-separated mono text, not pills.
+- **Records.** Articles keep a two-column project header (record + facts rail), set prose
+  at `40rem`, and number sections with CSS counters (`01`, `02`, …) instead of typed
+  numbers. Wide media breaks out to `1060px`.
+- **Favicon.** A dark ink tile with three sienna rules, replacing the purple gradient
+  glyph.
+
+### Verification
+
+- `npx tsc --noEmit` and `npm run build` succeed.
+- `npm run validate` passes **1,541 checks, 0 failures** across all 23 routes, including
+  the five homepage plates, all 14 `figure.project-thumb` entries, the About headings, and
+  the Markdown homepage needle. Homepage plates gained a Turndown rule so the Markdown
+  copy reads as `### [Title](url)` with the plate image, metric, and category beneath.
+- Full-page browser captures at 1440, 1024, 768, and 390 px covered `/`, `/projects`,
+  `/lab`, `/blog`, `/about`, `/resume`, `/projects/fpga`, and `/lab/nebula`; the plate
+  grids, the reflowed captions, the counters, the diagrams, and the result blocks were
+  checked in the Atlas palette. The nebula canvas was confirmed to draw when scrolled into
+  view; its black appearance in a full-page capture is an IntersectionObserver artefact,
+  not a rendering failure.
+
+### Known limits
+
+- The benchmark figures carried over from §9 remain **unconfirmed**: 86% of peak /
+  4,403.6 GFLOPS HPL at SCC Connect 2026, 663 GFLOPS on Haydean (~47% of theoretical
+  peak), and "1st place Winter Classical, 9 teams" versus the earlier "vs. 8 U.S.
+  colleges". The redesign did not change or promote any of them.
+- No automated a11y or performance audit in CI; contrast, keyboard order, and reduced
+  motion were reviewed by inspection and in headless Chrome.
+- The homepage plate grid is hand-tuned at the five current entries. Adding a sixth
+  featured project needs a span decision, not only a data edit.
+
+### Files changed
+
+`src/style.css` (full Atlas system, ~2,960 lines), `src/pages/home.ts`,
+`src/pages/projects.ts`, `src/render.ts`, `scripts/generate-site.ts` (plate Markdown
+rule), `index.html` (font link), `public/favicon.svg`, `public/icons.svg`, the six
+`public/projects/*.svg` marks, the ten recoloured `src/pages/*.ts` records, `STYLE.md`
+(rewritten for Atlas), and this file.

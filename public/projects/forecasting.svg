@@ -1,24 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="forecast-thumb-title forecast-thumb-desc">
   <title id="forecast-thumb-title">Data-center load forecasting error</title>
   <desc id="forecast-thumb-desc">A bar chart comparing 3 percent mean absolute percentage error for the model with 10 percent for the traditional baseline.</desc>
-  <rect width="1200" height="800" fill="#120d18"/>
-  <g stroke="#403248" stroke-width="1">
+  <rect width="1200" height="800" fill="#06090b"/>
+  <g stroke="#2b3439" stroke-width="1">
     <line x1="110" y1="620" x2="1090" y2="620"/>
     <line x1="110" y1="520" x2="1090" y2="520" stroke-dasharray="6 10"/>
     <line x1="110" y1="420" x2="1090" y2="420" stroke-dasharray="6 10"/>
     <line x1="110" y1="320" x2="1090" y2="320" stroke-dasharray="6 10"/>
     <line x1="110" y1="220" x2="1090" y2="220" stroke-dasharray="6 10"/>
   </g>
-  <text x="110" y="100" fill="#c59ad8" font-family="monospace" font-size="26" letter-spacing="4">SHORT-TERM LOAD FORECASTING</text>
-  <text x="110" y="166" fill="#f2ecf5" font-family="sans-serif" font-size="54">Lower error, decade-long test</text>
-  <text x="110" y="206" fill="#9a8da0" font-family="monospace" font-size="22">10-minute resolution / reported MAPE</text>
+  <text x="110" y="100" fill="#d98a5f" font-family="monospace" font-size="26" letter-spacing="4">SHORT-TERM LOAD FORECASTING</text>
+  <text x="110" y="166" fill="#f4f0e7" font-family="sans-serif" font-size="54">Lower error, decade-long test</text>
+  <text x="110" y="206" fill="#99a09d" font-family="monospace" font-size="22">10-minute resolution / reported MAPE</text>
   <g>
-    <rect x="240" y="440" width="230" height="180" fill="#5be584" opacity="0.9"/>
-    <rect x="700" y="320" width="230" height="300" fill="#c59ad8" opacity="0.6"/>
-    <text x="355" y="414" fill="#f2ecf5" font-family="monospace" font-size="56" text-anchor="middle">3%</text>
-    <text x="815" y="294" fill="#f2ecf5" font-family="monospace" font-size="48" text-anchor="middle">10%</text>
-    <text x="355" y="676" fill="#b9acbe" font-family="monospace" font-size="24" text-anchor="middle">MODEL</text>
-    <text x="815" y="676" fill="#b9acbe" font-family="monospace" font-size="24" text-anchor="middle">TRADITIONAL</text>
+    <rect x="240" y="440" width="230" height="180" fill="#8fb3a0" opacity="0.9"/>
+    <rect x="700" y="320" width="230" height="300" fill="#d98a5f" opacity="0.6"/>
+    <text x="355" y="414" fill="#f4f0e7" font-family="monospace" font-size="56" text-anchor="middle">3%</text>
+    <text x="815" y="294" fill="#f4f0e7" font-family="monospace" font-size="48" text-anchor="middle">10%</text>
+    <text x="355" y="676" fill="#b3b8b3" font-family="monospace" font-size="24" text-anchor="middle">MODEL</text>
+    <text x="815" y="676" fill="#b3b8b3" font-family="monospace" font-size="24" text-anchor="middle">TRADITIONAL</text>
   </g>
-  <text x="110" y="750" fill="#9a8da0" font-family="monospace" font-size="20">Reported result from the Smart Grids and Data Analytics Lab.</text>
+  <text x="110" y="750" fill="#99a09d" font-family="monospace" font-size="20">Reported result from the Smart Grids and Data Analytics Lab.</text>
 </svg>

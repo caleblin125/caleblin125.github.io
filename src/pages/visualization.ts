@@ -35,34 +35,34 @@ ${projectHeader(
 <div class="diagram-scroll"><svg class="vector-diagram" viewBox="0 0 960 410" role="img" aria-labelledby="vis-arch-title vis-arch-desc">
 <title id="vis-arch-title">Computational visualization pipeline</title>
 <desc id="vis-arch-desc">A rule or dataset feeds a simulation or field, which is projected into screen space, shaded, and drawn to pixels; controls expose parameters and the seed, while the page explains the mapping.</desc>
-<rect x="1" y="1" width="958" height="408" fill="#2a1e32" stroke="#51425a"/>
-<g fill="#1a1320" stroke="#51425a">
+<rect x="1" y="1" width="958" height="408" fill="#10161a" stroke="#2b3439"/>
+<g fill="#161d22" stroke="#2b3439">
 <rect x="28" y="92" width="164" height="80"/><rect x="230" y="92" width="164" height="80"/>
 <rect x="432" y="92" width="164" height="80"/><rect x="634" y="92" width="150" height="80"/>
 <rect x="818" y="92" width="114" height="80"/>
 </g>
-<g fill="#eee8f2" font-family="sans-serif" font-size="16" text-anchor="middle">
+<g fill="#e6e2d8" font-family="sans-serif" font-size="16" text-anchor="middle">
 <text x="110" y="126">rule / data</text><text x="312" y="126">simulation</text><text x="514" y="126">projection</text><text x="709" y="126">shader / mark</text><text x="875" y="126">pixels</text>
 </g>
-<g fill="#9a8da0" font-family="monospace" font-size="11" text-anchor="middle">
+<g fill="#99a09d" font-family="monospace" font-size="11" text-anchor="middle">
 <text x="110" y="150">z² + c / steering</text><text x="312" y="150">orbits / agents</text><text x="514" y="150">complex → screen</text><text x="709" y="150">hue / trail / ink</text><text x="875" y="150">frame</text>
 </g>
-<g stroke="#c59ad8" stroke-width="2" marker-end="url(#vis-arrow)">
+<g stroke="#d98a5f" stroke-width="2" marker-end="url(#vis-arrow)">
 <line x1="192" y1="132" x2="224" y2="132"/><line x1="394" y1="132" x2="426" y2="132"/>
 <line x1="596" y1="132" x2="628" y2="132"/><line x1="784" y1="132" x2="812" y2="132"/>
 </g>
-<g fill="#1a1320" stroke="#51425a">
+<g fill="#161d22" stroke="#2b3439">
 <rect x="230" y="246" width="366" height="70"/><rect x="634" y="246" width="298" height="70"/>
 </g>
-<g fill="#eee8f2" font-family="sans-serif" font-size="15" text-anchor="middle">
+<g fill="#e6e2d8" font-family="sans-serif" font-size="15" text-anchor="middle">
 <text x="413" y="276">exposed parameters</text><text x="783" y="276">reproducible seed</text>
 </g>
-<g fill="#9a8da0" font-family="monospace" font-size="11" text-anchor="middle">
+<g fill="#99a09d" font-family="monospace" font-size="11" text-anchor="middle">
 <text x="413" y="300">zoom / iterations / density / scale</text><text x="783" y="300">?seed=0x… / presets / reset</text>
 </g>
-<text x="28" y="52" fill="#c59ad8" font-family="monospace" font-size="15" letter-spacing="2">ONE PIPELINE, FOUR OUTPUTS</text>
-<text x="28" y="380" fill="#9a8da0" font-family="monospace" font-size="14">If a parameter cannot be changed and a result cannot be reproduced, the image is not yet inspectable.</text>
-<defs><marker id="vis-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c59ad8"/></marker></defs>
+<text x="28" y="52" fill="#d98a5f" font-family="monospace" font-size="15" letter-spacing="2">ONE PIPELINE, FOUR OUTPUTS</text>
+<text x="28" y="380" fill="#99a09d" font-family="monospace" font-size="14">If a parameter cannot be changed and a result cannot be reproduced, the image is not yet inspectable.</text>
+<defs><marker id="vis-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#d98a5f"/></marker></defs>
 </svg></div>
 <p>The common architecture is a sequence of transformations, each of which can lose information. A complex orbit becomes a screen coordinate; a velocity becomes an angle; a density field becomes a color. Exposing the step where the mapping happens is the difference between a picture and a tool.</p>
 

@@ -2,33 +2,33 @@
   <title id="title">Sources flowing through a local model into a claim with citations</title>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#1c1325"/>
-      <stop offset="1" stop-color="#100b16"/>
+      <stop offset="0" stop-color="#161d22"/>
+      <stop offset="1" stop-color="#06090b"/>
     </linearGradient>
     <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
-      <path d="M32 0H0v32" fill="none" stroke="#51425a" stroke-width="0.6" opacity="0.35"/>
+      <path d="M32 0H0v32" fill="none" stroke="#2b3439" stroke-width="0.6" opacity="0.35"/>
     </pattern>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0 0 10 5 0 10z" fill="#c59ad8"/>
+      <path d="M0 0 10 5 0 10z" fill="#d98a5f"/>
     </marker>
   </defs>
   <rect width="480" height="300" fill="url(#bg)"/>
   <rect width="480" height="300" fill="url(#grid)"/>
-  <rect x="14" y="14" width="452" height="272" fill="none" stroke="#51425a" stroke-width="1" opacity="0.55"/>
-  <g stroke="#51425a" stroke-width="2" opacity="0.9">
+  <rect x="14" y="14" width="452" height="272" fill="none" stroke="#2b3439" stroke-width="1" opacity="0.55"/>
+  <g stroke="#2b3439" stroke-width="2" opacity="0.9">
     <path d="M14 34V14h20M446 14h20v20M466 266v20h-20M34 286H14v-20"/>
   </g>
 
-  <g fill="#231a2c" stroke="#51425a" stroke-width="1.5">
+  <g fill="#10161a" stroke="#2b3439" stroke-width="1.5">
     <rect x="40" y="62" width="98" height="44" rx="6"/>
     <rect x="40" y="128" width="98" height="44" rx="6"/>
     <rect x="40" y="194" width="98" height="44" rx="6"/>
   </g>
   <g>
-    <circle cx="56" cy="78" r="4" fill="#86d7e8"/>
-    <circle cx="56" cy="144" r="4" fill="#c59ad8"/>
+    <circle cx="56" cy="78" r="4" fill="#7fa6c9"/>
+    <circle cx="56" cy="144" r="4" fill="#d98a5f"/>
     <circle cx="56" cy="210" r="4" fill="#e6a15f"/>
-    <g fill="#b9acbe" opacity="0.65">
+    <g fill="#b3b8b3" opacity="0.65">
       <rect x="70" y="74" width="50" height="3" rx="1.5"/>
       <rect x="70" y="83" width="34" height="3" rx="1.5"/>
       <rect x="70" y="140" width="42" height="3" rx="1.5"/>
@@ -38,16 +38,16 @@
     </g>
   </g>
 
-  <g fill="none" stroke="#6b5875" stroke-width="1.5" stroke-dasharray="4 5">
+  <g fill="none" stroke="#7d8580" stroke-width="1.5" stroke-dasharray="4 5">
     <path d="M138 84 C168 84 172 132 196 140"/>
     <path d="M138 150 H196"/>
     <path d="M138 216 C168 216 172 168 196 160"/>
   </g>
-  <circle cx="196" cy="150" r="4" fill="#c59ad8"/>
+  <circle cx="196" cy="150" r="4" fill="#d98a5f"/>
 
   <g>
-    <rect x="204" y="116" width="70" height="68" rx="10" fill="#2a1e33" stroke="#c59ad8" stroke-width="2"/>
-    <g fill="#c59ad8">
+    <rect x="204" y="116" width="70" height="68" rx="10" fill="#10161a" stroke="#d98a5f" stroke-width="2"/>
+    <g fill="#d98a5f">
       <rect x="218" y="130" width="8" height="8" rx="1.5"/>
       <rect x="235" y="130" width="8" height="8" rx="1.5"/>
       <rect x="252" y="130" width="8" height="8" rx="1.5"/>
@@ -60,12 +60,12 @@
     </g>
   </g>
 
-  <line x1="282" y1="150" x2="318" y2="150" stroke="#c59ad8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="282" y1="150" x2="318" y2="150" stroke="#d98a5f" stroke-width="2" marker-end="url(#arrow)"/>
 
   <g>
-    <rect x="330" y="64" width="104" height="172" rx="5" fill="#1e1627" stroke="#51425a" stroke-width="1.5"/>
-    <path d="M410 64h24v24z" fill="#2a1e33" stroke="#51425a" stroke-width="1.5"/>
-    <g fill="#b9acbe" opacity="0.6">
+    <rect x="330" y="64" width="104" height="172" rx="5" fill="#161d22" stroke="#2b3439" stroke-width="1.5"/>
+    <path d="M410 64h24v24z" fill="#10161a" stroke="#2b3439" stroke-width="1.5"/>
+    <g fill="#b3b8b3" opacity="0.6">
       <rect x="346" y="92" width="54" height="3" rx="1.5"/>
       <rect x="346" y="102" width="70" height="3" rx="1.5"/>
       <rect x="346" y="112" width="44" height="3" rx="1.5"/>
@@ -74,11 +74,11 @@
       <rect x="346" y="158" width="72" height="3" rx="1.5"/>
       <rect x="346" y="168" width="38" height="3" rx="1.5"/>
     </g>
-    <circle cx="406" cy="202" r="16" fill="#2a1e33" stroke="#86d7e8" stroke-width="2"/>
-    <path d="M398 202l6 6 10-12" fill="none" stroke="#86d7e8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="406" cy="202" r="16" fill="#10161a" stroke="#7fa6c9" stroke-width="2"/>
+    <path d="M398 202l6 6 10-12" fill="none" stroke="#7fa6c9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
     <g>
-      <circle cx="350" cy="224" r="5" fill="#c59ad8"/>
-      <circle cx="368" cy="224" r="5" fill="#86d7e8"/>
+      <circle cx="350" cy="224" r="5" fill="#d98a5f"/>
+      <circle cx="368" cy="224" r="5" fill="#7fa6c9"/>
       <circle cx="386" cy="224" r="5" fill="#e6a15f"/>
     </g>
   </g>

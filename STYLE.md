@@ -1,175 +1,223 @@
-# STYLE.md — Webpage styling & canvas structure
+# STYLE.md — the Atlas system
 
 This document describes the visual language and the canvas conventions used across the
 site, so new pages and visualizations match the existing ones. Everything below is
-derived from the live code in `src/style.css` and `src/main.ts` — if you change the CSS,
-update this file to match.
+derived from the live code in `src/style.css`, `src/pages/`, and `src/main.ts` — if you
+change those, update this file.
+
+The direction is **Atlas: the work is the page**. The site is set as a printed technical
+record, not a portfolio. One ink ground, warm chalk text, a serif for prose and titles, a
+mono face for numbers, dates, and plate captions. Images are plates, not cards: no border,
+no radius, no shadow. Rules separate records; nothing glows, and no display headline
+announces the author.
 
 ---
 
 ## 1. Design tokens
 
-All tokens live on `:root` in `src/style.css` (plus a few hard-coded values in the
-component rules).
+All tokens live on `:root` in `src/style.css` (plus a few hard-coded values in component
+rules). The comment block at the top of the file states the intent; keep it accurate.
 
 | Token | Value | Used for |
 |---|---|---|
-| `--bg` | `#120d18` | page / body background, frame background |
-| `--bg-surface` | `#1a1320` | control bars, panel backgrounds |
-| `--bg-surface-alt` | `#2a1e32` | `.math-display`, `.vector-diagram`, `.code-block` |
-| boids frame | `#0e101c` | `.boids-frame` (darker, near-black) |
-| `--text` | `#eee8f2` | main foreground text |
-| `--text-heading` | `#f2ecf5` | heading and metric text |
-| `--text-muted` | `#b9acbe` | paragraphs |
-| `--text-subtle` | `#a192a7` | tags, secondary labels |
-| `--text-dim` | `#9a8da0` | HUD text, seeds, footnotes |
-| `--accent` | `#c59ad8` | kickers, hover links, brand slash, diagram titles |
-| `--border` | `#51425a` | headers, rows, frames, table rules |
-| `--border-subtle` | `#403248` | inner control-bar rules |
+| `--bg` | `#0a0d10` | page ground, plate wells, accent-on-ink |
+| `--bg-surface` | `#10161a` | figure panels, code and math panels, control bars |
+| `--bg-surface-alt` | `#161d22` | raised row hover, nested panels, diagram panels |
+| `--bg-recess` | `#06090b` | the deepest recess: canvas wells, table headers |
+| `--text` | `#e6e2d8` | body prose |
+| `--text-heading` | `#f4f0e7` | titles and large figures |
+| `--text-muted` | `#b3b8b3` | secondary prose, captions |
+| `--text-subtle` | `#99a09d` | dates, categories, small labels |
+| `--text-dim` | `#858c89` | footnotes, plate numbers, inactive controls |
+| `--accent` | `#d98a5f` | burnt sienna: links, rules under active nav, diagram labels |
+| `--accent-deep` | `#7d4026` | pressed states, dark accent fills |
+| `--accent-ink` | `#0a0d10` | text on an accent fill |
+| `--border` | `#2b3439` | panel and frame outlines |
+| `--border-subtle` | `#20272b` | inner control-bar rules |
+| `--rule` | `#1b2226` | hairline separators between records |
+| `--rule-strong` | `#2b353a` | section rules, table head rules |
 
-`html` sets `color-scheme: dark`, so native controls (range, select) follow the dark palette.
+### Type
 
-### Fonts
+| Token | Value |
+|---|---|
+| `--font-body` | `"Newsreader", Georgia, "Times New Roman", serif` |
+| `--font-mono` | `"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace` |
+| `--measure` | `58ch` |
+| `--reading-width` | `40rem` |
 
-- **Body / headings:** "Space Grotesk".
-- **Mono / labels:** "DM Mono" — used for `.kicker`, `.tag`, `.visual-label`,
-  `.header-note`, table headers, diagram captions, the nebula HUD and its controls.
-  These elements typically use
-  `font: .68rem "DM Mono", monospace; letter-spacing: .08em; text-transform: uppercase;`.
-- Fonts are loaded from Google Fonts with `<link>` tags in `index.html`, after
-  `preconnect` hints. Do not add a CSS `@import`; it blocks rendering later than the
-  document-level links.
+- **Body / headings:** Newsreader. Prose is set at `1.0625rem` / `1.62` with optical
+  sizing on. Titles carry the serif's italic and oldstyle range; they are never
+  `font-weight: 800` and never letter-spaced display type.
+- **Mono / labels:** IBM Plex Mono — `.kicker`, `.plate-no`, `.plate-metric`,
+  `.post-date`, `.work-number`, `.work-category`, table headers, the nebula HUD and its
+  controls. The common recipe is
+  `font: .68rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase;`.
+- Fonts load from Google Fonts with `<link>` tags in `index.html` after `preconnect`
+  hints. Do not add a CSS `@import`; it delays rendering past the document links.
 
-### Layout constants
+### Shape and layout
 
-- App max width: `1240px`, centered, `padding: 0 48px` (`20px` below 760px).
-- Header min-height: `84px` (`76px` mobile), bottom border `1px solid #51425a`.
-- Article column: `max-width: 820px; margin: 0 auto`.
-- Paragraph max width inside cards/articles: `620px`.
-- Mobile breakpoint: `760px` (single-column grids, smaller type).
+- `--radius: 2px`. Nothing is a pill, a card, or a glass panel. Rounded corners are a
+  two-pixel softening on inputs only.
+- App max width `1320px`, centred, with `--content-padding: clamp(18px, 4vw, 44px)`.
+- Article shell `820px`; reading measure `40rem` (64 ch of serif); wide media breaks out
+  to `--wide: 1060px`.
+- Header min-height `84px` (`76px` mobile) with a `1px solid var(--border)` bottom rule.
+- Breakpoints: `1120px`, `960px`, `760px`, `520px`. `760px` is the single-column line.
 
 ---
 
 ## 2. Page anatomy
 
-Every page is a module in `src/pages/` exporting a `Page` value; the `pages`
-record mapping routes to those modules lives in `src/pages/index.ts`. The shell
-(header/nav/footer) comes from `src/render.ts`, which both the static generator and the
-dev client call, so the page contributes only its `content`.
+Every page is a module in `src/pages/` exporting a `Page`; the `pages` record mapping
+routes to modules lives in `src/pages/index.ts`. The shell (header/nav/footer) comes from
+`src/render.ts`, which both the static generator and the dev client call, so a page
+supplies only its `content`.
 
 `Page` is `{ title, eyebrow, description?, content, kind?, date?, updated?, keywords?,
-section? }`. `description` should be set on every page: it is used for the meta
-description, Open Graph, Twitter tags, Markdown front matter, and the site indexes.
-`kind` (`home`, `project`, `post`, `index`, `profile`, `page`, `not-found`) selects the
-JSON-LD and Open Graph type. Notes set `date` (ISO) and often `keywords`; projects and
-posts set `section` for breadcrumbs.
+section? }`. `description` is required in practice: it feeds the meta description, Open
+Graph, Twitter, Markdown front matter, and the site indexes. `kind` (`home`, `project`,
+`post`, `index`, `profile`, `page`, `not-found`) selects JSON-LD and Open Graph type.
+Notes set `date` (ISO) and often `keywords`; projects and posts set `section` for
+breadcrumbs.
 
 The name, affiliation, degree programs, and social-preview image live in
-`src/identity.ts`. The page modules, `src/render.ts`, and `src/structured-data.ts` read
-those values instead of repeating the strings, so visible copy and metadata stay aligned.
+`src/identity.ts`; page modules, `src/render.ts`, and `src/structured-data.ts` read those
+values instead of repeating strings.
 
 Each project and note page derives its summary, keywords, and dates from
-`src/data/projects.ts` or `src/data/posts.ts`. Edit the data file first; the page module
+`src/data/projects.ts` or `src/data/posts.ts`. Edit the data file first: the page module
 reads it, and the generated HTML, Markdown, `llms.txt`, sitemap, and JSON-LD follow. The
-project index and note index rows are generated from the same lists, so a new entry
-appears everywhere at once.
+project and note indexes are generated from the same lists, so a new entry appears
+everywhere at once.
 
-Every `ProjectEntry` also carries `image: { src, alt }`. The project index and the
-homepage selected-work list render it at a 3:2 aspect ratio; the alt text is written for
-someone who cannot see the image and describes what the project actually produces. Use
-real output when it exists. The Mandelbrot and Boids rasters are generated by
-`npm run generate:thumbnails` from the same rules as their canvases; the other project
-marks are hand-authored SVGs in `public/projects/`. Do not use a generic icon, a logo, or
-an image that implies results the project does not have.
+Every `ProjectEntry` carries `image: { src, alt }`. The homepage plates and the project
+catalogue render it at the record's own aspect; the alt text describes what the project
+actually produces. Use real output when it exists. The Mandelbrot and Boids rasters come
+from `npm run generate:thumbnails`; the other marks are hand-authored SVGs in
+`public/projects/`. Do not use a generic icon, a logo, or an image that implies results
+the project does not have.
 
-**Static output:** `npm run build` emits `<route>/index.html` with `#app`
-marked `data-prerendered="true"` and `data-route="<route>"`. `src/main.ts` re-renders only
-when that route does not match the current path. Do not remove the marker unless you also
-change the generator. Do not put essential prose in client-only markup.
+**Static output:** `npm run build` emits `<route>/index.html` with `#app` marked
+`data-prerendered="true"` and `data-route="<route>"`. `src/main.ts` re-renders only when
+that route does not match the current path. Do not remove the marker unless you also
+change the generator, and do not put essential prose in client-only markup.
 
 Unknown routes render `notFoundPage` (also exported from `src/pages/index.ts`) with
-`noindex, nofollow` and no canonical link. The build writes a real `dist/404.html`; GitHub
-Pages serves it for unknown deep links, and no SPA fallback is used.
+`noindex, nofollow` and no canonical link. The build writes a real `dist/404.html`;
+GitHub Pages serves it for unknown deep links, and no SPA fallback is used.
 
-### Common elements
+### Shared elements
 
-- `<p class="kicker">` — small magenta mono label above an `<h1>` (e.g. `Project / Boids`).
-- `<h1>` — the page title (large, light-weight `Space Grotesk`).
-- `<p class="lede">` — one-sentence summary under the title.
-- `.link-row` — inline links with `<a class="text-link">` ("uppercase mono" buttons).
+- `.kicker` — small sienna mono label. On index pages it names the section; on records it
+  names the project or note.
+- `.atlas-name` / `.atlas-claim` — the homepage's only "heading" pair: a mono name line
+  and a serif sentence set at body-title size, not display size.
+- `.lede` — one-sentence summary under a title, in muted serif.
+- `.text-link` — inline link, underlined with a sienna rule on hover; trailing `↗`
+  arrows are `aria-hidden`.
+- `.mono-note` — a dim mono line for counts and provenance ("14 records...").
+- `.demo-link` — a sienna mono link to an interactive experiment, used beside "Project
+  page".
 
-### Landing page (`/`)
+### Homepage (`/`) — the specimen board
 
 ```
-<section class="hero-grid">
-  <div class="hero-copy">…kicker / h1 / lede / link-row…</div>
-  <div class="nebula-frame" data-nebula data-nebula-variant="home">
-    <div class="nebula-stage">
-      <canvas data-visualization="nebula" role="img" aria-label="…"></canvas>
-      <div class="nebula-hud" aria-hidden="true"><span>Field 01 / density + palette</span><span data-nebula-hud>…</span></div>
-      <p class="nebula-caption">Nebula <span>seed-reproducible / six presets</span></p>
-      <div class="nebula-fallback">…shown when WebGL2 is unavailable…</div>
-    </div>
-    <div class="nebula-controls">
-      preset select · density range · scale range · palette select · seed · link · reseed
-    </div>
-    <details class="nebula-notes">…how the field is generated…</details>
-  </div>
+<section class="atlas-top">
+  <p class="atlas-name">Caleb Lin <span>Santa Cruz, California</span></p>
+  <h1 class="atlas-claim">…one sentence…</h1>
+  <p class="atlas-lede">…</p>
+  <div class="atlas-links">Selected work · Interactive lab · Résumé · GitHub</div>
 </section>
-<section class="selected-work" id="selected-work">
-  <div class="section-head"><p class="kicker">Selected work</p><a class="text-link">…</a></div>
-  <div class="work-list">
-    <a class="work-row" href="/projects/…">
-      <span class="work-number">01</span>
-      <div><h2>Title</h2><p>One-sentence claim.</p></div>
-      <span class="work-metric"><strong>3×</strong><span>class throughput</span></span>
-    </a>
+<section class="atlas-plates" id="selected-work">
+  <a class="plate" href="/projects/fpga">
+    <span class="work-thumb"><img …></span>
+    <div class="plate-cap">
+      <span class="plate-no">01</span>
+      <div class="plate-meta"><span>Digital hardware</span><span>2025–26</span></div>
+      <h2>FPGA and digital hardware</h2>
+      <span class="plate-metric">3× — class throughput</span>
+    </div>
+  </a>
+  … five featured plates …
+</section>
+<section class="live-plate">…nebula frame…</section>
+<section class="record-note">…how to read a record…</section>
+<ol class="method">…Build / Instrument / Measure / Understand…</ol>
+<section class="home-notes">…note rows…</section>
+<section class="at-the-moment">…</section>
+```
+
+- Five featured projects appear as **plates on a 12-column irregular grid**, each set at
+  a different span and alignment so the board reads as a specimen sheet rather than a
+  card wall. Plate caption text is mono; the title is serif. The metric sits on its own
+  mono line under the caption.
+- The nebula is **one subordinate plate**, labelled `Field 01 / live`, not a second hero.
+  It is the only visualization on the homepage; Mandelbrot and Boids live in `/lab`.
+- `.record-note` carries the site's contract: every entry states **Problem**,
+  **Contribution**, technologies, one measured result, and a limitation. This note is
+  what replaces a "skills" band; do not add skill bars or percentage meters.
+- `.method` is a four-step ordered list: Build → Instrument → Measure → Understand. It
+  is prose about the practice, not a decorative timeline.
+- `.home-notes` is the notes list; `.at-the-moment` is a single quiet line about current
+  work (it carries the SCC figure and links to the record).
+
+Use plates only for work that has a real image and a real number. A project without
+either belongs in the notes or a row, not in the featured grid.
+
+### Project catalogue (`/projects`)
+
+```
+<section class="page-intro">kicker · h1 · lede · mono-note · link-row</section>
+<section class="project-group" id="flagship">
+  <div class="group-head">title · count · note</div>
+  <div class="project-lead-grid">
+    <article class="project-lead">
+      <figure class="project-thumb"><img …></figure>
+      <div class="project-body">
+        <p class="work-category"><span class="work-number">01</span>Digital hardware</p>
+        <h2><a>Title</a></h2>
+        <p>Problem or lede</p>
+        <p class="project-lead-metric"><span class="work-label">Result</span><strong>3×</strong><span>…</span></p>
+        <div class="project-links">Project page · demo link</div>
+      </div>
+    </article>
+    …
+  </div>
+  <div class="project-list">
+    <article class="project-row">thumb · body · status</article>
     …
   </div>
 </section>
-<section class="home-strip">…three-column "at the moment" strip…</section>
 ```
 
-Use the work rows for three projects with a hard, sourced number each — not for a
-generic list. The nebula is the only visualization on the homepage; the Mandelbrot
-canvas lives on `/projects/mandelbrot`.
-
-The control markup is generated by `nebulaControls("home")` from the parameter schema,
-not hand-written. Use `nebulaControls("lab")` on `/lab/nebula`; it adds the renderer,
-inspection, quality, advanced, and action rows. Both variants bind through
-`data-nebula-*` hooks rather than labels or order.
-
-### Project index (`/projects`)
-
-```
-<section class="page-intro">…</section>
-<section class="project-list">
-  <article class="project-row">
-    <div class="project-number">01</div>
-    <div><h2><a>Title</a></h2><p>Description</p>
-         <div class="project-links"><a>Link</a>…</div>
-         <span class="tag">WebGL / TypeScript</span></div>
-    <div class="project-status">Building</div>
-  </article>
-  …
-</section>
-```
+- The catalogue has three groups: **Flagship work**, **Experiments**, **Archive**. Each
+  group states its count and a one-sentence scope note.
+- Four flagship entries are **leads**: larger plates in a two-column irregular grid, with
+  problem, result, and links. Everything else is a compact annotated row with a
+  thumbnail, technologies, and period. Do not give every project identical weight.
+- Technologies render as an inline `/`-separated mono list (`.tech-list`), never as
+  pills or chips. `.project-status` is the period, not a fake build status.
+- Every project row keeps `figure.project-thumb`. The validator counts them
+  (currently 14), so adding a record means adding one there too.
 
 ### Blog index (`/blog`)
 
 ```
 <section class="page-intro">…</section>
-<section class="post-list">
-  <a class="post-row" href="/blog/…">
+<section class="note-list">
+  <a class="note-row" href="/blog/…">
     <span class="post-date">2026 / 08 / 20</span>
     <span><h2>Title</h2><p>Excerpt</p></span>
-    <span class="arrow">↗</span>
+    <span class="note-arrow" aria-hidden="true">↗</span>
   </a>
-  …
 </section>
 ```
 
-### Résumé page (`/resume`)
+Notes are a dated list with hairline rules, not cards. Dates are mono and use slashes.
+
+### Résumé (`/resume`)
 
 ```
 <article class="article resume">
@@ -180,7 +228,6 @@ inspection, quality, advanced, and action rows. Both variants bind through
     <h2>Education</h2>
     <div class="resume-entry"><div><h3>…</h3><p class="resume-sub">…</p></div>
          <div class="resume-date">Expected June 2027</div></div>
-    <p class="resume-note">GPA …</p>
     <ul class="article-list"><li>…</li></ul>
   </section>
   <section class="resume-section"><h2>Skills</h2>
@@ -189,43 +236,51 @@ inspection, quality, advanced, and action rows. Both variants bind through
 </article>
 ```
 
-The downloadable PDF lives at `public/caleb-lin-resume.pdf` and is served from `/caleb-lin-resume.pdf`.
+The PDF lives at `public/caleb-lin-resume.pdf`, served from `/caleb-lin-resume.pdf`.
+Skill groups are plain label + prose, not bars.
 
-### Article pages (`/projects/*`, `/blog/*`)
+### Records (`/projects/*`, `/blog/*`)
 
 ```
 <article class="article">
-  <p class="kicker">Project / Boids</p>
-  <h1>Title.</h1>
-  <p class="lede">…</p>
+  <header class="project-header">          ← projects; notes use a plain kicker + h1
+    <div class="project-main"><p class="kicker">…</p><h1>Title.</h1><p class="lede">…</p></div>
+    <aside class="project-facts">…category / period / technologies / dates…</aside>
+  </header>
+  <p class="problem"><strong>Problem.</strong> …</p>
   <div class="article-visual visual-frame …"><canvas data-visualization="…">…
        <div class="visual-label">…</div></div>
-  <p>…body…</p>
-  <h2>Section</h2>  <h3>Sub-section</h3>
+  <h2>Overview</h2> … <h3>Sub-section</h3>
   <div class="math-display">$$…$$</div>
   <div class="table-wrap"><table class="spec-table">…</table></div>
   <svg class="vector-diagram">…</svg>
+  <div class="result-grid"><div class="result-row">…</div>…</div>
 </article>
 ```
 
-Project pages that report measurements end with a **Limitations** section: a short
-paragraph that says what the number is not, so the result is not overclaimed. See
-`/projects/fpga` and `/projects/hpc`.
+- Project headers keep **two columns**: the record itself, and a right-hand facts rail
+  (category, period, technologies, dates). The rail is mono; it never becomes a sidebar
+  of badges.
+- Section numbering is **CSS counters** on `.article h2::before`: `01`, `02`, … set in
+  sienna mono. Do not type the numbers into the headings; it breaks when a section is
+  inserted. `h2` in a record carries the rule and number, `h3` is unnumbered.
+- Prose stays at `40rem`; wide media (figures, diagrams, tables, result grids) break out
+  to `1060px` inside the 820px shell.
+- Records that report measurements end with **Limitations**: what the number is not,
+  and what would be needed to claim more. See `/projects/fpga` and `/projects/hpc`.
 
-### 404 page
+### 404
 
-`src/pages/not-found.ts` supplies the content for any route missing from the `pages`
-record. It uses `.page-intro`, `.mono-note` (a dim mono line), and a `.link-row` back to
-the main sections. Keep it useful, not cute. The generated `404.html` carries
-`noindex, nofollow`, has no canonical link, and clears the active nav item.
+`src/pages/not-found.ts` supplies content for any route missing from the `pages` record.
+It uses `.page-intro`, `.mono-note`, and a `.link-row` back to the main sections. Keep it
+useful, not cute. The generated `404.html` is `noindex, nofollow`, has no canonical link,
+and clears the active nav item.
 
 ---
 
 ## 3. Canvas elements & visualizations
 
 ### The DOM pattern (required)
-
-A visualization lives inside a `.visual-frame`:
 
 ```html
 <div class="article-visual visual-frame boids-frame">
@@ -238,153 +293,147 @@ A visualization lives inside a `.visual-frame`:
 Rules:
 
 - The `<canvas>` **must** carry a `data-visualization` attribute. `main.ts` finds every
-  such canvas after rendering a page and instantiates the matching renderer inside a
-  try/catch:
+  such canvas after rendering and lazily imports the matching renderer:
+
   ```ts
   for (const canvas of document.querySelectorAll("canvas[data-visualization]")) {
       try {
-          if (kind === "boids") new BoidsRenderer(canvas).start();
-          else if (kind === "nebula") new NebulaRenderer(canvas).start();
-          else new ChaosRenderer(canvas, new Mandelbrot()).start();
+          if (kind === "boids") { const { BoidsRenderer } = await import("./boids/renderer"); … }
+          else if (kind === "nebula") { … }
+          else { … Mandelbrot … }
       } catch (error) {
           canvas.closest(".visual-frame, .nebula-frame")?.classList.add("is-fallback");
       }
   }
   ```
-  Add a new branch here when you introduce a new visualization kind. A failed renderer
-  must not stop the other canvases on the page.
-- `.visual-frame` gives the canvas its dark background, min-height (`500px`, `360px`
-  mobile; `.article-visual` variant `460px`/`320px`), and the `1px solid #51425a` border.
-  `.is-fallback` hides the canvas and shows a "needs WebGL2" note via a pseudo-element.
-- `.nebula-frame` stacks a `.nebula-stage` (canvas + HUD + caption + fallback) over the
-  generated `.nebula-controls`, optional `.nebula-advanced` and `.nebula-controls-actions`
-  rows, and a `.nebula-notes` disclosure, with the same hairline border. The laboratory
-  adds `.nebula-lab` and a taller stage; `.nebula-frame:fullscreen` makes the stage fill
-  the screen and hides the notes and advanced panel.
-- `.visual-label` is absolutely positioned at the bottom of the frame; it shows the viz
-  name in accent color plus a hint (`.visual-label span`) in muted text. Keep it
-  `pointer-events: none` so it never blocks pointer interaction.
-- Give the canvas a `role="img"` and an `aria-label` that describes what it shows. The
-  controls are separate native inputs, not canvas interaction.
+
+  Add a new branch there when you add a visualization kind. A failed renderer must not
+  stop the other canvases on the page, and lazy imports keep unused renderers out of the
+  initial bundle.
+- `.visual-frame` gives the canvas its recessed background, min-height (`500px`, `360px`
+  at `760px`; `.article-visual` variant `460px` / `320px`) and a `1px solid
+  var(--border)` frame. `.is-fallback` hides the canvas and shows a "needs WebGL2" note
+  through a pseudo-element.
+- `.nebula-frame` stacks `.nebula-stage` (HUD + canvas + caption + fallback) over the
+  generated `.nebula-controls`, an optional advanced row and actions, and a
+  `.nebula-notes` disclosure, with the same hairline frame. `.nebula-lab` adds the taller
+  stage; `.nebula-frame:fullscreen` fills the screen and hides notes and the advanced
+  panel.
+- `.visual-label` sits at the bottom of the frame: visualization name in sienna, hint in
+  muted text. It is `pointer-events: none` so it never blocks interaction.
+- Give the canvas `role="img"` and an `aria-label` describing what it shows. Controls are
+  separate native inputs, not canvas interaction.
 
 ### Renderer conventions (TypeScript side)
 
-Each renderer (`src/boids/renderer.ts`, `src/chaos/renderer.ts`, `src/nebula/renderer.ts`)
-follows this shape:
+Each renderer (`src/boids/renderer.ts`, `src/chaos/renderer.ts`,
+`src/nebula/renderer.ts`) follows this shape:
 
-1. **Context:** boids calls `canvas.getContext("webgl2", { preserveDrawingBuffer: true })`
-   because its trails rely on the framebuffer persisting between frames (the canvas is
-   not cleared each frame — a fade pass decays it). The Mandelbrot renderer clears every
+1. **Context.** Boids asks for `webgl2` with `preserveDrawingBuffer: true` because its
+   trails rely on the framebuffer persisting between frames. Mandelbrot clears every
    frame and does not need it. The nebula engine creates its own context, programs, and
    framebuffers; the site adapter never touches GL.
-2. **Shaders:** imported as raw strings and compiled at construction. Boids and chaos
-   compile their programs directly. The nebula engine composes `vertex.glsl`,
-   `nebula.frag`, `volume.frag`, and `post.frag` with shared `#include` files at compile
-   time, then compiles each program lazily when its mode is first used:
+2. **Shaders.** Imported as raw strings and compiled at construction. Boids and chaos
+   compile their programs directly. The nebula engine resolves `#include` files and
+   compiles each program lazily when its mode first appears:
    ```ts
    import fragmentSource from "./shaders/boids.glsl?raw";
    ```
-3. **Layout:** renderers multiply `clientWidth/Height` by `window.devicePixelRatio`, set
-   `canvas.width/height`, and repaint. The nebula engine caps DPR at 2 and observes its
-   canvas with `ResizeObserver`; boids and chaos listen on `window` for `"resize"`.
-   Repaint on every layout change: resizing the drawing buffer clears the canvas, so a
-   paused loop would otherwise leave a black frame.
-4. **Loop:** `requestAnimationFrame` drives boids and the nebula; chaos re-renders on
-   demand (`requestRender`) to avoid work while idle. The nebula adapter calls
-   `engine.setActive(false)` when the canvas leaves the viewport or the tab is hidden, and
+3. **Layout.** Renderers multiply `clientWidth/Height` by `devicePixelRatio` (nebula caps
+   DPR at 2), set `canvas.width/height`, and repaint. The nebula engine observes its
+   canvas with `ResizeObserver`; boids and chaos listen for `"resize"`. Always repaint
+   after a layout change: resizing the drawing buffer clears it.
+4. **Loop.** `requestAnimationFrame` drives boids and the nebula; chaos renders on demand
+   (`requestRender`) so it is idle when nothing changes. The nebula adapter calls
+   `engine.setActive(false)` when the canvas leaves the viewport or the tab hides, and
    the engine stops requesting frames until reactivated.
-5. **Instancing:** boids uses `drawArraysInstanced` for 489 chevrons; chaos uses
-   instanced `POINTS` with `gl_InstanceID` driving orbit iteration in the vertex shader.
-   The nebula draws one full-screen triangle and evaluates the whole image in the fragment
-   shader, so it has no vertex buffers or attributes.
+5. **Instancing.** Boids uses `drawArraysInstanced` for 489 chevrons; chaos uses instanced
+   `POINTS` with `gl_InstanceID` driving orbit iteration in the vertex shader. The
+   nebula draws one full-screen triangle and evaluates the image in the fragment shader,
+   so it has no vertex buffers.
 
-### Nebula renderer specifics
+### Nebula specifics
 
-- **Model:** analytic, hash-based gradient noise built into a scalar density field. The
-  field uses three to nine octaves (six in the engine default, set per preset) of fBm with
-  two domain-warp passes, crossing ridged terms for filaments and dust lanes, a
-  low-frequency mask for negative space, and a soft threshold that moves with the density
-  control. Light is derived from the field through a five-stop
-  sRGB-to-linear palette, emission, ACES tone mapping, quarter-resolution bloom, a hashed
-  star layer, vignette, and dither. The same parameters feed two samplers: a screen-space
-  2D field (no camera, depth, or parallax) and a raymarched unit-cube volume (56 steps by
+- **Model.** Analytic, hash-based gradient noise composed into a scalar density field:
+  three to nine octaves (six by default, set per preset) of fBm with two domain-warp
+  passes, crossing ridged terms for filaments and dust lanes, a low-frequency mask for
+  negative space, and a movable soft threshold. Light is derived from the field through a
+  five-stop sRGB-to-linear palette, emission, ACES tone mapping, quarter-resolution
+  bloom, a hashed star layer, vignette, and dither. The same parameters feed two
+  samplers: a screen-space 2D field and a raymarched unit-cube volume (56 steps by
   default at 0.72 internal scale). This is a designed visual model, not a physical
-  simulation; the controls are aesthetic, not gas density, temperature, or distance.
-- **Controls:** generated by `src/nebula/controls.ts` from the schema in
-  `src/nebula/parameters.ts`. Numeric ranges carry `data-nebula-param`; the other hooks are
-  `data-nebula-preset`, `-palette`, `-mode`, `-debug`, `-quality`, `-seed-input`,
-  `-reseed`, `-link`, `-copy`, and `-fullscreen`. Keep the schema as the source of truth;
-  do not re-type ranges in page markup.
-- **Seeds:** a decimal integer from 1 to 999999 (`normalizeSeed`). `?seed=65521` opens the
-  Orion Deep preset; the homepage opens Violet Hollow (90210). Reseed draws a new seed and
-  writes the whole state back with `history.replaceState`, so any frame can be shared.
-- **URL state:** `seed`, `preset`, `palette`, every numeric parameter, `mode` (`2d` or
-  `volume`), `debug` (final/density/cloud/filament/shape/mask), and `quality`
-  (adaptive/high/low). An inspection channel forces the 2D sampler; the old `view=` key is
-  ignored safely.
-- **Budget:** DPR is capped at 2. Adaptive quality targets about 21 ms of GPU cost (22 ms
-  of frame time without the GPU timer) and scales the buffer between 1.0 and 0.55. *High*
-  pins scale 1 and disables adaptation; *Low* starts at 0.6. The volume starts at 0.72
-  before adaptation. Reduced-motion users keep the chosen speed in the URL but the adapter
-  passes `animationSpeed: 0`, drawing a still field.
-- **Fallback:** if WebGL2 is unavailable or the context is lost, the frame gets
-  `.is-fallback`; the canvas, HUD, caption, controls, and advanced panel are hidden, and
-  the `.nebula-fallback` note sets the stage height. The prose, model description, and rest
-  of the page remain.
+  simulation; the controls are aesthetic.
+- **Controls.** Generated by `src/nebula/controls.ts` from `src/nebula/parameters.ts`.
+  Numeric ranges carry `data-nebula-param`; the other hooks are `data-nebula-preset`,
+  `-palette`, `-mode`, `-debug`, `-quality`, `-seed-input`, `-reseed`, `-link`, `-copy`,
+  and `-fullscreen`. Keep the schema authoritative; never retype ranges in markup.
+- **Seeds.** Decimal integers 1–999999 (`normalizeSeed`). `?seed=65521` opens Orion Deep;
+  the homepage opens Violet Hollow (90210). Reseed writes the whole state back with
+  `history.replaceState`, so any frame can be shared.
+- **URL state.** `seed`, `preset`, `palette`, every numeric parameter, `mode`
+  (`2d`/`volume`), `debug` (final/density/cloud/filament/shape/mask), and `quality`
+  (adaptive/high/low). An inspection channel forces the 2D sampler; the old `view=` key
+  is ignored safely.
+- **Budget.** Adaptive quality targets about 21 ms of GPU cost (22 ms frame time without
+  the GPU timer), scaling the buffer between 1.0 and 0.55. *High* pins scale 1 and
+  disables adaptation; *Low* starts at 0.6. Reduced-motion users keep their chosen speed
+  in the URL but the adapter passes `animationSpeed: 0`, drawing a still field.
+- **Fallback.** Without WebGL2, or after context loss, the frame gains `.is-fallback`:
+  canvas, HUD, caption, controls, and advanced panel hide, and `.nebula-fallback` sets
+  the stage height. Prose and the rest of the page remain.
 
-### Shader file layout
+### Shader layout
 
-GLSL ES 3.00 (`#version 300 es`), imported with `?raw`, one file per shader stage:
+GLSL ES 3.00 (`#version 300 es`), imported with `?raw`, one file per stage:
 
 ```
 src/<viz>/shaders/
-├── <name>.vert.glsl      # vertex shader
-├── <name>.glsl           # fragment shader
-└── fade.*                # (boids) trail-decay pass
-```
+├── <name>.vert.glsl
+├── <name>.glsl
+└── fade.*            (boids trail-decay pass)
 
-The nebula splits the field into shared includes, composed once per program by the
-engine's `#include` resolver:
-
-```
 src/nebula/shaders/
-├── vertex.glsl           # full-screen triangle
-├── nebula.frag           # 2D field (uses the includes below)
-├── volume.frag           # raymarched volume sampler
-├── post.frag             # bloom bright-pass, blur, and composite
-├── noise.glsl            # gradient noise and fBm/ridged helpers
-├── density.glsl          # cloud, filament, mask, threshold
-├── color.glsl            # palette, emission, ACES, dither
-└── stars.glsl            # hashed star layer
+├── vertex.glsl       full-screen triangle
+├── nebula.frag       2D field
+├── volume.frag       raymarched volume sampler
+├── post.frag         bloom bright-pass, blur, composite
+├── noise.glsl        gradient noise, fBm, ridged helpers
+├── density.glsl      cloud, filament, mask, threshold
+├── color.glsl        palette, emission, ACES, dither
+└── stars.glsl        hashed star layer
 ```
 
-Add a declaration to the right include rather than duplicating a function in both
+Add a declaration to the right include rather than duplicating a function across both
 fragment shaders; include order is preserved at compile time.
 
 ---
 
 ## 4. Content components
 
-### Math (`KaTeX`)
+### Typography inside records
 
-Write math in the page content with:
+- `h2` — serif, `~1.55rem`, with a sienna counter number (`01`, `02`, …) in the left
+  gutter at wide widths and inline above the text when the gutter collapses.
+- `h3` — serif, smaller, no number, no rule.
+- Prose paragraphs are `var(--text)`; captions and captions-under-plates are
+  `var(--text-muted)`; metadata is `var(--text-subtle)`; footnotes are `var(--text-dim)`.
+- Do not use uppercase display headings. Uppercase is reserved for mono labels at or
+  below `0.72rem`.
 
-- `$$…$$` inside a `<div class="math-display">` for display math — gets the accent left
-  border and panel background.
+### Math (KaTeX)
+
+- `$$…$$` inside `<div class="math-display">` for display math; it gets the recessed panel,
+  a sienna left rule, and horizontal scroll.
 - `$…$` inline in paragraphs.
 
 The static build renders math in `src/math.ts` with KaTeX's `htmlAndMathml` output, so
-equations are visible with JavaScript disabled and remain machine-readable. The dev
-client falls back to `renderMathInElement`. Do not typeset math only in client code.
+equations survive with JavaScript disabled. Do not typeset math only in client code.
 
-**Important:** page content strings are JS template literals, so backslashes must be
-escaped — write `\\text{sep}` in the page module (renders as `\text{sep}`). See
-`src/pages/boids.ts` for examples. The Markdown generator protects `$…$` and `$$…$$`
-segments before conversion, so do not wrap math in extra code tags.
+**Important:** page content is a JS template literal, so backslashes are escaped — write
+`\\text{sep}` in the page module. `src/pages/boids.ts` has examples. The Markdown
+generator protects `$…$` / `$$…$$` before conversion, so do not wrap math in code tags.
 
 ### Tables
-
-Wrap tables in a scroll container and use the shared class:
 
 ```html
 <div class="table-wrap">
@@ -395,147 +444,156 @@ Wrap tables in a scroll container and use the shared class:
 </div>
 ```
 
-`.spec-table` is full width (min-width 640px so it scrolls on mobile), mono uppercase
-headers in accent, body rows in muted text with `1px solid #51425a` row rules. Add the
-`wrap` class (`<table class="spec-table wrap">`) when cells contain prose rather than
-short numeric values; it lets body cells wrap instead of forcing horizontal scroll, and
-below `760px` it drops the 640px minimum so the whole table fits the screen.
+`.spec-table` is full width (min-width `640px`, so it scrolls), mono uppercase headers in
+sienna, body rows in muted text, hairline `var(--rule)` row rules, and a stronger head
+rule. Add `wrap` (`class="spec-table wrap"`) for prose cells: it lets body cells wrap,
+and below `760px` it drops the 640px minimum.
 
-### Code blocks
-
-Wrap a short excerpt in `.code-block`:
+### Code
 
 ```html
 <div class="code-block"><pre>assign rgb_o = {12{shouldDraw}} &amp; rgb;</pre></div>
 ```
 
-`.code-block` mirrors `.math-display` — panel background, accent left rule, and
-horizontal scroll — and its `pre` uses the mono font. Escape HTML characters
-(`&lt;`, `&amp;`) inside the excerpt, and keep code blocks to a few lines; longer
-listings belong in a repository or a linked file.
+`.code-block` mirrors `.math-display` — recessed panel, sienna left rule, horizontal
+scroll, mono `pre`. Escape HTML characters (`&lt;`, `&amp;`). Keep excerpts short; longer
+listings belong in a repository.
 
-### Figures
+### Figures and plates
 
 ```html
 <figure class="article-figure">
-  <img src="/blog/name.png" alt="…" loading="lazy">
+  <img src="/blog/name.png" alt="…" loading="lazy" decoding="async">
   <figcaption>What the image shows and why it matters.</figcaption>
 </figure>
 ```
 
-Images live in `public/blog/` and are referenced by absolute path. `.article-figure`
-sets the vertical rhythm, a hairline border on the image, and a small mono caption in
-muted text. Keep figures to the article's 820px measure and write real `alt` text.
+Images live in `public/blog/` or `public/projects/` and are referenced by absolute path.
+`.article-figure` sets the vertical rhythm, a hairline frame on the image, and a small
+mono caption in muted text. Plates on the homepage and the catalogue
+(`.work-thumb`, `.project-thumb`) carry **no** border, radius, or shadow: the image is
+the plate, and the caption attaches to it below. Every image gets real `alt` text.
+
+### Result blocks
+
+Project pages that report numbers use `.result-grid` / `.result-row`: a three-up grid of
+serif statements with a mono label (`Result`), a large figure, and a plain-language
+basis. Values are quoted with their run count and comparison where the source has them.
+Do not invent a chart when only summary numbers exist — use the result rows and a table.
 
 ### Lists
 
-Use `<ul class="article-list">` for bulleted content on article and résumé pages. It sets the muted body color, line height, and accent-colored markers. Avoid a bare `<ul>` — the base stylesheet does not reset its spacing or color.
-
-### Résumé
-
-The `/resume` page uses `.resume`, `.resume-section`, `.resume-entry`, `.resume-sub`, `.resume-date`, `.resume-note`, `.resume-contact`, `.skill-grid`, and `.skill-label`. Section headings are small mono uppercase, entries are a two-column grid, and the skill grid is two columns; both collapse to one column at `760px`.
+`<ul class="article-list">` for bulleted content on record and résumé pages: muted body
+colour, generous line height, sienna markers. Avoid a bare `<ul>`; the base sheet does
+not reset its spacing.
 
 ### Vector diagrams (SVG)
 
-Inline SVGs are styled with `.vector-diagram` (panel background, border, full width).
-Internal text uses `.diagram-title` (accent, mono, uppercase) and `.diagram-caption`
-(muted mono). Marker arrowheads are defined in `<defs>` and referenced via
-`marker-end="url(#…)"`. See the boids page for a three-panel example
-(separation / alignment / cohesion).
+Inline SVGs use `.vector-diagram` (recessed panel, `1px solid var(--border)`, full width).
+Internal text uses `.diagram-title` (sienna mono uppercase) and `.diagram-caption` (muted
+mono). Arrowheads live in `<defs>` and are referenced with
+`marker-end="url(#…)"`. Palette: sienna for the signal path, steel `#7fa6c9` for
+secondary series, sage `#8fb3a0` for a third, ink surfaces elsewhere. Wide diagrams sit
+in `.diagram-scroll` so labels stay legible instead of shrinking.
 
 ### Machine-readable representations
 
-The same page content must remain legible outside a browser. The build converts each
-page's `content` to Markdown with Turndown and GFM, and writes:
+Page content must remain legible outside a browser. The build converts each page's
+`content` to Markdown with Turndown + GFM and writes:
 
 - `<route>.md` (or `/index.md` for the homepage) with YAML front matter.
-- `/llms.txt` and `/llms-full.txt` from the project and post data plus the page list.
-- `/sitemap.xml` and `/robots.txt` from the same route table, including the copied
-  `/lab/aurora/` artifact, which has its own canonical URL.
+- `/llms.txt` and `/llms-full.txt` from project/post data plus the page list.
+- `/sitemap.xml` and `/robots.txt`, including the copied `/lab/aurora/` artifact with its
+  own canonical URL.
 - A JSON-LD `@graph` in each page's `<head>`. The homepage `Person` and the About
-  `ProfilePage` share the `#person` identifier and the same GitHub/LinkedIn `sameAs`
-  links.
+  `ProfilePage` share `#person` and the same GitHub/LinkedIn `sameAs` links.
 
 Consequences for markup:
 
-- Write real `<h1>`/`<h2>`/`<h3>` structure and prose, not text baked into an image or
-  canvas.
+- Write real `<h1>`/`<h2>`/`<h3>` structure and prose, not text baked into an image.
 - Put the substantive description of a canvas or SVG in its `aria-label`; the Markdown
   rule turns it into `[Interactive visualization: …]` or `[Diagram: …]`.
-- Use `<figure>` + `<figcaption>` for images so the caption survives conversion. Images
-  are made absolute in Markdown.
-- Avoid interactive-only claims. The controls on the nebula and boids are enhancements;
-  the surrounding prose must stand on its own.
-- Do not add an element whose only purpose is to carry metadata a crawler needs. Put
-  authors, dates, and keywords in `Page` and the data modules so they reach every output.
+- Use `<figure>` + `<figcaption>` so captions survive conversion.
+- Avoid interactive-only claims; the controls are enhancements, and the prose stands
+  alone.
+- Do not add an element whose only purpose is crawler metadata. Put authors, dates, and
+  keywords in `Page` and the data modules.
 
 ### Content changes
 
-1. Update `src/data/projects.ts` or `src/data/posts.ts` for shared metadata, then the page
-   module for prose. Keep the two consistent when a metric or summary changes.
+1. Update `src/data/projects.ts` or `src/data/posts.ts`, then the page module. Keep a
+   metric or summary consistent across both.
 2. Run `npm run build && npm run validate`. The validator fails on a missing canonical
    URL, duplicate title, HTML left in Markdown, a missing sitemap entry, or a 404 that is
    not `noindex`.
-3. Check one page with JavaScript disabled. The content, headings, math, and figure
-   captions must still be present.
+3. Check one page with JavaScript disabled: content, headings, math, and figure captions
+   must remain.
 
-## 5. Responsive behavior
+---
 
-At `max-width: 760px`:
+## 5. Responsive behaviour
 
-- `#app` padding drops to `20px`; grids (`hero-grid`, `about-grid`, `home-strip`,
-  `project-row`) collapse to a single column.
-- `.header-note` hides; header/nav shrink.
+At `max-width: 1120px` the plate grid takes fewer columns; at `960px` the project lead
+grid, project header, and method strip go to one or two columns; at `760px`:
+
+- `#app` padding drops to `18px`; homepage plates, project leads, rows, `.project-header`,
+  `.about-grid`, `.home-strip`, and `.method` collapse to one column.
+- `.header-note` hides; header/nav shrink; the nav wraps if needed.
+- Plates go full width with their caption directly beneath; the irregular spans are
+  dropped, so the board reads in a single column.
 - Visual frames drop to `min-height: 360px` (article variant `320px`); the nebula stage
-  drops to `420px`, and the laboratory stage to `460px`.
-- The nebula HUD's right label and the caption's right hint hide; the control bar wraps
-  and the seed group loses its `margin-left: auto`.
-- `.work-row` becomes one column, with the metric moved under the description in a
-  horizontal pair.
-- Tables rely on `.table-wrap { overflow-x: auto }` rather than resizing.
-- `.spec-table.wrap` drops its minimum width, so prose tables fit the screen.
-- `.resume-entry` collapses to one column (dates go left) and `.skill-grid` becomes one column.
+  drops to `420px`, the laboratory stage to `460px`.
+- The nebula HUD's right label and caption hint hide; control bars wrap and the seed
+  group loses `margin-left: auto`.
+- `.spec-table.wrap` drops its minimum width; unwrapped tables rely on
+  `.table-wrap { overflow-x: auto }`.
+- `.result-grid` stacks; `.resume-entry` goes one column (dates first) and `.skill-grid`
+  becomes one column.
+
+At `520px`, mono labels drop to `0.6rem`, the article gutter rules are removed, and
+result figures shrink a step.
 
 ---
 
 ## 6. Accessibility & motion
 
-- `index.html` starts with a `.skip-link` to `#main`; `main` has `tabindex="-1"` so the
-  skip target takes focus. The link is translated off-screen until `:focus-visible`.
-- `:focus-visible` gets a 2px accent outline with a 3px offset. Do not remove outlines.
-- The active nav item carries `aria-current="page"`. Unknown routes clear it.
-- Inline links inside `.article` and `.about-grid` prose are underlined with
-  `text-decoration-color: var(--border)`; do not rely on hover color alone.
+- `index.html` opens with `.skip-link` to `#main`; `main` has `tabindex="-1"` so the skip
+  target takes focus. The link is translated off-screen until `:focus-visible`.
+- `:focus-visible` gets a `2px solid var(--accent)` outline with `3px` offset. Do not
+  remove outlines.
+- The active nav item carries `aria-current="page"`; unknown routes clear it.
+- Inline links in `.article` and prose blocks are underlined with
+  `text-decoration-color: var(--border)`; hover adds the sienna. Colour alone never
+  carries meaning.
 - Canvas controls are native `<input type="range">`, `<select>`, and `<button>` with
   visible `<label>` text. The seed readout is `aria-live="polite"`.
-- `@media (prefers-reduced-motion: reduce)` collapses animation/transition durations.
-  The nebula adapter passes `animationSpeed: 0`; the engine stops advancing time and
-  redraws only on parameter or layout changes, so the frame is still. Boids still
-  simulates but is not motion-safe by nature, so keep it behind a link rather than
-  autoplaying it on the homepage.
+- `prefers-reduced-motion: reduce` collapses animation and transition durations. The
+  nebula adapter passes `animationSpeed: 0`, so the field is still and redraws only on
+  parameter or layout change. Boids still simulates but is not motion-safe, so it stays
+  behind a link rather than autoplaying on the homepage.
+- Decorative marks (arrows, plate numbers, HUD labels) are `aria-hidden` where they
+  repeat adjacent text.
 
 ---
 
-## 7. Adding a new page — quick checklist
+## 7. Adding a new page — checklist
 
 1. Create a page module in `src/pages/` (e.g. `my-page.ts`) exporting a `Page` — copy an
-   existing page file or use the templates in `templates/`. Set `description`, `kind`,
-   and, for notes, `date`; set `section` for breadcrumbs.
-2. Register it in `src/pages/index.ts` under its route key (e.g.
-   `"/projects/my-page": myPage`). The shell, static generator, and 404 handling need no
-   changes.
-3. For a project or note, add the shared metadata to `src/data/projects.ts` or
-   `src/data/posts.ts` and have the page read it. Do not retype the summary in two
-   places.
-4. Write the `content` string as an `<article class="article">` (or a `page-intro` + list
-   section for index pages). Project pages with measurements get a **Limitations**
-   section.
-5. If the page has a visualization, add a `<canvas data-visualization="…" role="img"
-   aria-label="…">` inside a `.visual-frame` and a matching branch in the canvas wiring
-   loop in `src/main.ts`.
+   existing record or use `templates/`. Set `description`, `kind`, and, for notes,
+   `date`; set `section` for breadcrumbs.
+2. Register it in `src/pages/index.ts` under its route key. The shell, generator, and 404
+   handling need no changes.
+3. For a project or note, add shared metadata to `src/data/projects.ts` or
+   `src/data/posts.ts` and read it from the page. Never retype the summary.
+4. Write `content` as `<article class="article">` (or `page-intro` + a group/list section
+   for an index). A project with measurements gets **Results** and **Limitations**.
+5. If it has a visualization, add a `<canvas data-visualization="…" role="img"
+   aria-label="…">` inside `.visual-frame` and a branch in the canvas wiring loop in
+   `src/main.ts`. Add its CSS to the existing visualization block, in the Atlas palette.
 6. Escape LaTeX backslashes (`\\`), keep `aria-label`s, and verify at
    `http://localhost:5173/<route>`.
-7. Run `npm run build && npm run preview`, then check the page at
-   `<route>/` and `<route>.md`, and run `npm run validate`. Confirm the title,
-   description, canonical URL, JSON-LD, and sitemap entry, and that unknown routes render
-   the 404 page rather than the homepage.
+7. Run `npm run build && npm run preview`, check `<route>/` and `<route>.md`, and run
+   `npm run validate`. Confirm the title, description, canonical URL, JSON-LD, sitemap
+   entry, and that an unknown route renders the 404.
+8. If the entry is featured, give it a plate on the homepage and, if it is a flagship, a
+   lead in the catalogue. If not, add a row. Update the validator's counts.

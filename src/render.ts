@@ -93,11 +93,11 @@ export function renderHeader(_page: Page, path: string, isNotFound: boolean): st
         })
         .join("");
 
-    return `<header class="site-header"><a class="brand" href="/" aria-label="Caleb Lin, home">CL<span>/</span></a><nav aria-label="Primary">${nav}</nav><span class="header-note">UC Santa Cruz / 2027</span></header>`;
+    return `<header class="site-header"><a class="brand" href="/" aria-label="Caleb Lin, home"><span class="brand-name">Caleb Lin</span></a><nav aria-label="Primary">${nav}</nav><span class="header-note">UC Santa Cruz / 2027</span></header>`;
 }
 
 export function renderFooter(): string {
-    return `<footer><span>© 2026 Caleb Lin</span><span class="footer-links"><a href="${githubProfileUrl}">GitHub ↗</a><a href="${linkedinUrl}">LinkedIn ↗</a><a href="/resume">Résumé ↗</a><a href="mailto:${email}">Say hello ↗</a></span></footer>`;
+    return `<footer class="site-footer"><span>© 2026 Caleb Lin</span><span class="footer-links"><a href="${githubProfileUrl}">GitHub ↗</a><a href="${linkedinUrl}">LinkedIn ↗</a><a href="/resume">Résumé ↗</a><a href="mailto:${email}">Say hello ↗</a></span></footer>`;
 }
 
 export function renderPage(page: Page, path: string, isNotFound: boolean): string {

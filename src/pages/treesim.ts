@@ -38,17 +38,17 @@ ${projectHeader(
 <div class="diagram-scroll"><svg class="vector-diagram" viewBox="0 0 960 430" role="img" aria-labelledby="treesim-arch-title treesim-arch-desc">
 <title id="treesim-arch-title">TreeSim growth, competition, and selection loop</title>
 <desc id="treesim-arch-desc">A seed and genome feed a per-limb growth brain, which sets limb growth. The forest fields of light, soil, water, and wind determine the tree's energy, which decides reproduction or death. Surviving seeds form the next generation. A lower band records metrics, frames, genomes, and checkpoints for offline rendering and phylogeny.</desc>
-<rect x="1" y="1" width="958" height="428" fill="#2a1e32" stroke="#51425a"/>
-<text x="36" y="38" fill="#c59ad8" font-family="monospace" font-size="15" letter-spacing="2">TREESIM / ONE GENERATION</text>
-<g fill="#1a1320" stroke="#51425a">
+<rect x="1" y="1" width="958" height="428" fill="#10161a" stroke="#2b3439"/>
+<text x="36" y="38" fill="#d98a5f" font-family="monospace" font-size="15" letter-spacing="2">TREESIM / ONE GENERATION</text>
+<g fill="#161d22" stroke="#2b3439">
 <rect x="36" y="64" width="196" height="86"/><rect x="286" y="64" width="232" height="86"/><rect x="572" y="64" width="250" height="86"/>
 <rect x="572" y="214" width="250" height="96"/><rect x="286" y="214" width="232" height="96"/><rect x="36" y="214" width="196" height="96"/>
 </g>
-<g fill="#eee8f2" font-family="sans-serif" font-size="17">
+<g fill="#e6e2d8" font-family="sans-serif" font-size="17">
 <text x="52" y="92">SEED + GENOME</text><text x="302" y="92">GROWTH BRAIN</text><text x="588" y="92">LIMB GROWTH</text>
 <text x="588" y="242">FOREST FIELDS</text><text x="302" y="242">ENERGY</text><text x="52" y="242">REPRODUCTION</text>
 </g>
-<g fill="#9a8da0" font-family="monospace" font-size="11">
+<g fill="#99a09d" font-family="monospace" font-size="11">
 <text x="52" y="116">genes + brain weights</text><text x="52" y="136">lineage id</text>
 <text x="302" y="116">12 in → 12 tanh → 10 out</text><text x="302" y="136">per limb, inherited</text>
 <text x="588" y="116">length · width · thickness</text><text x="588" y="136">branch · root · shed</text>
@@ -56,19 +56,19 @@ ${projectHeader(
 <text x="302" y="266">photosynthesis − respiration</text><text x="302" y="286">pipe model · buckling</text>
 <text x="52" y="266">seed at sunlit tips</text><text x="52" y="286">establish or die</text>
 </g>
-<g stroke="#c59ad8" stroke-width="2" marker-end="url(#treesim-arrow)" fill="none">
+<g stroke="#d98a5f" stroke-width="2" marker-end="url(#treesim-arrow)" fill="none">
 <line x1="232" y1="107" x2="280" y2="107"/><line x1="518" y1="107" x2="566" y2="107"/>
 <line x1="697" y1="150" x2="697" y2="208"/><line x1="566" y1="262" x2="524" y2="262"/>
 <line x1="286" y1="262" x2="238" y2="262"/><line x1="134" y1="214" x2="134" y2="156"/>
 </g>
-<text x="144" y="190" fill="#9a8da0" font-family="monospace" font-size="11">next generation</text>
-<line x1="36" y1="336" x2="924" y2="336" stroke="#51425a" stroke-width="1.5" stroke-dasharray="7 7"/>
-<text x="36" y="364" fill="#c59ad8" font-family="monospace" font-size="12">RUN</text>
-<text x="84" y="364" fill="#9a8da0" font-family="monospace" font-size="12">24–48 ranks · x-strips + halo exchange · periodic checkpoints</text>
-<text x="36" y="392" fill="#c59ad8" font-family="monospace" font-size="12">READ</text>
-<text x="84" y="392" fill="#9a8da0" font-family="monospace" font-size="12">offline renderer · UPGMA phylogeny · species history · seed sweeps</text>
-<text x="36" y="418" fill="#9a8da0" font-family="monospace" font-size="12">No shape is stored: the genome carries growth weights, and the stand selects them.</text>
-<defs><marker id="treesim-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c59ad8"/></marker></defs>
+<text x="144" y="190" fill="#99a09d" font-family="monospace" font-size="11">next generation</text>
+<line x1="36" y1="336" x2="924" y2="336" stroke="#2b3439" stroke-width="1.5" stroke-dasharray="7 7"/>
+<text x="36" y="364" fill="#d98a5f" font-family="monospace" font-size="12">RUN</text>
+<text x="84" y="364" fill="#99a09d" font-family="monospace" font-size="12">24–48 ranks · x-strips + halo exchange · periodic checkpoints</text>
+<text x="36" y="392" fill="#d98a5f" font-family="monospace" font-size="12">READ</text>
+<text x="84" y="392" fill="#99a09d" font-family="monospace" font-size="12">offline renderer · UPGMA phylogeny · species history · seed sweeps</text>
+<text x="36" y="418" fill="#99a09d" font-family="monospace" font-size="12">No shape is stored: the genome carries growth weights, and the stand selects them.</text>
+<defs><marker id="treesim-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#d98a5f"/></marker></defs>
 </svg></div>
 <p>The loop is deliberately local. A limb sees twelve numbers about itself and its place in the tree; it does not see the forest. Competition enters through fields: the light a neighbour intercepts, the water a root cell can deliver, the soil nutrition left after uptake, and the gust load on a crown. The only global optimizer is survival.</p>
 <p>A run is also a data pipeline. The same binary writes metrics, frames, genomes, and checkpoints while it simulates. The Python tools read those files afterwards to render a frame without OpenGL, infer a phylogeny from the genomes, trace species through time, or compare a sweep of seeds.</p>

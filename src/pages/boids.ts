@@ -21,43 +21,43 @@ export const boidsPage: Page = {
 <div class="math-display">$$\\text{separation} + \\text{alignment} + \\text{cohesion}$$</div>
 <div class="diagram-scroll"><svg class="vector-diagram" viewBox="0 0 960 280" role="img" aria-label="Vector diagram of the three boid steering rules">
 <defs>
-<marker id="arrow-sep" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#ff6b6b"/></marker>
-<marker id="arrow-coh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5be584"/></marker>
-<marker id="arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#eee8f2"/></marker>
+<marker id="arrow-sep" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#b5563f"/></marker>
+<marker id="arrow-coh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8fb3a0"/></marker>
+<marker id="arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#e6e2d8"/></marker>
 </defs>
 <g>
 <text x="160" y="26" class="diagram-title" text-anchor="middle">Separation</text>
-<circle cx="80" cy="90" r="9" fill="#4d8cff" opacity="0.8"/>
-<circle cx="255" cy="100" r="9" fill="#4d8cff" opacity="0.8"/>
-<circle cx="130" cy="225" r="9" fill="#4d8cff" opacity="0.8"/>
-<circle cx="160" cy="160" r="11" fill="#4d8cff"/>
-<line x1="160" y1="160" x2="186" y2="182" stroke="#ff6b6b" stroke-width="2.5" marker-end="url(#arrow-sep)"/>
-<line x1="160" y1="160" x2="131" y2="178" stroke="#ff6b6b" stroke-width="2.5" marker-end="url(#arrow-sep)"/>
-<line x1="160" y1="160" x2="174" y2="129" stroke="#ff6b6b" stroke-width="2.5" marker-end="url(#arrow-sep)"/>
+<circle cx="80" cy="90" r="9" fill="#7fa6c9" opacity="0.8"/>
+<circle cx="255" cy="100" r="9" fill="#7fa6c9" opacity="0.8"/>
+<circle cx="130" cy="225" r="9" fill="#7fa6c9" opacity="0.8"/>
+<circle cx="160" cy="160" r="11" fill="#7fa6c9"/>
+<line x1="160" y1="160" x2="186" y2="182" stroke="#b5563f" stroke-width="2.5" marker-end="url(#arrow-sep)"/>
+<line x1="160" y1="160" x2="131" y2="178" stroke="#b5563f" stroke-width="2.5" marker-end="url(#arrow-sep)"/>
+<line x1="160" y1="160" x2="174" y2="129" stroke="#b5563f" stroke-width="2.5" marker-end="url(#arrow-sep)"/>
 <text x="160" y="262" class="diagram-caption" text-anchor="middle">push away from close neighbours</text>
 </g>
 <g transform="translate(320,0)">
 <text x="160" y="26" class="diagram-title" text-anchor="middle">Alignment</text>
-<circle cx="90" cy="150" r="9" fill="#4d8cff"/>
-<line x1="90" y1="150" x2="128" y2="138" stroke="#eee8f2" stroke-width="2.5" marker-end="url(#arrow-head)"/>
-<circle cx="160" cy="95" r="9" fill="#4d8cff"/>
-<line x1="160" y1="95" x2="200" y2="95" stroke="#eee8f2" stroke-width="2.5" marker-end="url(#arrow-head)"/>
-<circle cx="235" cy="150" r="9" fill="#4d8cff"/>
-<line x1="235" y1="150" x2="271" y2="167" stroke="#eee8f2" stroke-width="2.5" marker-end="url(#arrow-head)"/>
-<line x1="160" y1="210" x2="215" y2="210" stroke="#c59ad8" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow-head)"/>
+<circle cx="90" cy="150" r="9" fill="#7fa6c9"/>
+<line x1="90" y1="150" x2="128" y2="138" stroke="#e6e2d8" stroke-width="2.5" marker-end="url(#arrow-head)"/>
+<circle cx="160" cy="95" r="9" fill="#7fa6c9"/>
+<line x1="160" y1="95" x2="200" y2="95" stroke="#e6e2d8" stroke-width="2.5" marker-end="url(#arrow-head)"/>
+<circle cx="235" cy="150" r="9" fill="#7fa6c9"/>
+<line x1="235" y1="150" x2="271" y2="167" stroke="#e6e2d8" stroke-width="2.5" marker-end="url(#arrow-head)"/>
+<line x1="160" y1="210" x2="215" y2="210" stroke="#d98a5f" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow-head)"/>
 <text x="160" y="262" class="diagram-caption" text-anchor="middle">match the average heading</text>
 </g>
 <g transform="translate(640,0)">
 <text x="160" y="26" class="diagram-title" text-anchor="middle">Cohesion</text>
-<circle cx="85" cy="95" r="9" fill="#4d8cff" opacity="0.8"/>
-<circle cx="245" cy="100" r="9" fill="#4d8cff" opacity="0.8"/>
-<circle cx="90" cy="225" r="9" fill="#4d8cff" opacity="0.8"/>
-<circle cx="240" cy="215" r="9" fill="#4d8cff" opacity="0.8"/>
-<line x1="85" y1="95" x2="160" y2="160" stroke="#5be584" stroke-width="2.5" marker-end="url(#arrow-coh)"/>
-<line x1="245" y1="100" x2="160" y2="160" stroke="#5be584" stroke-width="2.5" marker-end="url(#arrow-coh)"/>
-<line x1="90" y1="225" x2="160" y2="160" stroke="#5be584" stroke-width="2.5" marker-end="url(#arrow-coh)"/>
-<line x1="240" y1="215" x2="160" y2="160" stroke="#5be584" stroke-width="2.5" marker-end="url(#arrow-coh)"/>
-<circle cx="160" cy="160" r="5" fill="#eee8f2"/>
+<circle cx="85" cy="95" r="9" fill="#7fa6c9" opacity="0.8"/>
+<circle cx="245" cy="100" r="9" fill="#7fa6c9" opacity="0.8"/>
+<circle cx="90" cy="225" r="9" fill="#7fa6c9" opacity="0.8"/>
+<circle cx="240" cy="215" r="9" fill="#7fa6c9" opacity="0.8"/>
+<line x1="85" y1="95" x2="160" y2="160" stroke="#8fb3a0" stroke-width="2.5" marker-end="url(#arrow-coh)"/>
+<line x1="245" y1="100" x2="160" y2="160" stroke="#8fb3a0" stroke-width="2.5" marker-end="url(#arrow-coh)"/>
+<line x1="90" y1="225" x2="160" y2="160" stroke="#8fb3a0" stroke-width="2.5" marker-end="url(#arrow-coh)"/>
+<line x1="240" y1="215" x2="160" y2="160" stroke="#8fb3a0" stroke-width="2.5" marker-end="url(#arrow-coh)"/>
+<circle cx="160" cy="160" r="5" fill="#e6e2d8"/>
 <text x="160" y="262" class="diagram-caption" text-anchor="middle">steer toward the centre of mass</text>
 </g>
 </svg></div>

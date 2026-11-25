@@ -36,11 +36,11 @@ ${projectHeader(
 <div class="diagram-scroll"><svg class="vector-diagram" viewBox="0 0 960 470" role="img" aria-labelledby="robot-arch-title robot-arch-desc">
 <title id="robot-arch-title">Robot sensing and control architecture</title>
 <desc id="robot-arch-desc">Tape sensors, bumpers, a BNO055 IMU, and a filtered 2 kHz beacon feed a PIC32 event loop every 10 milliseconds; the state machine drives mecanum motors and the flywheel shooter. A separate offline path contained a particle filter, opponent EKF, and A star planner that did not ship in the match code.</desc>
-<rect x="1" y="1" width="958" height="468" fill="#2a1e32" stroke="#51425a"/>
-<text x="36" y="40" fill="#c59ad8" font-family="monospace" font-size="15" letter-spacing="2">SENSING</text>
-<text x="470" y="40" fill="#c59ad8" font-family="monospace" font-size="15" letter-spacing="2">10 MS EVENT LOOP</text>
-<text x="740" y="40" fill="#c59ad8" font-family="monospace" font-size="15" letter-spacing="2">ACTUATION</text>
-<g fill="#1a1320" stroke="#51425a">
+<rect x="1" y="1" width="958" height="468" fill="#10161a" stroke="#2b3439"/>
+<text x="36" y="40" fill="#d98a5f" font-family="monospace" font-size="15" letter-spacing="2">SENSING</text>
+<text x="470" y="40" fill="#d98a5f" font-family="monospace" font-size="15" letter-spacing="2">10 MS EVENT LOOP</text>
+<text x="740" y="40" fill="#d98a5f" font-family="monospace" font-size="15" letter-spacing="2">ACTUATION</text>
+<g fill="#161d22" stroke="#2b3439">
 <rect x="30" y="58" width="250" height="58"/><rect x="30" y="132" width="250" height="58"/>
 <rect x="30" y="206" width="250" height="58"/><rect x="30" y="280" width="250" height="58"/>
 <rect x="390" y="96" width="230" height="84"/><rect x="390" y="206" width="230" height="84"/>
@@ -48,24 +48,24 @@ ${projectHeader(
 <rect x="720" y="76" width="206" height="74"/><rect x="720" y="174" width="206" height="74"/>
 <rect x="720" y="272" width="206" height="74"/>
 </g>
-<g fill="#eee8f2" font-family="sans-serif" font-size="17">
+<g fill="#e6e2d8" font-family="sans-serif" font-size="17">
 <text x="48" y="82">Tape sensors ×7</text><text x="48" y="156">Bumpers ×4</text>
 <text x="48" y="230">BNO055 IMU</text><text x="48" y="304">2 kHz IR receiver</text>
-<text x="408" y="128">event service</text><text x="408" y="152" font-family="monospace" font-size="12" fill="#9a8da0">debounce / overrun fallback</text>
-<text x="408" y="238">match state machine</text><text x="408" y="262" font-family="monospace" font-size="12" fill="#9a8da0">yaw zero / heading PID</text>
-<text x="408" y="348">offline estimator</text><text x="408" y="372" font-family="monospace" font-size="12" fill="#9a8da0">particle filter / EKF / A* — built, not shipped</text>
+<text x="408" y="128">event service</text><text x="408" y="152" font-family="monospace" font-size="12" fill="#99a09d">debounce / overrun fallback</text>
+<text x="408" y="238">match state machine</text><text x="408" y="262" font-family="monospace" font-size="12" fill="#99a09d">yaw zero / heading PID</text>
+<text x="408" y="348">offline estimator</text><text x="408" y="372" font-family="monospace" font-size="12" fill="#99a09d">particle filter / EKF / A* — built, not shipped</text>
 <text x="738" y="104">mecanum drive</text><text x="738" y="202">flywheel shooter</text>
 <text x="738" y="300">feeder servo</text>
 </g>
-<g stroke="#c59ad8" stroke-width="2" marker-end="url(#robot-arrow)">
+<g stroke="#d98a5f" stroke-width="2" marker-end="url(#robot-arrow)">
 <line x1="280" y1="87" x2="384" y2="126"/><line x1="280" y1="161" x2="384" y2="146"/>
 <line x1="280" y1="235" x2="384" y2="164"/><line x1="280" y1="309" x2="384" y2="182"/>
 <line x1="620" y1="138" x2="714" y2="110"/><line x1="620" y1="248" x2="714" y2="208"/>
 <line x1="620" y1="358" x2="714" y2="306"/>
 </g>
-<line x1="390" y1="286" x2="620" y2="286" stroke="#51425a" stroke-width="1.5" stroke-dasharray="7 7"/>
-<text x="36" y="438" fill="#9a8da0" font-family="monospace" font-size="14">The shipped match code used reactive tape logic and IR peak tracking. The general estimator stayed on the bench.</text>
-<defs><marker id="robot-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c59ad8"/></marker></defs>
+<line x1="390" y1="286" x2="620" y2="286" stroke="#2b3439" stroke-width="1.5" stroke-dasharray="7 7"/>
+<text x="36" y="438" fill="#99a09d" font-family="monospace" font-size="14">The shipped match code used reactive tape logic and IR peak tracking. The general estimator stayed on the bench.</text>
+<defs><marker id="robot-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#d98a5f"/></marker></defs>
 </svg></div>
 <p>The important architectural fact is the separation between the fast event loop and the deliberate state machine. Tape and bumpers are debounced at the event layer; the match service runs every 10 ms; the estimator that would generalize across the field was built offline but did not replace the reactive logic that could be verified on the actual mat.</p>
 

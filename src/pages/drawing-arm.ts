@@ -38,17 +38,17 @@ ${projectHeader(
 <div class="diagram-scroll"><svg class="vector-diagram" viewBox="0 0 960 360" role="img" aria-labelledby="arm-arch-title arm-arch-desc">
 <title id="arm-arch-title">Drawing arm pipeline from drawing to printable parts</title>
 <desc id="arm-arch-desc">A drawing becomes strokes, the planner turns strokes into joint angles over time, cam synthesis turns the angles into cam profiles, and the part generator exports printable parts. A structural check and the simulator read the same plan.</desc>
-<rect x="1" y="1" width="958" height="358" fill="#2a1e32" stroke="#51425a"/>
-<text x="36" y="38" fill="#c59ad8" font-family="monospace" font-size="15" letter-spacing="2">DRAWING ARM / DRAWING TO PARTS</text>
-<g fill="#1a1320" stroke="#51425a">
+<rect x="1" y="1" width="958" height="358" fill="#10161a" stroke="#2b3439"/>
+<text x="36" y="38" fill="#d98a5f" font-family="monospace" font-size="15" letter-spacing="2">DRAWING ARM / DRAWING TO PARTS</text>
+<g fill="#161d22" stroke="#2b3439">
 <rect x="36" y="68" width="190" height="92"/><rect x="262" y="68" width="190" height="92"/><rect x="488" y="68" width="190" height="92"/><rect x="714" y="68" width="210" height="92"/>
 <rect x="262" y="214" width="190" height="80"/><rect x="488" y="214" width="190" height="80"/>
 </g>
-<g fill="#eee8f2" font-family="sans-serif" font-size="17">
+<g fill="#e6e2d8" font-family="sans-serif" font-size="17">
 <text x="52" y="96">DRAWING</text><text x="278" y="96">PLANNER</text><text x="504" y="96">CAM SYNTHESIS</text><text x="730" y="96">PARTS</text>
 <text x="278" y="242">SIMULATOR</text><text x="504" y="242">STRUCTURAL</text>
 </g>
-<g fill="#9a8da0" font-family="monospace" font-size="11">
+<g fill="#99a09d" font-family="monospace" font-size="11">
 <text x="52" y="120">SVG · image · shape</text><text x="52" y="140">→ strokes on paper</text>
 <text x="278" y="120">order · 2/3 power law</text><text x="278" y="140">min-energy hand angle</text>
 <text x="504" y="120">re-timing · 35° limit</text><text x="504" y="140">cams or helical drum</text>
@@ -56,12 +56,12 @@ ${projectHeader(
 <text x="278" y="266">tkinter · margins</text><text x="278" y="284">motor torque · CSV</text>
 <text x="504" y="266">stress · buckling</text><text x="504" y="284">Hertz contact · pen error</text>
 </g>
-<g stroke="#c59ad8" stroke-width="2" marker-end="url(#arm-arrow)" fill="none">
+<g stroke="#d98a5f" stroke-width="2" marker-end="url(#arm-arrow)" fill="none">
 <line x1="226" y1="114" x2="256" y2="114"/><line x1="452" y1="114" x2="482" y2="114"/><line x1="678" y1="114" x2="708" y2="114"/>
 <line x1="357" y1="160" x2="357" y2="208"/><line x1="583" y1="160" x2="583" y2="208"/>
 </g>
-<text x="36" y="334" fill="#9a8da0" font-family="monospace" font-size="12">One params.toml feeds every stage: change a link length and the plan, cams, parts, and report all follow.</text>
-<defs><marker id="arm-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c59ad8"/></marker></defs>
+<text x="36" y="334" fill="#99a09d" font-family="monospace" font-size="12">One params.toml feeds every stage: change a link length and the plan, cams, parts, and report all follow.</text>
+<defs><marker id="arm-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#d98a5f"/></marker></defs>
 </svg></div>
 <p>The mechanism keeps every motor input at the shoulder. The upper arm is driven directly. The forearm is driven through a parallelogram across the upper arm, and the hand through two parallelograms in series joined by a free L-shaped bell-crank at the elbow. Because each input sets an absolute link angle, the kinematics decouple: turning the shoulder input alone moves the forearm and hand without rotating them, and inverse kinematics reduces to a two-link solve plus a choice of hand angle.</p>
 <p>That choice is where the planner earns its keep, and the cams are where the drawing is stored. Each cam turns one shoulder hub through a 3:1 gear sector, a fourth cam lifts the pen through a cable, and one revolution of the camshaft is one drawing.</p>

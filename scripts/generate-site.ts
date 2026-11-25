@@ -107,23 +107,32 @@ turndown.addRule("link", {
     }
 });
 
-// Homepage selected-work rows are links that contain their own heading,
-// description, and metric. Unwrap them into a readable block instead of
-// letting Turndown nest an H2 inside a Markdown link.
+// Homepage plates and selected-work rows are links that contain their own
+// heading, image, and metric. Unwrap them into a readable block instead of
+// letting Turndown nest a heading inside a Markdown link.
 turndown.addRule("workRow", {
-    filter: (node) => node.nodeName === "A" && (node.classList.contains("work-row") || node.classList.contains("work-lead")),
+    filter: (node) =>
+        node.nodeName === "A" &&
+        (node.classList.contains("work-row") || node.classList.contains("work-lead") || node.classList.contains("plate")),
     replacement: (_content, node) => {
         const href = node.getAttribute("href") ?? "";
         const title = node.querySelector("h2, h3")?.textContent?.trim() ?? "";
-        const description = (node.querySelector(".work-problem") ?? node.querySelector("p"))?.textContent?.trim() ?? "";
-        const metric = node.querySelector(".work-metric strong")?.textContent?.trim() ?? "";
+        const description =
+            (node.querySelector(".work-problem") ?? node.querySelector(".plate-lead"))?.textContent?.trim() ?? "";
+        const metric =
+            (node.querySelector(".work-metric strong") ?? node.querySelector(".plate-metric"))?.textContent?.trim() ?? "";
         const metricLabel = node.querySelector(".work-metric-note")?.textContent?.trim() ?? "";
-        const metricLine = metric ? `\n\n**${metric}**${metricLabel ? ` ${metricLabel}` : ""}` : "";
+        const meta = [...node.querySelectorAll(".plate-meta span")]
+            .map((span) => span.textContent?.trim() ?? "")
+            .filter(Boolean)
+            .join(" · ");
         const image = node.querySelector("img");
-        // The homepage hides the alt text because the row's own heading names the
-        // work; in the Markdown copy, use the heading as the image description.
-        const imageLine = image ? `\n\n![${title}](${absoluteUrl(image.getAttribute("src") ?? "")})` : "";
-        return `\n\n${imageLine}\n\n### [${title}](${absoluteUrl(href)})\n\n${description}${metricLine}\n\n`;
+        const imageLine = image
+            ? `\n\n![${image.getAttribute("alt") ?? title}](${absoluteUrl(image.getAttribute("src") ?? "")})`
+            : "";
+        const metricLine = metric ? `\n\n**${metric}**${metricLabel ? ` ${metricLabel}` : ""}` : "";
+        const metaLine = meta ? `\n\n*${meta}*` : "";
+        return `\n\n### [${title}](${absoluteUrl(href)})\n\n${description}${imageLine}${metricLine}${metaLine}\n\n`;
     }
 });
 

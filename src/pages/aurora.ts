@@ -40,17 +40,17 @@ ${projectHeader(
 <div class="diagram-scroll"><svg class="vector-diagram" viewBox="0 0 960 340" role="img" aria-labelledby="aurora-arch-title aurora-arch-desc">
 <title id="aurora-arch-title">Aurora space-weather model and render pipeline</title>
 <desc id="aurora-arch-desc">Solar wind drives a coupling proxy, which charges stored energy until a substorm releases it. Four signals, activity, slow activity, energy, and surge, drive the render passes: the aurora volume, bloom extract, two blur scales, and the scene composite.</desc>
-<rect x="1" y="1" width="958" height="338" fill="#2a1e32" stroke="#51425a"/>
-<text x="36" y="38" fill="#c59ad8" font-family="monospace" font-size="15" letter-spacing="2">AURORA / MODEL TO PIXELS</text>
-<g fill="#1a1320" stroke="#51425a">
+<rect x="1" y="1" width="958" height="338" fill="#10161a" stroke="#2b3439"/>
+<text x="36" y="38" fill="#d98a5f" font-family="monospace" font-size="15" letter-spacing="2">AURORA / MODEL TO PIXELS</text>
+<g fill="#161d22" stroke="#2b3439">
 <rect x="36" y="64" width="196" height="86"/><rect x="268" y="64" width="196" height="86"/><rect x="500" y="64" width="196" height="86"/><rect x="732" y="64" width="192" height="86"/>
 <rect x="36" y="214" width="196" height="76"/><rect x="268" y="214" width="196" height="76"/><rect x="500" y="214" width="196" height="76"/><rect x="732" y="214" width="192" height="76"/>
 </g>
-<g fill="#eee8f2" font-family="sans-serif" font-size="17">
+<g fill="#e6e2d8" font-family="sans-serif" font-size="17">
 <text x="52" y="92">SOLAR WIND</text><text x="284" y="92">COUPLING</text><text x="516" y="92">STORAGE</text><text x="748" y="92">SUBSTORM</text>
 <text x="52" y="242">AURORA VOLUME</text><text x="284" y="242">BLOOM EXTRACT</text><text x="516" y="242">BLUR × 2</text><text x="748" y="242">SCENE</text>
 </g>
-<g fill="#9a8da0" font-family="monospace" font-size="11">
+<g fill="#99a09d" font-family="monospace" font-size="11">
 <text x="52" y="116">speed · density · Bz</text><text x="52" y="136">slow sine periods</text>
 <text x="284" y="116">southward Bz + speed</text><text x="284" y="136">raise the proxy</text>
 <text x="516" y="116">energy builds in</text><text x="516" y="136">the growth phase</text>
@@ -60,14 +60,14 @@ ${projectHeader(
 <text x="516" y="266">½ and ¼ resolution</text><text x="516" y="282">separable Gaussian</text>
 <text x="748" y="266">sky · terrain · lake</text><text x="748" y="282">ACES · grain</text>
 </g>
-<g stroke="#c59ad8" stroke-width="2" marker-end="url(#aurora-arrow)" fill="none">
+<g stroke="#d98a5f" stroke-width="2" marker-end="url(#aurora-arrow)" fill="none">
 <line x1="232" y1="107" x2="262" y2="107"/><line x1="464" y1="107" x2="494" y2="107"/><line x1="696" y1="107" x2="726" y2="107"/>
 <line x1="828" y1="150" x2="134" y2="208"/>
 <line x1="232" y1="252" x2="262" y2="252"/><line x1="464" y1="252" x2="494" y2="252"/><line x1="696" y1="252" x2="726" y2="252"/>
 </g>
-<text x="300" y="184" fill="#9a8da0" font-family="monospace" font-size="11">activity · slow activity · energy · surge</text>
-<text x="36" y="320" fill="#9a8da0" font-family="monospace" font-size="12">One fullscreen triangle per pass, no per-frame allocations. Only the aurora feeds bloom.</text>
-<defs><marker id="aurora-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#c59ad8"/></marker></defs>
+<text x="300" y="184" fill="#99a09d" font-family="monospace" font-size="11">activity · slow activity · energy · surge</text>
+<text x="36" y="320" fill="#99a09d" font-family="monospace" font-size="12">One fullscreen triangle per pass, no per-frame allocations. Only the aurora feeds bloom.</text>
+<defs><marker id="aurora-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#d98a5f"/></marker></defs>
 </svg></div>
 <p>The model hands the renderer four signals. <em>Activity</em> drives the fast green emission. <em>Slow activity</em> has a longer time constant and drives the 630.0 nm red layer, because that oxygen state takes far longer to radiate than the green one. <em>Energy</em> stands in for precipitation hardness and raises nitrogen blue and violet at the base of the curtain. <em>Surge</em> is the substorm envelope, and it also pulls the sheet stack in slightly to suggest the expanding auroral oval.</p>
 
